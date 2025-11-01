@@ -1,11 +1,9 @@
-1. do u use ballchasing? have you used it to improve? if so, how?
+1. do u use ballchasing? have you used it to improve? if so, how? if not, why?
 2. features that could be added/improved so you can use it to improve?
-3. why do you think you dont use it?
-4. list of playstyles you can label most players with?
-5. which aspects of their gameplay would give a player a specific playstyle?
-6. what is a typical flaw from each playstyle / something they may struggle with?
-7. stats that differ most between ranks? stats:...
-8. general advice for specific ranks?
-9. most useful statistics to compare to others to highlight flaws?
-10. suggestions as to visualising this comparison?
-11. what would x statistic being different tell us about the player?
+3. list of playstyles you can label most players with?  (passive, goalkeeper, ballchaser... whatever you think of doesn't matter much just ideas)
+4. which aspects of their gameplay would give a player a specific playstyle?  (what makes a player their playstyle: on their side of the pitch most the game etc. ; just a simple characteristic is enough)
+5. what is a typical flaw from each playstyle / something they may struggle with?
+6. stats that differ most between ranks? (look at stats shown on ballchasing for example, and anything else you can think of pretty much, there's lots of data in a replay)
+7. general advice for any specific ranks?
+8. most useful statistics to compare to others to highlight flaws?
+9. what would x statistic being different tell us about the player's possible habits/flaws?
