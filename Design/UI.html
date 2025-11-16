@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Replay Analysis</title>
+    <link rel="stylesheet" href="style.css" />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/icon?family=Material+Icons"
+    />
+  </head>
+  <body>
+    <header>
+      <div class="container">
+        <h1>Rocket League Replay Analyser</h1>
+      </div>
+    </header>
+
+    <!-- SECTION 1: REPLAY UPLOAD -->
+    <section class="section alt" id="upload">
+      <div class="container">
+        <h2>Upload Your Replays</h2>
+        <p class="note">
+          Please upload replays from <u>only one game mode</u> (e.g: only 2v2)
+          for accurate analysis
+        </p>
+
+        <div class="upload-area">
+          <div class="upload-link">
+            C:\Users\%USERNAME%\Documents\My Games\Rocket League\TAGame\Demos
+          </div>
+          <label for="file-upload" class="file-upload"
+            >Choose replays to upload
+            <span class="material-icons">add</span></label
+          >
+          <input type="file" id="file-upload" multiple />
+          <div style="text-align: center; opacity: 0.7; margin-top: 5px">
+            (Click on a replay to remove it)
+          </div>
+          <div class="replay-list">
+            <ol id="replay-names">
+              <li>DFH Stadium - 2v2 - 2025-02-14</li>
+              <li>Champions Field - 2v2 - 2025-02-11</li>
+              <li>Mannfield (Night) - 2v2 - 2025-02-09</li>
+              <li>Utopia Coliseum - 2v2 - 2025-02-07</li>
+              <li>Neo Tokyo - 2v2 - 2025-02-04</li>
+              <li>Forbidden Temple - 2v2 - 2025-02-01</li>
+              <li>Starbase ARC - 2v2 - 2025-01-28</li>
+              <li>Neo Tokyo - 2v2 - 2025-02-04</li>
+              <li>Forbidden Temple - 2v2 - 2025-02-01</li>
+              <li>Starbase ARC - 2v2 - 2025-01-28</li>
+              <li>Starbase ARC - 2v2 - 2025-01-28</li>
+              <li>Neo Tokyo - 2v2 - 2025-02-04</li>
+              <li>Forbidden Temple - 2v2 - 2025-02-01</li>
+              <li>Starbase ARC - 2v2 - 2025-01-28</li>
+            </ol>
+          </div>
+          <button id="analyse-button">Analyse Replays</button>
+
+          <div class="error-message hidden">
+            ❌ Invalid file type. Please upload .replay files only.
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- 
+    <section class="section alt" id="overview">
+      <div class="container">
+        <h2>Data Overview</h2>
+        <p>Select a category to display your gameplay insights.</p>
+
+        <div class="category-buttons">
+          <button>Boost</button>
+          <button>Speed</button>
+          <button>Air Time</button>
+          <button>Ball Positioning</button>
+        </div>
+
+        <div class="chart-placeholder">
+          <h3>Boost Usage (Example Bar Chart)</h3>
+          <div class="bar-chart">
+            <div class="bar" style="height: 60%"></div>
+            <div class="bar" style="height: 40%"></div>
+            <div class="bar" style="height: 80%"></div>
+          </div>
+          <p class="chart-labels">You • Teammates • Opponents</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="playstyle">
+      <div class="container">
+        <h2>Playstyle Classification</h2>
+
+        <div class="card">
+          <h3>Your Playstyle: <span class="highlight">Striker</span></h3>
+
+          <ul>
+            <li>High shot-to-goal ratio</li>
+            <li>Spends more time ahead of the ball</li>
+            <li>Low average boost wasted</li>
+          </ul>
+
+          <p class="advice">
+            Advice: Focus on maintaining possession and rotating consistently
+            behind your teammates.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section alt" id="comparison">
+      <div class="container">
+        <h2>Rank Comparison</h2>
+
+        <div class="chart-placeholder spider"></div>
+      </div>
+    </section> -->
+  </body>
+</html>
