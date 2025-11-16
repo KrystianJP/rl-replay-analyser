@@ -159,52 +159,46 @@ section#upload h2 {
 
 .category-buttons {
   display: flex;
-  gap: 1rem;
-  margin-top: 1rem;
+  gap: 2rem;
+  margin-top: 3rem;
+  justify-content: center;
 }
 
 .category-buttons button {
   padding: 0.7rem 1.2rem;
   border: none;
-  background: #2349f2;
   color: white;
+  background: none;
   border-radius: 6px;
+  border: 3px solid rgb(162, 192, 238);
   cursor: pointer;
-  transition: 0.2s;
+  font-size: 1rem;
+  transition: 0.1s;
 }
 
-.category-buttons button:hover {
-  background: #132f9c;
+.category-buttons button:hover,
+.category-buttons button.active {
+  box-shadow: 0 0 10px #1e90ff, 0 0 10px #1e90ff, 0 0 20px #1e90ff;
 }
 
-.chart-placeholder {
+.bar-chart-container {
   margin-top: 2rem;
+  background: rgb(78, 139, 230);
+  padding: 1rem;
+  width: 300px;
+  height: 300px;
+  border-radius: 8px;
+}
+
+.charts-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+}
+
+#overview h3 {
   text-align: center;
-}
-
-.bar-chart {
-  display: flex;
-  gap: 1.2rem;
-  margin: 2rem auto;
-  height: 200px;
-  align-items: flex-end;
-}
-
-.bar {
-  width: 40px;
-  background: #2349f2;
-  border-radius: 4px;
-}
-
-.chart-labels {
-  margin-top: 0.5rem;
-  font-size: 0.9em;
-  color: #555;
-}
-
-.highlight {
-  color: #2349f2;
-  font-weight: bold;
+  margin-top: 3rem;
 }
 
 .advice {
@@ -223,4 +217,10 @@ section#upload h2 {
   color: white;
   text-align: center;
   padding: 2rem 0;
+}
+
+h2 span.material-icons {
+  vertical-align: middle;
+  margin-right: 1rem;
+  font-size: 1.8rem;
 }
