@@ -1,0 +1,39 @@
+(Refer to requirements where relevant throughout)
+
+Design a simple UI in html and css
+Highlight specific design decisions (such as maximum width, different coloured sections, etc.) with simple justification.
+Explain and show using screenshots, example interactions (manually changing the html+css for a simplified view)
+Justify how it links with requirements
+
+Decide on frameworks/libraries (i.e: React, FastAPI, Ballchasing API, Carball, etc.)
+Justify each referring to requirements
+Draw a component hierarchy diagram for React frontend
+Draw diagram showing how the frontend and backend interact with each other
+
+Show how UI will look when user uploads their replays and when there's an error
+Explain how data will be parsed, and how derived statistics will be acquired (using diagrams?)
+
+Decide on specific data categories for data overview as well as what data to show
+Show examples of how the bar charts will look (showing any unique cases) and how the data for them will be acquired from the replays and justify
+Show updated UI with chosen categories and example bar charts
+Make diagram for file -> parse -> statistic derivation -> chart data
+
+Decide on which playstyles to include and justify
+Decide what features the model will learn from and justify
+Explain how I will manually label the data
+Show how the data will be acquired and stored via Ballchasing API (Schema)
+(Explain how errors will be handled)
+Show updated UI
+have more detailed machine learning specifications i.e (potential libraries, algorithms, etc.)
+
+Decide on the categories for the spider diagrams and the data each one will include and justify
+Specify the range of ranks that will be compared
+Give an example visualisation of one and how it would look with data outliers
+Give basic diagram of what the large dataset would store (including ranks of the players)
+Show updated UI with examples shown
+
+Testing...
+
+Conclude how each requirement is addressed
+
+
