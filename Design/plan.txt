@@ -28,6 +28,7 @@ Explain how I will manually label the data
 Show how the data will be acquired and stored via Ballchasing API (Schema)
 (Explain how errors will be handled)
 Show updated UI
+Draw diagram showing how advice will be given
 have more detailed machine learning specifications i.e (potential libraries, algorithms, etc.)
 
 6
