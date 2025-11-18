@@ -33,7 +33,7 @@ Draw diagram showing how advice will be given
 have more detailed machine learning specifications i.e (potential libraries, algorithms, etc.)
 
 6
-Decide on the categories for the spider diagrams and the data each one will include and justify
+Decide on the categories for the spider charts and the data each one will include and justify
 Specify the range of ranks that will be compared
 Give an example visualisation of one and how it would look with data outliers
 Give basic diagram of what the large dataset would store (including ranks of the players)
