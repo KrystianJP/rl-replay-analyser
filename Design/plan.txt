@@ -24,6 +24,7 @@ Make diagram for file -> parse -> statistic derivation -> chart data
 5
 Decide on which playstyles to include and justify
 Decide what features the model will learn from and justify
+Which model to use (RandomForestClassifier - supports sureness and feature importance)
 Explain how I will manually label the data
 Show how the data will be acquired and stored via Ballchasing API (Schema)
 (Explain how errors will be handled)

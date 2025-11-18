@@ -1,0 +1,169 @@
+<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36" version="29.0.3">
+  <diagram name="Page-1" id="Fx-WqMg41TaT8AwUNoXC">
+    <mxGraphModel dx="1426" dy="783" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="a9u7ROfEN7RKwvXNPcNM-23" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="a9u7ROfEN7RKwvXNPcNM-2" target="a9u7ROfEN7RKwvXNPcNM-7">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a9u7ROfEN7RKwvXNPcNM-2" value="Website" style="strokeWidth=2;html=1;shape=mxgraph.flowchart.terminator;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="60" y="60" width="110" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="a9u7ROfEN7RKwvXNPcNM-25" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="a9u7ROfEN7RKwvXNPcNM-4" target="a9u7ROfEN7RKwvXNPcNM-17">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a9u7ROfEN7RKwvXNPcNM-4" value="User uploads their replays and provides their rank" style="shape=parallelogram;html=1;strokeWidth=2;perimeter=parallelogramPerimeter;whiteSpace=wrap;rounded=1;arcSize=12;size=0.23;labelBackgroundColor=default;" vertex="1" parent="1">
+          <mxGeometry x="224" y="150" width="190" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="a9u7ROfEN7RKwvXNPcNM-27" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="a9u7ROfEN7RKwvXNPcNM-5" target="a9u7ROfEN7RKwvXNPcNM-6">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a9u7ROfEN7RKwvXNPcNM-28" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="a9u7ROfEN7RKwvXNPcNM-5" target="a9u7ROfEN7RKwvXNPcNM-4">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a9u7ROfEN7RKwvXNPcNM-5" value="No errors?" style="strokeWidth=2;html=1;shape=mxgraph.flowchart.decision;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="645.5" y="145" width="80" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="a9u7ROfEN7RKwvXNPcNM-29" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="a9u7ROfEN7RKwvXNPcNM-6" target="a9u7ROfEN7RKwvXNPcNM-9">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a9u7ROfEN7RKwvXNPcNM-6" value="Parses replays using &lt;b&gt;Carball &lt;/b&gt;asynchronously (&lt;b&gt;FastAPI&lt;/b&gt;)" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="625.5" y="250" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="a9u7ROfEN7RKwvXNPcNM-24" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" edge="1" parent="1" source="a9u7ROfEN7RKwvXNPcNM-7" target="a9u7ROfEN7RKwvXNPcNM-4">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a9u7ROfEN7RKwvXNPcNM-7" value="User interface displayed using &lt;b&gt;React&lt;/b&gt;" style="shape=parallelogram;html=1;strokeWidth=2;perimeter=parallelogramPerimeter;whiteSpace=wrap;rounded=1;arcSize=12;size=0.23;labelBackgroundColor=default;" vertex="1" parent="1">
+          <mxGeometry x="20" y="150" width="190" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="a9u7ROfEN7RKwvXNPcNM-32" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="a9u7ROfEN7RKwvXNPcNM-8">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="680" y="630" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="a9u7ROfEN7RKwvXNPcNM-54" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;" edge="1" parent="1" source="a9u7ROfEN7RKwvXNPcNM-8">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="440" y="315" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="490" y="560" />
+              <mxPoint x="490" y="315" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="a9u7ROfEN7RKwvXNPcNM-56" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="a9u7ROfEN7RKwvXNPcNM-8" target="a9u7ROfEN7RKwvXNPcNM-55">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="550" y="560" />
+              <mxPoint x="550" y="265" />
+              <mxPoint x="155" y="265" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="a9u7ROfEN7RKwvXNPcNM-8" value="Data Overview section displayed, and other sections now accessible (&lt;b&gt;React)&lt;/b&gt;" style="shape=parallelogram;html=1;strokeWidth=2;perimeter=parallelogramPerimeter;rounded=1;arcSize=12;size=0.23;labelBackgroundColor=default;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="575" y="530" width="210" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="a9u7ROfEN7RKwvXNPcNM-30" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="a9u7ROfEN7RKwvXNPcNM-9" target="a9u7ROfEN7RKwvXNPcNM-10">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a9u7ROfEN7RKwvXNPcNM-9" value="Separate data into each section in &lt;b&gt;Backend&lt;/b&gt;" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="625.5" y="340" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="a9u7ROfEN7RKwvXNPcNM-33" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="a9u7ROfEN7RKwvXNPcNM-10" target="a9u7ROfEN7RKwvXNPcNM-8">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a9u7ROfEN7RKwvXNPcNM-10" value="&lt;div&gt;Generate bar charts with &lt;b&gt;Recharts&lt;/b&gt;&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="620" y="435" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="a9u7ROfEN7RKwvXNPcNM-37" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="a9u7ROfEN7RKwvXNPcNM-53" target="a9u7ROfEN7RKwvXNPcNM-13">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="380.75" y="360" as="sourcePoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="a9u7ROfEN7RKwvXNPcNM-40" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="335.25" y="315" as="sourcePoint" />
+            <mxPoint x="210.5" y="315" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="a9u7ROfEN7RKwvXNPcNM-41" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.582;exitY=0.95;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;exitPerimeter=0;" edge="1" parent="1" source="a9u7ROfEN7RKwvXNPcNM-55" target="a9u7ROfEN7RKwvXNPcNM-16">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="165" y="360" as="sourcePoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="a9u7ROfEN7RKwvXNPcNM-38" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="a9u7ROfEN7RKwvXNPcNM-13" target="a9u7ROfEN7RKwvXNPcNM-15">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a9u7ROfEN7RKwvXNPcNM-13" value="Make prediction using &lt;b&gt;Scikit-learn&lt;/b&gt;&amp;nbsp;based on user data" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="320.75" y="405" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="a9u7ROfEN7RKwvXNPcNM-14" value="Show user their predicted playstyle, reasons, advice, other playstyles" style="shape=parallelogram;html=1;strokeWidth=2;perimeter=parallelogramPerimeter;whiteSpace=wrap;rounded=1;arcSize=12;size=0.23;labelBackgroundColor=default;" vertex="1" parent="1">
+          <mxGeometry x="300" y="585" width="161.5" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="a9u7ROfEN7RKwvXNPcNM-39" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="a9u7ROfEN7RKwvXNPcNM-15" target="a9u7ROfEN7RKwvXNPcNM-14">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a9u7ROfEN7RKwvXNPcNM-15" value="Use &lt;b&gt;Scikit-learn &lt;/b&gt;to extract feature importance and model sureness" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="320.75" y="485" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="a9u7ROfEN7RKwvXNPcNM-44" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="a9u7ROfEN7RKwvXNPcNM-16" target="a9u7ROfEN7RKwvXNPcNM-20">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a9u7ROfEN7RKwvXNPcNM-16" value="Generate spider charts for average stats of users rank using &lt;b&gt;Recharts&lt;/b&gt;" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="105" y="390" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="a9u7ROfEN7RKwvXNPcNM-17" value="Check for errors in &lt;b&gt;Backend&lt;/b&gt;" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="470" y="155" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="a9u7ROfEN7RKwvXNPcNM-46" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="a9u7ROfEN7RKwvXNPcNM-18" target="a9u7ROfEN7RKwvXNPcNM-19">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a9u7ROfEN7RKwvXNPcNM-18" value="User chooses rank to compare to" style="shape=parallelogram;html=1;strokeWidth=2;perimeter=parallelogramPerimeter;whiteSpace=wrap;rounded=1;arcSize=12;size=0.23;labelBackgroundColor=default;" vertex="1" parent="1">
+          <mxGeometry x="107.25" y="540" width="115.5" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="a9u7ROfEN7RKwvXNPcNM-47" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="a9u7ROfEN7RKwvXNPcNM-19" target="a9u7ROfEN7RKwvXNPcNM-21">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a9u7ROfEN7RKwvXNPcNM-19" value="Generate spider charts for average stats of chosen rank using &lt;b&gt;Recharts&lt;/b&gt;" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="105" y="640" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="a9u7ROfEN7RKwvXNPcNM-45" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="a9u7ROfEN7RKwvXNPcNM-20" target="a9u7ROfEN7RKwvXNPcNM-18">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a9u7ROfEN7RKwvXNPcNM-20" value="Display spider charts for average of user&#39;s rank" style="shape=parallelogram;html=1;strokeWidth=2;perimeter=parallelogramPerimeter;whiteSpace=wrap;rounded=1;arcSize=12;size=0.23;labelBackgroundColor=default;" vertex="1" parent="1">
+          <mxGeometry x="90" y="460" width="150" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="a9u7ROfEN7RKwvXNPcNM-21" value="Display spider charts for average of chosen rank" style="shape=parallelogram;html=1;strokeWidth=2;perimeter=parallelogramPerimeter;whiteSpace=wrap;rounded=1;arcSize=12;size=0.23;labelBackgroundColor=default;" vertex="1" parent="1">
+          <mxGeometry x="92.25" y="720" width="150" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="a9u7ROfEN7RKwvXNPcNM-36" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" target="a9u7ROfEN7RKwvXNPcNM-10">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="720" y="670" as="sourcePoint" />
+            <Array as="points">
+              <mxPoint x="800" y="670" />
+              <mxPoint x="800" y="465" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="a9u7ROfEN7RKwvXNPcNM-26" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="a9u7ROfEN7RKwvXNPcNM-17" target="a9u7ROfEN7RKwvXNPcNM-5">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a9u7ROfEN7RKwvXNPcNM-49" value="Yes" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="670" y="220" width="60" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="a9u7ROfEN7RKwvXNPcNM-50" value="No" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="670" y="110" width="60" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="a9u7ROfEN7RKwvXNPcNM-52" value="User selects different category" style="shape=parallelogram;html=1;strokeWidth=2;perimeter=parallelogramPerimeter;whiteSpace=wrap;rounded=1;arcSize=12;size=0.23;labelBackgroundColor=default;" vertex="1" parent="1">
+          <mxGeometry x="620" y="630" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="a9u7ROfEN7RKwvXNPcNM-53" value="User expands Playstyle section" style="shape=parallelogram;html=1;strokeWidth=2;perimeter=parallelogramPerimeter;whiteSpace=wrap;rounded=1;arcSize=12;size=0.23;labelBackgroundColor=default;" vertex="1" parent="1">
+          <mxGeometry x="331" y="285" width="100" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="a9u7ROfEN7RKwvXNPcNM-55" value="User expands Comparison section" style="shape=parallelogram;html=1;strokeWidth=2;perimeter=parallelogramPerimeter;whiteSpace=wrap;rounded=1;arcSize=12;size=0.23;labelBackgroundColor=default;" vertex="1" parent="1">
+          <mxGeometry x="100" y="285" width="110" height="60" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
