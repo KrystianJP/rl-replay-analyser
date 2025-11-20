@@ -10,18 +10,13 @@ Justify how it links with requirements
 Decide on frameworks/libraries (i.e: React, FastAPI, Ballchasing API, Carball, etc.)
 Justify each referring to requirements
 Draw a component hierarchy diagram for React frontend
-Draw diagram showing how the frontend and backend interact with each other
+Draw diagram showing how each framework/tool will interact with each other
 
 3
-Explain how data will be parsed, and how derived statistics will be acquired (using diagrams?)
+Decide on specific data categories for data overview as well as what data to show
+Show examples of how the bar charts will look. bar chart, stacked bar chart, pie chart
 
 4
-Decide on specific data categories for data overview as well as what data to show
-Show examples of how the bar charts will look (showing any unique cases) and how the data for them will be acquired from the replays and justify
-Show updated UI with chosen categories and example bar charts
-Make diagram for file -> parse -> statistic derivation -> chart data
-
-5
 Decide on which playstyles to include and justify
 Decide what features the model will learn from and justify
 Which model to use (RandomForestClassifier - supports sureness and feature importance)
@@ -32,15 +27,22 @@ Show updated UI
 Draw diagram showing how advice will be given
 have more detailed machine learning specifications i.e (potential libraries, algorithms, etc.)
 
-6
+5
 Decide on the categories for the spider charts and the data each one will include and justify
 Specify the range of ranks that will be compared
 Give an example visualisation of one and how it would look with data outliers
 Give basic diagram of what the large dataset would store (including ranks of the players)
 Show updated UI with examples shown
 
-7
+6
 Testing...
+
+7
+Give examples of different ways user may approach using this website
+i.e: 
+To improve -> use data overview and comparison to compare themselves to others -> spot outliers -> learn more about how they play through playstyle classification and get useful tips
+To compare 2 teams in a series (data overview) -> can see why their/other team was more dominant/won -> can confirm style they played in series specifically with playstyle classifier -> can compare this to other series to see how they played differently in other series to figure out why they may have won/lost that specific one -> find what they lacked through both overview and comparison
+To see their playstyle -> see tips -> check other sections to confirm and learn more
 
 8
 Conclude how each requirement is addressed
