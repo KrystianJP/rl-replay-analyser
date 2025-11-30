@@ -27,10 +27,8 @@ how advice will be given
 
 5
 Decide on the categories for the spider charts and the data each one will include and justify
-Specify the range of ranks that will be compared
 Give an example visualisation of one and how it would look with data outliers
-Give basic diagram of what the large dataset would store (including ranks of the players)
-Show updated UI with examples shown
+Decide on basic advice for every possible outlier
 
 6 (small)
 Give examples of different ways user may approach using this website
