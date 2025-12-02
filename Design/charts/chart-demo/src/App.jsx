@@ -37,48 +37,48 @@ const data3 = [
 
 const comparisonData = [
   {
-    category: "Boost Management",
-    You: 85, // Normalized (0-100)
-    You_Original: 500, // Raw Value
-    RankAverage: 70, // Normalized (0-100)
-    RankAverage_Original: 450, // Raw Value
-    unit: "BpM",
-    fullMark: 600,
+    category: "Average speed",
+    You: 66.65, // Normalized (0-100)
+    You_Original: 66.65, // Raw Value
+    RankAverage: 65, // Normalized (0-100)
+    RankAverage_Original: 65, // Raw Value
+    unit: "%",
+    fullMark: 100,
   },
   {
-    category: "Aggression / Demos",
+    category: "Time supersonic",
     You: 80,
-    You_Original: 8,
+    You_Original: 80,
     RankAverage: 50,
-    RankAverage_Original: 5,
-    unit: "Demos",
-    fullMark: 10,
+    RankAverage_Original: 50,
+    unit: "%",
+    fullMark: 100,
   },
   {
-    category: "Attacking Presence",
+    category: "Time on ground",
     You: 60,
     You_Original: 60,
     RankAverage: 55,
     RankAverage_Original: 55,
-    unit: "",
+    unit: "%",
     fullMark: 100,
   },
   {
-    category: "Possession Control",
+    category: "Time low in air",
     You: 90,
     You_Original: 90,
     RankAverage: 75,
     RankAverage_Original: 75,
-    unit: "",
+    unit: "%",
     fullMark: 100,
   },
   {
-    category: "Defensive Impact",
+    category: "Time high in air",
     You: 70,
     You_Original: 70,
     RankAverage: 65,
     RankAverage_Original: 65,
-    unit: "",
+    unit: "%",
     fullMark: 100,
   },
 ];
@@ -102,14 +102,15 @@ const CustomTooltip = ({ active, payload, label }) => {
     return (
       <div
         style={{
-          backgroundColor: "#333",
-          padding: "10px",
-          border: "1px solid #ccc",
-          borderRadius: "4px",
+          backgroundColor: "#222",
+          padding: "2px 10px",
+          border: "none",
+          borderRadius: "6px",
           color: "#fff",
+          fontFamily: "Arial, sans-serif",
         }}
       >
-        <p className="label">{`Category: ${label}`}</p>
+        <p className="label">{label}</p>
         <p style={{ color: "#FFC658" }}>{`You: ${yourScore} ${unit}`}</p>
         <p
           style={{ color: "#FF8042" }}
@@ -314,25 +315,36 @@ export default function App() {
           </PieChart>
         </ResponsiveContainer>
 
+        <h3
+          style={{
+            color: "white",
+            fontFamily: "Arial, sans-serif",
+            textAlign: "center",
+            marginBottom: "10px",
+            marginTop: "50px",
+          }}
+        >
+          Movement
+        </h3>
         <ResponsiveContainer>
           <RadarChart
-            cx={300}
-            cy={250}
             outerRadius={150}
             width={600}
             height={500}
             data={comparisonData}
           >
-            {/* Draws the radial and concentric lines */}
             <PolarGrid />
 
-            {/* Defines the axes/categories. 'category' must match the key in your data array. */}
-            <PolarAngleAxis dataKey="category" />
+            <PolarAngleAxis
+              dataKey="category"
+              fontFamily="Arial"
+              stroke="#c2d9f8ff"
+            />
 
             <Radar
-              name="You" // Label for the legend
-              dataKey="You" // Key in the data array to plot
-              stroke="#FFC658" // Your preferred color (e.g., the yellow from your bar chart)
+              name="You"
+              dataKey="You"
+              stroke="#FFC658"
               fill="#FFC658"
               fillOpacity={0.3}
               fullMark="fullMark"
@@ -341,21 +353,28 @@ export default function App() {
             <Radar
               name="Rank Average"
               dataKey="RankAverage"
-              stroke="#FF8042" // Another contrasting color (e.g., red)
+              stroke="#FF8042"
               fill="#FF8042"
               fillOpacity={0.3}
               fullMark="fullMark"
             />
 
-            {/* Shows the names and colors of the polygons */}
-            <Legend />
+            <Legend wrapperStyle={{ fontFamily: "Arial, sans-serif" }} />
 
             <Tooltip
               content={<CustomTooltip />}
+              contentStyle={{
+                backgroundColor: "#222",
+                border: "none",
+                borderRadius: "6px",
+              }}
+              labelStyle={{ color: "#fff", fontFamily: "Arial, sans-serif" }}
+              itemStyle={{ color: "#fff", fontFamily: "Arial, sans-serif" }}
               cursor={{ fill: "rgba(255, 255, 255, 0.1)" }}
             />
           </RadarChart>
         </ResponsiveContainer>
+        <div style={{ height: "50px" }}>&nbsp;</div>
       </div>
     </div>
   );
