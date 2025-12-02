@@ -9,6 +9,11 @@ import {
   Legend,
   PieChart,
   Pie,
+  Radar,
+  RadarChart,
+  PolarGrid,
+  PolarAngleAxis,
+  PolarRadiusAxis,
 } from "recharts";
 import CustomLegend from "./CustomLegend";
 
@@ -30,11 +35,90 @@ const data3 = [
   { name: "most forward", value: 33 },
 ];
 
+const comparisonData = [
+  {
+    category: "Boost Management",
+    You: 85, // Normalized (0-100)
+    You_Original: 500, // Raw Value
+    RankAverage: 70, // Normalized (0-100)
+    RankAverage_Original: 450, // Raw Value
+    unit: "BpM",
+    fullMark: 600,
+  },
+  {
+    category: "Aggression / Demos",
+    You: 80,
+    You_Original: 8,
+    RankAverage: 50,
+    RankAverage_Original: 5,
+    unit: "Demos",
+    fullMark: 10,
+  },
+  {
+    category: "Attacking Presence",
+    You: 60,
+    You_Original: 60,
+    RankAverage: 55,
+    RankAverage_Original: 55,
+    unit: "",
+    fullMark: 100,
+  },
+  {
+    category: "Possession Control",
+    You: 90,
+    You_Original: 90,
+    RankAverage: 75,
+    RankAverage_Original: 75,
+    unit: "",
+    fullMark: 100,
+  },
+  {
+    category: "Defensive Impact",
+    You: 70,
+    You_Original: 70,
+    RankAverage: 65,
+    RankAverage_Original: 65,
+    unit: "",
+    fullMark: 100,
+  },
+];
+
 const barColors = ["#f0de7aff", "#83dae9ff", "#f87171"];
 const barColors2 = ["#a59436ff", "#348796ff", "#943131ff"];
 const barColors3 = ["#504509ff", "#0f4852ff", "#631c1cff"];
 
 const pieChartColours = ["#f0de7aff", "#a59436ff", "#665a15ff"];
+
+const CustomTooltip = ({ active, payload, label }) => {
+  if (active && payload && payload.length) {
+    // payload[0].payload holds the entire data object for the hovered category
+    const data = payload[0].payload;
+
+    // We can extract the values for clean display
+    const yourScore = data.You_Original;
+    const rankAvgScore = data.RankAverage_Original;
+    const unit = data.unit;
+
+    return (
+      <div
+        style={{
+          backgroundColor: "#333",
+          padding: "10px",
+          border: "1px solid #ccc",
+          borderRadius: "4px",
+          color: "#fff",
+        }}
+      >
+        <p className="label">{`Category: ${label}`}</p>
+        <p style={{ color: "#FFC658" }}>{`You: ${yourScore} ${unit}`}</p>
+        <p
+          style={{ color: "#FF8042" }}
+        >{`Rank Average: ${rankAvgScore} ${unit}`}</p>
+      </div>
+    );
+  }
+  return null;
+};
 
 export default function App() {
   return (
@@ -228,6 +312,49 @@ export default function App() {
               cursor={{ fill: "rgba(255, 255, 255, 0.1)" }}
             />
           </PieChart>
+        </ResponsiveContainer>
+
+        <ResponsiveContainer>
+          <RadarChart
+            cx={300}
+            cy={250}
+            outerRadius={150}
+            width={600}
+            height={500}
+            data={comparisonData}
+          >
+            {/* Draws the radial and concentric lines */}
+            <PolarGrid />
+
+            {/* Defines the axes/categories. 'category' must match the key in your data array. */}
+            <PolarAngleAxis dataKey="category" />
+
+            <Radar
+              name="You" // Label for the legend
+              dataKey="You" // Key in the data array to plot
+              stroke="#FFC658" // Your preferred color (e.g., the yellow from your bar chart)
+              fill="#FFC658"
+              fillOpacity={0.3}
+              fullMark="fullMark"
+            />
+
+            <Radar
+              name="Rank Average"
+              dataKey="RankAverage"
+              stroke="#FF8042" // Another contrasting color (e.g., red)
+              fill="#FF8042"
+              fillOpacity={0.3}
+              fullMark="fullMark"
+            />
+
+            {/* Shows the names and colors of the polygons */}
+            <Legend />
+
+            <Tooltip
+              content={<CustomTooltip />}
+              cursor={{ fill: "rgba(255, 255, 255, 0.1)" }}
+            />
+          </RadarChart>
         </ResponsiveContainer>
       </div>
     </div>
