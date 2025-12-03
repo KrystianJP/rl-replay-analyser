@@ -38,10 +38,10 @@ const data3 = [
 const comparisonData = [
   {
     category: "Average speed",
-    You: 66.65, // Normalized (0-100)
-    You_Original: 66.65, // Raw Value
-    RankAverage: 65, // Normalized (0-100)
-    RankAverage_Original: 65, // Raw Value
+    You: 66.65, // normalized
+    You_Original: 66.65,
+    RankAverage: 65,
+    RankAverage_Original: 65,
     unit: "%",
     fullMark: 100,
   },
@@ -113,12 +113,36 @@ const CustomTooltip = ({ active, payload, label }) => {
         <p className="label">{label}</p>
         <p style={{ color: "#FFC658" }}>{`You: ${yourScore} ${unit}`}</p>
         <p
-          style={{ color: "#FF8042" }}
+          style={{ color: "#ff5e42ff" }}
         >{`Rank Average: ${rankAvgScore} ${unit}`}</p>
       </div>
     );
   }
   return null;
+};
+
+const CustomTick = ({ payload, x, y, textAnchor, radius }) => {
+  const label = payload.value;
+
+  const color = label === "" ? "#f73d3dff" : "#c2d9f8ff";
+
+  return (
+    <g>
+      <text
+        radius={radius}
+        fill={color}
+        x={x}
+        y={y}
+        text-anchor={textAnchor}
+        fontFamily="Arial"
+        fontSize="14"
+      >
+        <tspan x={x} dy="0em">
+          {payload.value}
+        </tspan>
+      </text>
+    </g>
+  );
 };
 
 export default function App() {
@@ -335,11 +359,7 @@ export default function App() {
           >
             <PolarGrid />
 
-            <PolarAngleAxis
-              dataKey="category"
-              fontFamily="Arial"
-              stroke="#c2d9f8ff"
-            />
+            <PolarAngleAxis dataKey="category" tick={<CustomTick />} />
 
             <Radar
               name="You"
@@ -353,8 +373,8 @@ export default function App() {
             <Radar
               name="Rank Average"
               dataKey="RankAverage"
-              stroke="#FF8042"
-              fill="#FF8042"
+              stroke="#ff5e42ff"
+              fill="#ff5e42ff"
               fillOpacity={0.3}
               fullMark="fullMark"
             />
