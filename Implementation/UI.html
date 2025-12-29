@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Replay Analysis</title>
+    <link rel="stylesheet" href="style.css" />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/icon?family=Material+Icons"
+    />
+  </head>
+  <body>
+    <header>
+      <div class="container">
+        <h1>Rocket League Replay Analyser</h1>
+      </div>
+    </header>
+
+    <section class="section alt" id="upload">
+      <div class="container">
+        <h2>Upload Your Replays</h2>
+        <p class="note">
+          Please upload replays from <u>only one game mode</u> (e.g: only 2v2)
+          for accurate analysis
+        </p>
+
+        <div class="upload-area">
+          <div class="upload-link">
+            C:\Users\%USERNAME%\Documents\My Games\Rocket League\TAGame\Demos
+          </div>
+          <label for="file-upload" class="file-upload"
+            >Choose replays to upload
+            <span class="material-icons">add</span></label
+          >
+          <input type="file" id="file-upload" multiple />
+          <div style="text-align: center; opacity: 0.7; margin-top: 5px">
+            (Click on a replay to remove it)
+          </div>
+          <div class="replay-list">
+            <ol id="replay-names">
+              <li>DFH Stadium - 2v2 - 2025-02-14</li>
+              <li>Champions Field - 2v2 - 2025-02-11</li>
+              <li>Mannfield (Night) - 2v2 - 2025-02-09</li>
+              <li>Utopia Coliseum - 2v2 - 2025-02-07</li>
+              <li>Neo Tokyo - 2v2 - 2025-02-04</li>
+              <li>Forbidden Temple - 2v2 - 2025-02-01</li>
+              <li>Starbase ARC - 2v2 - 2025-01-28</li>
+              <li>Neo Tokyo - 2v2 - 2025-02-04</li>
+              <li>Forbidden Temple - 2v2 - 2025-02-01</li>
+              <li>Starbase ARC - 2v2 - 2025-01-28</li>
+              <li>Starbase ARC - 2v2 - 2025-01-28</li>
+              <li>Neo Tokyo - 2v2 - 2025-02-04</li>
+              <li>Forbidden Temple - 2v2 - 2025-02-01</li>
+              <li>Starbase ARC - 2v2 - 2025-01-28</li>
+            </ol>
+          </div>
+          <div class="rank-selection">
+            <select id="rank" name="rank">
+              <option value="">-- Choose Your Rank --</option>
+              <option value="bronze1">Bronze I</option>
+              <option value="bronze2">Bronze II</option>
+              <option value="bronze3">Bronze III</option>
+
+              <option value="silver1">Silver I</option>
+              <option value="silver2">Silver II</option>
+              <option value="silver3">Silver III</option>
+
+              <option value="gold1">Gold I</option>
+              <option value="gold2">Gold II</option>
+              <option value="gold3">Gold III</option>
+
+              <option value="plat1">Platinum I</option>
+              <option value="plat2">Platinum II</option>
+              <option value="plat3">Platinum III</option>
+
+              <option value="diamond1">Diamond I</option>
+              <option value="diamond2">Diamond II</option>
+              <option value="diamond3">Diamond III</option>
+
+              <option value="champ1">Champion I</option>
+              <option value="champ2">Champion II</option>
+              <option value="champ3">Champion III</option>
+
+              <option value="gc1">Grand Champ I</option>
+              <option value="gc2">Grand Champ II</option>
+              <option value="gc3">Grand Champ III</option>
+
+              <option value="ssl">Supersonic Legend</option>
+            </select>
+          </div>
+          <button id="analyse-button">Analyse Replays</button>
+
+          <div class="error-message hidden">
+            ❌ Invalid file type. Please upload .replay files only.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section alt" id="overview">
+      <div class="container">
+        <h2>
+          Data Overview <span class="material-icons">arrow_drop_down</span>
+        </h2>
+
+        <div class="category-buttons">
+          <button class="active">Boost Usage</button>
+          <button>Option 2</button>
+          <button>Option 3</button>
+          <button>Option 4</button>
+        </div>
+
+        <h3>Boost Usage</h3>
+
+        <div class="charts-container">
+          <div class="bar-chart-container">Chart</div>
+          <div class="bar-chart-container">Chart</div>
+          <div class="bar-chart-container">Chart</div>
+          <div class="bar-chart-container">Chart</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="playstyle">
+      <div class="container">
+        <h2>
+          Playstyle Classification<span class="material-icons"
+            >arrow_drop_down</span
+          >
+        </h2>
+        <p id="your-playstyle">Your Playstyle:</p>
+        <div class="playstyle-result">FREESTYLER</div>
+        <p class="playstyle-description">
+          Freestylers are known for their flashy and acrobatic maneuvers, often
+          prioritizing style over efficiency. They excel in aerial plays and
+          creative shots but may sometimes neglect fundamental positioning and
+          teamwork.
+        </p>
+
+        <div class="list-section">
+          <p class="list-heading">Why this playstyle?</p>
+          <ul>
+            <li>Statistic 1</li>
+            <li>Statistic 2</li>
+            <li>Statistic 3</li>
+          </ul>
+        </div>
+        <div class="list-section">
+          <p class="list-heading">Improvement tips:</p>
+          <ul>
+            <li>Example advice - Statistic</li>
+            <li>Example advice - Statistic</li>
+            <li>General advice</li>
+          </ul>
+        </div>
+        <div class="list-section">
+          <p class="list-heading">Other playstyles:</p>
+          <ul>
+            <li>
+              <span style="color: #7eaef5; font-weight: bold">STRIKER</span> -
+              <span class="playstyle-sureness">28%</span>
+            </li>
+            <li>
+              <span style="color: #f57e7e; font-weight: bold">ENFORCER</span> -
+              <span class="playstyle-sureness">18%</span>
+            </li>
+            <li>[playstyle] - [model sureness]</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="section alt" id="comparison">
+      <div class="container">
+        <h2>
+          Rank Comparison<span class="material-icons">arrow_drop_up</span>
+        </h2>
+        <h3>You vs Average [user's rank]</h3>
+        <div class="spider-charts">
+          <div class="spider-chart-container">Spider Chart</div>
+          <div class="spider-chart-container">Spider Chart</div>
+          <div class="spider-chart-container">Spider Chart</div>
+          <div class="spider-chart-container">Spider Chart</div>
+        </div>
+        <div class="list-section">
+          <p class="list-heading">Outliers</p>
+          <ul>
+            <li><span style="color:rgb(255, 147, 147); font-weight:bold;">[Outlier]</span> - [Advice]</li>
+            <li><span style="color:rgb(255, 147, 147); font-weight:bold;">[Outlier]</span> - [Advice]</li>
+            <li><span style="color:rgb(255, 147, 147); font-weight:bold;">[Outlier]</span> - [Advice]</li>
+          </ul>
+        </div>
+        <h3 style="margin-top:5rem;">You vs Average <div class="rank-selection">
+            <select id="rank" name="rank">
+              <option value="">-- Choose A Rank --</option>
+              <option value="bronze1">Bronze I</option>
+              <option value="bronze2">Bronze II</option>
+              <option value="bronze3">Bronze III</option>
+
+              <option value="silver1">Silver I</option>
+              <option value="silver2">Silver II</option>
+              <option value="silver3">Silver III</option>
+
+              <option value="gold1">Gold I</option>
+              <option value="gold2">Gold II</option>
+              <option value="gold3">Gold III</option>
+
+              <option value="plat1">Platinum I</option>
+              <option value="plat2">Platinum II</option>
+              <option value="plat3">Platinum III</option>
+
+              <option value="diamond1">Diamond I</option>
+              <option value="diamond2">Diamond II</option>
+              <option value="diamond3">Diamond III</option>
+
+              <option value="champ1">Champion I</option>
+              <option value="champ2">Champion II</option>
+              <option value="champ3">Champion III</option>
+
+              <option value="gc1">Grand Champ I</option>
+              <option value="gc2">Grand Champ II</option>
+              <option value="gc3">Grand Champ III</option>
+
+              <option value="ssl">Supersonic Legend</option>
+            </select></h3>
+        <div class="spider-charts">
+          <div class="spider-chart-container">Spider Chart</div>
+          <div class="spider-chart-container">Spider Chart</div>
+          <div class="spider-chart-container">Spider Chart</div>
+          <div class="spider-chart-container">Spider Chart</div>
+        </div>
+      </div>
+    </section>
+    <footer><!-- to fill empty space if needed --></footer>
+  </body>
+</html>
