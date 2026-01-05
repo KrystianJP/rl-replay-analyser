@@ -62,10 +62,18 @@ async def upload_replay(file: UploadFile = File(...)):
 
         try:
             proto = get_replay_proto(temp_file.name)
+
+            # check for actual name first
+            if hasattr(proto.game_metadata, 'name') and proto.game_metadata.name != "None":
+                return {"status": "name found", "name": proto.game_metadata.name}
+
+            # fallback data
             playlist = get_playlist_name(proto.game_metadata.playlist)
             map_name = get_map_name(proto.game_metadata.map)
-            return {"playlist": playlist, "map": map_name, "date": datetime.fromtimestamp(proto.game_metadata.time).strftime("%Y-%m-%d")}
-        
+            date = datetime.fromtimestamp(proto.game_metadata.time).strftime("%Y-%m-%d")
+            replay_name = map_name + " - " + playlist + " - " + date
+            return {"status": "no name", "name": replay_name}
+
         except Exception as e:
             raise HTTPException(status_code=500, detail=f"Saved but failed to process replay: {e}")
     

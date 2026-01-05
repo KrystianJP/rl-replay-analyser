@@ -3,13 +3,6 @@ import { useState } from "react";
 function UploadPage() {
   const [replayList, setReplayList] = useState<string[]>([]);
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const addReplay = (data: any) => {
-    const replayName: string =
-      data.map + " - " + data.playlist + " - " + data.date;
-    setReplayList((prev) => [...prev, replayName]);
-  };
-
   const uploadFile = async (file: File) => {
     const formData = new FormData();
     formData.append("file", file);
@@ -24,7 +17,7 @@ function UploadPage() {
       }
 
       const data = await response.json();
-      addReplay(data);
+      setReplayList((prev) => [...prev, data.name]);
     } catch (error) {
       console.error("Error uploading file:", error);
     }

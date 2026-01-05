@@ -1,9 +1,9 @@
 PLAYLIST_MAP = {
-    2: "2v2",
-    3: "3v3",
+    2: "Doubles (Casual)",
+    3: "Standard (Casual)",
     6: "Private Match",
-    11: "2v2",
-    13: "3v3",
+    11: "Doubles (Ranked)",
+    13: "Standard (Ranked)",
 }
 
 MAP_MAP = {
@@ -59,8 +59,16 @@ MAP_MAP = {
     "wasteland_s_p": "Wasteland (Standard)"
 }
 
+def rollback_map_name(map_code: str) -> str:
+    parts = map_code.lower().split("_")
+    if len(parts) < 3:
+        return map_code
+    if parts[0] + "_" + parts[2] in MAP_MAP:
+        return MAP_MAP[parts[0] + "_" + parts[2]]
+    return map_code
+
 def get_playlist_name(playlist_id: int) -> str:
     return PLAYLIST_MAP.get(playlist_id, "Unknown / Illegal Playlist")
 
 def get_map_name(map_code: str) -> str:
-    return MAP_MAP.get(map_code.lower(), map_code)
+    return MAP_MAP.get(map_code.lower(), rollback_map_name(map_code))

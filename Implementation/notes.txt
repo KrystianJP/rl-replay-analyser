@@ -8,3 +8,5 @@ CACHING
 upload file -> analyse replay
 show replay name <- analyse header
 cache proto <- analyse full
+
+tried analysing both synchronously and asynchronously, syncronous was faster by approx 20%, as a bonus, it more accurately shows the progress of the parsing by displaying a replay one at a time, instead of showing nothing for a long time, then all of them nearer the end of the process.
