@@ -1,41 +1,87 @@
+import { useState } from "react";
+
 function UploadPage() {
+  const [replayList, setReplayList] = useState<string[]>([]);
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const addReplay = (data: any) => {
+    const replayName: string =
+      data.map + " - " + data.playlist + " - " + data.date;
+    setReplayList((prev) => [...prev, replayName]);
+  };
+
+  const uploadFile = async (file: File) => {
+    const formData = new FormData();
+    formData.append("file", file);
+
+    try {
+      const response = await fetch("http://127.0.0.1:8000/api/upload", {
+        method: "POST",
+        body: formData,
+      });
+      if (!response.ok) {
+        throw new Error("Network response not ok");
+      }
+
+      const data = await response.json();
+      addReplay(data);
+    } catch (error) {
+      console.error("Error uploading file:", error);
+    }
+  };
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const fileList = e.target.files;
+    if (!fileList) return;
+
+    const files = Array.from(fileList);
+    files.forEach((file) => {
+      uploadFile(file);
+    });
+  };
+
+  const handleCopy = () => {
+    const demoPath =
+      "C:\\Users\\%USERNAME%\\Documents\\My Games\\Rocket League\\TAGame\\Demos";
+    try {
+      navigator.clipboard.writeText(demoPath);
+      alert("Path copied");
+    } catch (err) {
+      console.error("Failed to copy text: ", err);
+    }
+  };
+
   return (
     <section className="section alt" id="upload">
       <div className="container">
         <h2>Upload Your Replays</h2>
         <p className="note">
-          Please upload replays from <u>only one game mode</u> (e.g: only 2v2)
+          Please upload replays from <u>a single playlist</u> (e.g: only 2v2)
           for accurate analysis
         </p>
 
         <div className="upload-area">
-          <div className="upload-link">
+          <div className="upload-link" onClick={handleCopy}>
             C:\Users\%USERNAME%\Documents\My Games\Rocket League\TAGame\Demos
           </div>
           <label htmlFor="file-upload" className="file-upload">
             Choose replays to upload
             <span className="material-icons">add</span>
           </label>
-          <input type="file" id="file-upload" multiple />
+          <input
+            type="file"
+            id="file-upload"
+            multiple
+            onChange={handleFileChange}
+          />
           <div style={{ textAlign: "center", opacity: 0.7, marginTop: "5px" }}>
             (Click on a replay to remove it)
           </div>
           <div className="replay-list">
             <ol id="replay-names">
-              <li>DFH Stadium - 2v2 - 2025-02-14</li>
-              <li>Champions Field - 2v2 - 2025-02-11</li>
-              <li>Mannfield (Night) - 2v2 - 2025-02-09</li>
-              <li>Utopia Coliseum - 2v2 - 2025-02-07</li>
-              <li>Neo Tokyo - 2v2 - 2025-02-04</li>
-              <li>Forbidden Temple - 2v2 - 2025-02-01</li>
-              <li>Starbase ARC - 2v2 - 2025-01-28</li>
-              <li>Neo Tokyo - 2v2 - 2025-02-04</li>
-              <li>Forbidden Temple - 2v2 - 2025-02-01</li>
-              <li>Starbase ARC - 2v2 - 2025-01-28</li>
-              <li>Starbase ARC - 2v2 - 2025-01-28</li>
-              <li>Neo Tokyo - 2v2 - 2025-02-04</li>
-              <li>Forbidden Temple - 2v2 - 2025-02-01</li>
-              <li>Starbase ARC - 2v2 - 2025-01-28</li>
+              {replayList.map((replay, index) => (
+                <li key={index}>{replay}</li>
+              ))}
             </ol>
           </div>
           <div className="rank-selection">
@@ -75,7 +121,7 @@ function UploadPage() {
           <button id="analyse-button">Analyse Replays</button>
 
           <div className="error-message hidden">
-            ❌ Invalid file type. Please upload .replay files only.
+            Invalid file type. Please upload .replay files only.
           </div>
         </div>
       </div>

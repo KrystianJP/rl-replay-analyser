@@ -3,11 +3,11 @@ import MainContent from "./Components/MainContent";
 
 function App() {
   return (
-    <body>
+    <div className="App">
       <Header />
       <MainContent />
       <footer></footer>
-    </body>
+    </div>
   );
 }
 

@@ -1,29 +1,72 @@
-from fastapi import FastAPI, HTTPException
-from pydantic import BaseModel
+from fastapi import FastAPI, UploadFile, File, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
+import carball
+import pandas as pd
+import json
+import subprocess
+import os
+import tempfile
+import shutil
+from carball.analysis.analysis_manager import AnalysisManager
+from carball.json_parser.game import Game
+from datetime import datetime
+from mappings import get_map_name, get_playlist_name
 
 app = FastAPI()
 
-class Item(BaseModel):
-    text: str = None
-    is_done: bool = False
+origins = [
+    "http://localhost:5173", 
+    "http://127.0.0.1:5173",
+]
 
-items=[]
+RRROCKET_PATH = "./rrrocket.exe"
 
-@app.get("/")
-def root():
-    return {"Hello": "World"}
+def get_replay_proto(replay_path: str):
+    if not os.path.exists(RRROCKET_PATH):
+        raise FileNotFoundError(f"{RRROCKET_PATH} not found.")
 
-@app.post("/items")
-def create_item(item: Item):
-    items.append(item)
-    return items
+    # decompile with rrrocket.exe
+    result = subprocess.run(
+        [RRROCKET_PATH, "-n", "--json-lines", replay_path],
+        capture_output=True,
+        text=True,
+        check=True,
+        encoding='utf-8'
+    )
+    replay_dict = json.loads(result.stdout.splitlines()[0])
 
-@app.get("/items", response_model=list[Item])
-def list_items(limit: int = 10):
-    return items[:limit]
+    # analyse with carball to get proto
+    game = Game()
+    game.initialize(loaded_json=replay_dict)
+    analysis_manager = AnalysisManager(game)
+    analysis_manager.create_analysis()
+    proto = analysis_manager.get_protobuf_data()
 
-@app.get("/items/{item_id}", response_model=Item)
-def get_item(item_id: int) -> Item:
-    if item_id < 0 or item_id >= len(items):
-        raise HTTPException(status_code=404, detail="Item not found")
-    return items[item_id]
+    return proto
+
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,            # Allows specific origins
+    allow_credentials=True,
+    allow_methods=["*"],              # Allows all methods (GET, POST, etc.)
+    allow_headers=["*"],              # Allows all headers
+)
+
+@app.post("/api/upload")
+async def upload_replay(file: UploadFile = File(...)):
+
+    with tempfile.NamedTemporaryFile(delete=False, suffix=".replay") as temp_file:
+        shutil.copyfileobj(file.file, temp_file)
+        temp_file.flush()
+
+        try:
+            proto = get_replay_proto(temp_file.name)
+            playlist = get_playlist_name(proto.game_metadata.playlist)
+            map_name = get_map_name(proto.game_metadata.map)
+            return {"playlist": playlist, "map": map_name, "date": datetime.fromtimestamp(proto.game_metadata.time).strftime("%Y-%m-%d")}
+        
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=f"Saved but failed to process replay: {e}")
+    
+    

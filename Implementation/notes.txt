@@ -1,3 +1,10 @@
 used design react component hierarchy to help
+
 carball parser was outdated, spent a lot of time (with help of AI) to fix the parser so it is compatible with most recent replays (since they changed the format or added more information many times, and the parser was last updated 5 years ago). 
+
 found issues with accuracy, mostly fine, but due to nature of parser, some flags are missed, ballchasing uses its own much more complicated and accurate parser.
+
+CACHING
+upload file -> analyse replay
+show replay name <- analyse header
+cache proto <- analyse full

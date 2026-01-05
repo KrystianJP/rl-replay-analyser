@@ -1,90 +1,54 @@
+import subprocess
+import json
 import os
-import gc
-import time
-import pandas as pd
-import traceback
-import shutil
-
-# Safe RLGym Parser
-from rlgym_tools.rocket_league.replays.parsed_replay import ParsedReplay
-# Accurate Carball Analysis
+from datetime import datetime
 from carball.analysis.analysis_manager import AnalysisManager
 from carball.json_parser.game import Game
+from mappings import get_map_name, get_playlist_name
 
-# --- CONFIGURATION ---
-# Use absolute paths to prevent any "File Not Found" confusion
-REPLAY_FILE = os.path.abspath("assets/example2.replay")
-OUTPUT_CSV = "match_results_summary.csv"
+REPLAY_PATH = "assets/example2.replay" 
+RRROCKET_PATH = "./rrrocket.exe"
 
-def analyze_match_fixed(replay_path):
-    print(f"--- Analyzing: {replay_path} ---")
+def get_replay_metadata(file_path):
+    print(f"--- Analyzing: {file_path} ---")
     
-    # FIX 1: Convert path to absolute string for Python 3.7 subprocess compatibility
-    path_str = str(os.path.abspath(replay_path))
-    
-    replay_obj = None
     try:
-        # FIX 2: Handle Windows PermissionError [WinError 32]
-        # We try to load, and if it fails due to a lock, we force a GC collect
-        for attempt in range(3):
-            try:
-                # rlgym-tools internally calls subprocess; str() is vital here
-                replay_obj = ParsedReplay.load(path_str)
-                break
-            except (PermissionError, TypeError) as e:
-                print(f"⚠️ System busy (Attempt {attempt+1}/3): {e}")
-                gc.collect() # Force close any dangling file handles
-                time.sleep(2) # Give Windows time to release the file
-        
-        if not replay_obj:
-            print("❌ Critical Failure: Could not bypass Windows file lock.")
-            return None
-
-        print("✅ Replay parsed into memory.")
-
-        # 3. Transfer data to Carball's Analysis engine
-        game = Game()
-        # rlgym_tools objects have a __dict__ that carball can ingest
-        game.initialize(loaded_json=replay_obj.__dict__) 
-        
-        _analysis_manager = AnalysisManager(game)
-        _analysis_manager.create_analysis()
-        
-        return _analysis_manager
-
+        result = subprocess.run(
+            [RRROCKET_PATH, "-n", "--json-lines", file_path],
+            capture_output=True, 
+            text=True, 
+            check=True,
+            encoding='utf-8'
+        )
+        replay_dict = json.loads(result.stdout.splitlines()[0])
     except Exception as e:
-        print(f"❌ Analysis failed: {e}")
-        traceback.print_exc()
+        print(f"Decompile failed: {e}")
         return None
 
-def export_stats_to_csv(analysis_manager, filename):
+    game = Game()
+    game.initialize(loaded_json=replay_dict)
+    analysis_manager = AnalysisManager(game)
+    analysis_manager.create_analysis()
+    
     proto = analysis_manager.get_protobuf_data()
-    all_players_data = []
-
-    for player in proto.players:
-        # Checking for nested stats safely
-        boost = getattr(player.stats, 'boost', None)
-        dist = getattr(player.stats, 'distance', None)
-        
-        p_stats = {
-            "name": player.name,
-            "team": "Orange" if player.is_orange else "Blue",
-            "goals": player.goals,
-            "boost_usage": boost.boost_usage if boost else 0,
-            "avg_boost": boost.average_boost_level if boost else 0,
-            "distance": dist.total_distance if dist else 0
-        }
-        all_players_data.append(p_stats)
-
-    df = pd.DataFrame(all_players_data)
-    df.to_csv(filename, index=False)
-    print(f"✅ Summary saved to: {filename}")
+    
+    metadata = {
+        "game_mode_id": proto.game_metadata.playlist,
+        "map_name": proto.game_metadata.map,
+        "unix_timestamp": proto.game_metadata.time,
+        "human_date": datetime.fromtimestamp(proto.game_metadata.time).strftime('%Y-%m-%d')
+    }
+    
+    return metadata
 
 if __name__ == "__main__":
-    # Ensure the assets folder exists for the script
-    if not os.path.exists(REPLAY_FILE):
-        print(f"❌ Error: Replay not found at {REPLAY_FILE}")
+    if not os.path.exists(REPLAY_PATH):
+        print(f"Replay file not found at {REPLAY_PATH}")
     else:
-        analysis = analyze_match_fixed(REPLAY_FILE)
-        if analysis:
-            export_stats_to_csv(analysis, OUTPUT_CSV)
+        data = get_replay_metadata(REPLAY_PATH)
+        if data:
+            print("\n--- METADATA RESULTS ---")
+            print(f"Playlist: {get_playlist_name(data['game_mode_id'])}")
+            print(f"Map:         {get_map_name(data['map_name'])}")
+            print(f"Date:        {data['human_date']}")
+            print("------------------------")
