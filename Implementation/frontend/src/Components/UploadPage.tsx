@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { set, get } from "idb-keyval";
+import Papa from "papaparse";
 
 function UploadPage() {
   const [replayList, setReplayList] = useState<string[]>([]);
@@ -16,8 +18,17 @@ function UploadPage() {
         throw new Error("Network response not ok");
       }
 
-      const data = await response.json();
-      console.log("File uploaded successfully:", data.name);
+      const result = await response.json();
+
+      if (result.status === "success") {
+        const key = `replay-${result.match_guid}`;
+        await set(key, result.csv); // store csv in IndexedDB
+        console.log(`Stored replay data with key: ${key}`);
+
+        // const csv = await get(key);
+        // const parsed = Papa.parse(csv, { header: true });
+        // console.log("Parsed CSV Data:", parsed.data);
+      }
     } catch (error) {
       console.error("Error uploading file:", error);
     }

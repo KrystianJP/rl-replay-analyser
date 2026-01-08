@@ -1,0 +1,8 @@
+cache csv in indexedDB DONE
+  check if in cache before uploading (include uploadFile in getHeader)
+  clear cache button (as IDB grown indefinitely)
+player dropdown
+removing replays
+handling erroneous replays
+disallow duplicate replays
+loading meter (with parsed progress)

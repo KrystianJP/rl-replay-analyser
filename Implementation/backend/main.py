@@ -12,6 +12,8 @@ from carball.json_parser.game import Game
 from carball.generated.api import game_pb2
 from datetime import datetime
 from mappings import get_map_name, get_playlist_name
+import base64
+import io
 
 app = FastAPI()
 
@@ -44,6 +46,7 @@ def get_replay_proto(replay_path: str):
     proto = analysis_manager.get_protobuf_data()
 
     return proto
+
 
 def get_replay_header(replay_path: str):
     if not os.path.exists(RRROCKET_PATH):
@@ -86,6 +89,7 @@ app.add_middleware(
     allow_headers=["*"],              # Allows all headers
 )
 
+# parses, turns into csv
 @app.post("/api/upload")
 def upload_replay(file: UploadFile = File(...)):
 
@@ -96,19 +100,42 @@ def upload_replay(file: UploadFile = File(...)):
         try:
             proto = get_replay_proto(temp_file.name)  
 
-            # fallback data
-            playlist = get_playlist_name(proto.game_metadata.playlist)
-            map_name = get_map_name(proto.game_metadata.map)
-            date = datetime.fromtimestamp(proto.game_metadata.time).strftime("%Y-%m-%d")
-            # check for actual name first
-            if hasattr(proto.game_metadata, 'name') and proto.game_metadata.name != "None":
-                return {"status": "name found", "name": proto.game_metadata.name +  " - " + playlist + " - " + date}
+            # get all carball data
+            all_players_data = []
+
+            for player in proto.players:
+                player_dict = {
+                    "player_name": player.name,
+                    "team": "Orange" if player.is_orange else "Blue",
+                    "score": player.score,
+                    "goals": player.goals,
+                    "assists": player.assists,
+                    "saves": player.saves,
+                    "shots": player.shots
+                }
+
+                for category_field, category_value in player.stats.ListFields():
+                    category_name = category_field.name
+                    if hasattr(category_value, "ListFields"):
+                        for stat_field, stat_value in category_value.ListFields():
+                            if not hasattr(stat_value, "ListFields"):
+                                column_name = f"{category_name}_{stat_field.name}"
+                                player_dict[column_name] = stat_value
+                    else:
+                        player_dict[category_name] = category_value
+                
+                all_players_data.append(player_dict)
+
+            df = pd.DataFrame(all_players_data).fillna(0)
             
-            replay_name = map_name + " - " + playlist + " - " + date
-            return {"status": "no name", "name": replay_name}
+            stream = io.StringIO()
+            df.to_csv(stream, index=False) # save csv to string stream
+
+            return {"status": "success", "match_guid": proto.game_metadata.match_guid, "csv": stream.getvalue()}
 
         except Exception as e:
             raise HTTPException(status_code=500, detail=f"Saved but failed to process replay: {e}")
+        
     
 @app.post("/api/header")
 def get_header(file: UploadFile = File(...)):

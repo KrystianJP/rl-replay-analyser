@@ -10,8 +10,9 @@ frontend - backend
 upload file -> analyse replay
 show replay name <- analyse header
 cache proto <- analyse full
+saved in IndexedDB
 
 different header formats so use different ways to compare: onlineID -> EpicID -> name (since old replays dont have epic ids, specific to epic players which have unique names)
 
-tried analysing both synchronously and asynchronously, syncronous was faster by approx 20%, as a bonus, it more accurately shows the progress of the parsing by displaying a replay one at a time, instead of showing nothing for a long time, then all of them nearer the end of the process.
+header parsing and full parsing are done asynchronously as header parsing is super fast, while full parsing (using carball) takes multiple seconds, so it allows the replays to be listed immediately while the full parsing occurs in the background
 (maybe mention map names)
