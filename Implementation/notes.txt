@@ -3,10 +3,15 @@ used design react component hierarchy to help
 carball parser was outdated, spent a lot of time (with help of AI) to fix the parser so it is compatible with most recent replays (since they changed the format or added more information many times, and the parser was last updated 5 years ago). 
 
 found issues with accuracy, mostly fine, but due to nature of parser, some flags are missed, ballchasing uses its own much more complicated and accurate parser.
+some issues with people's names, some names break the parser, couldn't figure out how to fix, rare but annoying, application continues to work, just ignores it, will have to display error to user
 
-CACHING
+CACHING + separate requests for header and full (because parsing takes longer than expected (6 sec per replay))
+frontend - backend
 upload file -> analyse replay
 show replay name <- analyse header
 cache proto <- analyse full
 
+different header formats so use different ways to compare: onlineID -> EpicID -> name (since old replays dont have epic ids, specific to epic players which have unique names)
+
 tried analysing both synchronously and asynchronously, syncronous was faster by approx 20%, as a bonus, it more accurately shows the progress of the parsing by displaying a replay one at a time, instead of showing nothing for a long time, then all of them nearer the end of the process.
+(maybe mention map names)

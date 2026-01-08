@@ -17,9 +17,29 @@ function UploadPage() {
       }
 
       const data = await response.json();
-      setReplayList((prev) => [...prev, data.name]);
+      console.log("File uploaded successfully:", data.name);
     } catch (error) {
       console.error("Error uploading file:", error);
+    }
+  };
+
+  const getHeader = async (file: File) => {
+    const formData = new FormData();
+    formData.append("file", file);
+
+    try {
+      const response = await fetch("http://127.0.0.1:8000/api/header", {
+        method: "POST",
+        body: formData,
+      });
+      if (!response.ok) {
+        throw new Error("Network response not ok");
+      }
+
+      const data = await response.json();
+      setReplayList((prevList) => [...prevList, data.name]);
+    } catch (error) {
+      console.error("Error fetching header:", error);
     }
   };
 
@@ -29,13 +49,14 @@ function UploadPage() {
 
     const files = Array.from(fileList);
     files.forEach((file) => {
+      getHeader(file);
       uploadFile(file);
     });
   };
 
   const handleCopy = () => {
     const demoPath =
-      "C:\\Users\\%USERNAME%\\Documents\\My Games\\Rocket League\\TAGame\\Demos";
+      "C:\\Users\\%USERNAME%\\Documents\\My Games\\Rocket League\\TAGame";
     try {
       navigator.clipboard.writeText(demoPath);
       alert("Path copied");
@@ -55,7 +76,8 @@ function UploadPage() {
 
         <div className="upload-area">
           <div className="upload-link" onClick={handleCopy}>
-            C:\Users\%USERNAME%\Documents\My Games\Rocket League\TAGame\Demos
+            C:\Users\%USERNAME%\Documents\My Games\Rocket
+            League\TAGame\DemosEpic
           </div>
           <label htmlFor="file-upload" className="file-upload">
             Choose replays to upload
