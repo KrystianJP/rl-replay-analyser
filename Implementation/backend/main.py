@@ -156,7 +156,7 @@ def get_header(file: UploadFile = File(...)):
             else:
                 replay_name = map_name + " - " + playlist + " - " + date
 
-            return {"status": "success", "name": replay_name}
+            return {"status": "success", "name": replay_name, "players": header["players"], "game_id": header["game_id"]}
 
         except Exception as e:
             raise HTTPException(status_code=500, detail=f"Failed to get header: {e}")

@@ -1,9 +1,52 @@
 import { useState } from "react";
-import { set, get } from "idb-keyval";
-import Papa from "papaparse";
+import { set } from "idb-keyval";
+/* eslint-disable  @typescript-eslint/no-explicit-any */
 
 function UploadPage() {
   const [replayList, setReplayList] = useState<string[]>([]);
+  const [playersDropdown, setPlayersDropdown] = useState<any[]>([]);
+
+  const updatePlayerDropdown = (playersList: any[]) => {
+    if (playersDropdown.length === 0) {
+      setPlayersDropdown(playersList);
+      return;
+    }
+    // online_id defaults at "0", epic_id defaults at ""
+    const recurringPlayers = playersList.filter((player) => {
+      return playersDropdown.some((existing) => {
+        if (
+          player.online_id &&
+          player.online_id !== "0" &&
+          existing.online_id !== "0"
+        ) {
+          if (player.online_id === existing.online_id) return true;
+        }
+
+        if (
+          player.epic_id &&
+          player.epic_id !== "" &&
+          existing.epic_id !== ""
+        ) {
+          if (player.epic_id === existing.epic_id) return true;
+        }
+
+        // no online id implies epic player, so name unique
+        const playerHasNoIds =
+          (!player.online_id || player.online_id === "0") && !player.epic_id;
+        const existingHasNoIds =
+          (!existing.online_id || existing.online_id === "0") &&
+          !existing.epic_id;
+
+        // if either player has no ids, then match by name (because one is epic on old replay)
+        if (playerHasNoIds || existingHasNoIds) {
+          return player.name === existing.name;
+        }
+
+        return false;
+      });
+    });
+    setPlayersDropdown(recurringPlayers);
+  };
 
   const uploadFile = async (file: File) => {
     const formData = new FormData();
@@ -49,6 +92,7 @@ function UploadPage() {
 
       const data = await response.json();
       setReplayList((prevList) => [...prevList, data.name]);
+      updatePlayerDropdown(data.players);
     } catch (error) {
       console.error("Error fetching header:", error);
     }
@@ -142,6 +186,16 @@ function UploadPage() {
               <option value="gc3">Grand Champ III</option>
 
               <option value="ssl">Supersonic Legend</option>
+            </select>
+          </div>
+          <div className="rank-selection">
+            <select id="player" name="player">
+              <option value="">-- Select Player --</option>
+              {playersDropdown.map((player, index) => (
+                <option key={index} value={player.name}>
+                  {player.name}
+                </option>
+              ))}
             </select>
           </div>
           <button id="analyse-button">Analyse Replays</button>
