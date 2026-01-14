@@ -1,10 +1,11 @@
 import { useState } from "react";
-import { set } from "idb-keyval";
+import { set, get } from "idb-keyval";
 /* eslint-disable  @typescript-eslint/no-explicit-any */
 
 function UploadPage() {
-  const [replayList, setReplayList] = useState<string[]>([]);
+  const [replayList, setReplayList] = useState<any[]>([]);
   const [playersDropdown, setPlayersDropdown] = useState<any[]>([]);
+  const [errorList, setErrorList] = useState<string[]>([]);
 
   const updatePlayerDropdown = (playersList: any[]) => {
     if (playersDropdown.length === 0) {
@@ -48,7 +49,13 @@ function UploadPage() {
     setPlayersDropdown(recurringPlayers);
   };
 
-  const uploadFile = async (file: File) => {
+  const uploadFile = async (file: File, match_guid: string) => {
+    const idbReplay = await get(`replay-${match_guid}`);
+    if (idbReplay) {
+      console.log(`Replay ${match_guid} found in cache, skipping upload.`);
+      return;
+    }
+
     const formData = new FormData();
     formData.append("file", file);
 
@@ -71,9 +78,18 @@ function UploadPage() {
         // const csv = await get(key);
         // const parsed = Papa.parse(csv, { header: true });
         // console.log("Parsed CSV Data:", parsed.data);
+      } else {
+        setErrorList((prevErrors) => [
+          ...prevErrors,
+          "Error uploading " + file.name + " (try different replay)",
+        ]);
       }
     } catch (error) {
       console.error("Error uploading file:", error);
+      setErrorList((prevErrors) => [
+        ...prevErrors,
+        "Error uploading " + file.name + " (try different replay)",
+      ]);
     }
   };
 
@@ -91,7 +107,13 @@ function UploadPage() {
       }
 
       const data = await response.json();
-      setReplayList((prevList) => [...prevList, data.name]);
+
+      uploadFile(file, data.game_id);
+
+      setReplayList((prevList) => [
+        ...prevList,
+        { ...data, fileName: file.name },
+      ]);
       updatePlayerDropdown(data.players);
     } catch (error) {
       console.error("Error fetching header:", error);
@@ -103,9 +125,31 @@ function UploadPage() {
     if (!fileList) return;
 
     const files = Array.from(fileList);
+
+    // duplicate check (for some reason duplicates are ignored anyway)
+    files.some((file) => {
+      if (replayList.find((replay) => replay.fileName === file.name)) {
+        setErrorList((prevErrors) => [
+          ...prevErrors,
+          "Duplicate replay: " + file.name,
+        ]);
+        return true;
+      }
+    });
+
+    // non .replay check
+    files.some((file) => {
+      if (!file.name.endsWith(".replay")) {
+        setErrorList((prevErrors) => [
+          ...prevErrors,
+          "Invalid file type (not .replay): " + file.name,
+        ]);
+        return true;
+      }
+    });
+
     files.forEach((file) => {
       getHeader(file);
-      uploadFile(file);
     });
   };
 
@@ -118,6 +162,18 @@ function UploadPage() {
     } catch (err) {
       console.error("Failed to copy text: ", err);
     }
+  };
+
+  const deleteReplay = (index: number) => {
+    const updatedList = [...replayList];
+    updatedList.splice(index, 1);
+    setReplayList(updatedList);
+
+    // remove error messages related to this replay
+    const updatedErrors = errorList.filter(
+      (error) => !error.includes(replayList[index].fileName),
+    );
+    setErrorList(updatedErrors);
   };
 
   return (
@@ -141,6 +197,7 @@ function UploadPage() {
           <input
             type="file"
             id="file-upload"
+            accept=".replay"
             multiple
             onChange={handleFileChange}
           />
@@ -150,7 +207,9 @@ function UploadPage() {
           <div className="replay-list">
             <ol id="replay-names">
               {replayList.map((replay, index) => (
-                <li key={index}>{replay}</li>
+                <li key={index} onClick={() => deleteReplay(index)}>
+                  {replay.name}
+                </li>
               ))}
             </ol>
           </div>
@@ -198,11 +257,14 @@ function UploadPage() {
               ))}
             </select>
           </div>
-          <button id="analyse-button">Analyse Replays</button>
-
-          <div className="error-message hidden">
-            Invalid file type. Please upload .replay files only.
+          <div className="error-message">
+            {errorList.map((error, index) => (
+              <div key={index} style={{ color: "red" }}>
+                {error}
+              </div>
+            ))}
           </div>
+          <button id="analyse-button">Analyse Replays</button>
         </div>
       </div>
     </section>

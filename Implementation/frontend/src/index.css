@@ -54,11 +54,9 @@ footer {
 }
 
 .error-message {
-  margin-top: 1rem;
-  padding: 0.8rem;
-  background: #ffcccc;
-  color: #990000;
-  border-radius: 5px;
+  text-align: center;
+  margin-top: 2rem;
+  color: red;
 }
 
 .hidden {
@@ -232,7 +230,7 @@ footer {
   font-size: 14px;
   outline: none;
   appearance: none;
-
+  text-align: center;
   box-shadow: 0 0 8px #1e90ff55;
 }
 

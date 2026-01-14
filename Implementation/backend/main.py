@@ -37,6 +37,12 @@ def get_replay_proto(replay_path: str):
         encoding='utf-8'
     )
     replay_dict = json.loads(result.stdout.splitlines()[0])
+    properties = replay_dict.get('properties', {})
+    id = ""
+    if (properties.get("Id", '') != ''):
+        id = properties.get("Id", "")
+    else:
+        id = properties.get("MatchGUID", "")
 
     # analyse with carball to get proto
     game = Game()
@@ -45,7 +51,7 @@ def get_replay_proto(replay_path: str):
     analysis_manager.create_analysis(clean=False)
     proto = analysis_manager.get_protobuf_data()
 
-    return proto
+    return {"proto": proto, "id": id}
 
 
 def get_replay_header(replay_path: str):
@@ -62,9 +68,15 @@ def get_replay_header(replay_path: str):
     replay_dict = json.loads(result.stdout.splitlines()[0])
     properties = replay_dict.get('properties', {})
 
+    id = ""
+    if (properties.get("Id",'') != ""):
+        id = properties.get("Id", "")
+    else:
+        id = properties.get("MatchGUID", "")
+
     
     header = {
-        "game_id": properties.get('id', ''),
+        "game_id": id,
         "name": properties.get("ReplayName", ""),
         "map": properties["MapName"],
         "date": properties["Date"],
@@ -98,7 +110,9 @@ def upload_replay(file: UploadFile = File(...)):
         temp_file.flush()
 
         try:
-            proto = get_replay_proto(temp_file.name)  
+            data = get_replay_proto(temp_file.name)
+            proto = data["proto"]
+            match_guid = data["id"]
 
             # get all carball data
             all_players_data = []
@@ -131,10 +145,10 @@ def upload_replay(file: UploadFile = File(...)):
             stream = io.StringIO()
             df.to_csv(stream, index=False) # save csv to string stream
 
-            return {"status": "success", "match_guid": proto.game_metadata.match_guid, "csv": stream.getvalue()}
+            return {"status": "success", "match_guid": match_guid, "csv": stream.getvalue()}
 
         except Exception as e:
-            raise HTTPException(status_code=500, detail=f"Saved but failed to process replay: {e}")
+            return {"status": "error", "message": f"Failed to process replay: {e}"}
         
     
 @app.post("/api/header")

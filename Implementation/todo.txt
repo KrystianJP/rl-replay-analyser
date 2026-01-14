@@ -1,8 +1,8 @@
 cache csv in indexedDB DONE
-  check if in cache before uploading (include uploadFile in getHeader)
+  check if in cache before uploading DONE
   clear cache button (as IDB grown indefinitely)
-player dropdown
-removing replays
-handling erroneous replays
-disallow duplicate replays
+player dropdown DONE
+removing replays DONE
+handling erroneous replays (non-working and non .replay) DONE
+remove duplicate / .replay errors when clicking upload button
 loading meter (with parsed progress)
