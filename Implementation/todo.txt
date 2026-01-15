@@ -6,5 +6,5 @@ removing replays DONE
 handling erroneous replays (non-working and non .replay) DONE
 remove duplicate / .replay errors when clicking upload button DONE
 parsing progress DONE
+visible parsing meter DONE
 redo dropdown when deleting
-visible parsing meter

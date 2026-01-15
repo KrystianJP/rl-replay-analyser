@@ -355,9 +355,18 @@ function UploadPage() {
           >
             Analyse Replays
           </button>
-          <p hidden={!analysing}>
-            Parsed {uploadCounter} / {replayCounter}
-          </p>
+          <div id="parse-progress" hidden={!analysing}>
+            <p>
+              Analysing... (
+              {replayCounter
+                ? Math.round((uploadCounter * 100) / replayCounter)
+                : 0}
+              %)
+            </p>
+            <progress
+              value={replayCounter ? uploadCounter / replayCounter : 0}
+            ></progress>
+          </div>
         </div>
       </div>
     </section>
