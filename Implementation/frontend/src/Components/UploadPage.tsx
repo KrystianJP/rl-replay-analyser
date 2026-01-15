@@ -1,58 +1,75 @@
 import { useState } from "react";
 import { set, get } from "idb-keyval";
+import { Mutex } from "async-mutex";
 /* eslint-disable  @typescript-eslint/no-explicit-any */
+
+const dropdownMutex = new Mutex();
 
 function UploadPage() {
   const [replayList, setReplayList] = useState<any[]>([]);
-  const [playersDropdown, setPlayersDropdown] = useState<any[]>([]);
+  const [playersDropdown, setPlayersDropdown] = useState<any[] | null>(null);
   const [errorList, setErrorList] = useState<string[]>([]);
+  const [selectedRank, setSelectedRank] = useState<string>("");
+  const [selectedPlayer, setSelectedPlayer] = useState<string>("");
+  const [replayCounter, setReplayCounter] = useState<number>(0);
+  const [uploadCounter, setUploadCounter] = useState<number>(0);
+  const [analysing, setAnalysing] = useState<boolean>(false);
 
-  const updatePlayerDropdown = (playersList: any[]) => {
-    if (playersDropdown.length === 0) {
-      setPlayersDropdown(playersList);
-      return;
-    }
-    // online_id defaults at "0", epic_id defaults at ""
-    const recurringPlayers = playersList.filter((player) => {
-      return playersDropdown.some((existing) => {
-        if (
-          player.online_id &&
-          player.online_id !== "0" &&
-          existing.online_id !== "0"
-        ) {
-          if (player.online_id === existing.online_id) return true;
+  const updatePlayerDropdown = async (playersList: any[]) => {
+    const release = await dropdownMutex.acquire();
+    try {
+      setPlayersDropdown((currentDropdown) => {
+        if (currentDropdown === null) {
+          return playersList;
         }
+        // online_id defaults at "0", epic_id defaults at ""
+        const recurringPlayers = playersList.filter((player) => {
+          return currentDropdown.some((existing) => {
+            if (
+              player.online_id &&
+              player.online_id !== "0" &&
+              existing.online_id !== "0"
+            ) {
+              if (player.online_id === existing.online_id) return true;
+            }
 
-        if (
-          player.epic_id &&
-          player.epic_id !== "" &&
-          existing.epic_id !== ""
-        ) {
-          if (player.epic_id === existing.epic_id) return true;
-        }
+            if (
+              player.epic_id &&
+              player.epic_id !== "" &&
+              existing.epic_id !== ""
+            ) {
+              if (player.epic_id === existing.epic_id) return true;
+            }
 
-        // no online id implies epic player, so name unique
-        const playerHasNoIds =
-          (!player.online_id || player.online_id === "0") && !player.epic_id;
-        const existingHasNoIds =
-          (!existing.online_id || existing.online_id === "0") &&
-          !existing.epic_id;
+            // no online id implies epic player, so name unique
+            const playerHasNoIds =
+              (!player.online_id || player.online_id === "0") &&
+              !player.epic_id;
+            const existingHasNoIds =
+              (!existing.online_id || existing.online_id === "0") &&
+              !existing.epic_id;
 
-        // if either player has no ids, then match by name (because one is epic on old replay)
-        if (playerHasNoIds || existingHasNoIds) {
-          return player.name === existing.name;
-        }
+            // if either player has no ids, then match by name (because one is epic on old replay)
+            if (playerHasNoIds || existingHasNoIds) {
+              return player.name === existing.name;
+            }
 
-        return false;
+            return false;
+          });
+        });
+        return recurringPlayers;
       });
-    });
-    setPlayersDropdown(recurringPlayers);
+    } finally {
+      release();
+    }
   };
 
   const uploadFile = async (file: File, match_guid: string) => {
     const idbReplay = await get(`replay-${match_guid}`);
     if (idbReplay) {
       console.log(`Replay ${match_guid} found in cache, skipping upload.`);
+      setUploadCounter((prev) => prev + 1);
+
       return;
     }
 
@@ -69,6 +86,8 @@ function UploadPage() {
       }
 
       const result = await response.json();
+
+      setUploadCounter((prev) => prev + 1);
 
       if (result.status === "success") {
         const key = `replay-${result.match_guid}`;
@@ -108,13 +127,15 @@ function UploadPage() {
 
       const data = await response.json();
 
+      setReplayCounter((prev) => prev + 1);
+
       uploadFile(file, data.game_id);
 
       setReplayList((prevList) => [
         ...prevList,
         { ...data, fileName: file.name },
       ]);
-      updatePlayerDropdown(data.players);
+      await updatePlayerDropdown(data.players);
     } catch (error) {
       console.error("Error fetching header:", error);
     }
@@ -127,26 +148,34 @@ function UploadPage() {
     const files = Array.from(fileList);
 
     // duplicate check (for some reason duplicates are ignored anyway)
-    files.some((file) => {
-      if (replayList.find((replay) => replay.fileName === file.name)) {
-        setErrorList((prevErrors) => [
-          ...prevErrors,
-          "Duplicate replay: " + file.name,
-        ]);
-        return true;
-      }
-    });
+    if (
+      files.some((file) => {
+        if (replayList.find((replay) => replay.fileName === file.name)) {
+          setErrorList((prevErrors) => [
+            ...prevErrors,
+            "Duplicate replay: " + file.name,
+          ]);
+          return true;
+        }
+      })
+    ) {
+      return;
+    }
 
     // non .replay check
-    files.some((file) => {
-      if (!file.name.endsWith(".replay")) {
-        setErrorList((prevErrors) => [
-          ...prevErrors,
-          "Invalid file type (not .replay): " + file.name,
-        ]);
-        return true;
-      }
-    });
+    if (
+      files.some((file) => {
+        if (!file.name.endsWith(".replay")) {
+          setErrorList((prevErrors) => [
+            ...prevErrors,
+            "Invalid file type (not .replay): " + file.name,
+          ]);
+          return true;
+        }
+      })
+    ) {
+      return;
+    }
 
     files.forEach((file) => {
       getHeader(file);
@@ -176,6 +205,36 @@ function UploadPage() {
     setErrorList(updatedErrors);
   };
 
+  const clearErrors = () => {
+    const newErrorList = errorList.filter((error) =>
+      error.startsWith("Error uploading"),
+    );
+    setErrorList(newErrorList);
+  };
+
+  const handleSubmit = () => {
+    if (replayList.length === 0) {
+      setErrorList((prevErrors) => [
+        ...prevErrors,
+        "No replays selected for analysis",
+      ]);
+      return;
+    }
+    if (selectedRank === "") {
+      setErrorList((prevErrors) => [...prevErrors, "Please select your rank"]);
+      return;
+    }
+    if (selectedPlayer === "") {
+      setErrorList((prevErrors) => [
+        ...prevErrors,
+        "Please select your player",
+      ]);
+      return;
+    }
+    // begin analysing
+    setAnalysing(true);
+  };
+
   return (
     <section className="section alt" id="upload">
       <div className="container">
@@ -190,7 +249,11 @@ function UploadPage() {
             C:\Users\%USERNAME%\Documents\My Games\Rocket
             League\TAGame\DemosEpic
           </div>
-          <label htmlFor="file-upload" className="file-upload">
+          <label
+            htmlFor="file-upload"
+            onClick={clearErrors}
+            className="file-upload"
+          >
             Choose replays to upload
             <span className="material-icons">add</span>
           </label>
@@ -200,6 +263,7 @@ function UploadPage() {
             accept=".replay"
             multiple
             onChange={handleFileChange}
+            disabled={analysing}
           />
           <div style={{ textAlign: "center", opacity: 0.7, marginTop: "5px" }}>
             (Click on a replay to remove it)
@@ -214,7 +278,16 @@ function UploadPage() {
             </ol>
           </div>
           <div className="rank-selection">
-            <select id="rank" name="rank">
+            <select
+              id="rank"
+              name="rank"
+              disabled={analysing}
+              value={selectedRank}
+              onChange={(e) => {
+                setSelectedRank(e.target.value);
+                clearErrors();
+              }}
+            >
               <option value="">-- Choose Your Rank --</option>
               <option value="bronze1">Bronze I</option>
               <option value="bronze2">Bronze II</option>
@@ -248,13 +321,24 @@ function UploadPage() {
             </select>
           </div>
           <div className="rank-selection">
-            <select id="player" name="player">
+            <select
+              id="player"
+              name="player"
+              disabled={analysing}
+              value={selectedPlayer}
+              onChange={(e) => {
+                setSelectedPlayer(e.target.value);
+                clearErrors();
+              }}
+            >
               <option value="">-- Select Player --</option>
-              {playersDropdown.map((player, index) => (
-                <option key={index} value={player.name}>
-                  {player.name}
-                </option>
-              ))}
+              {playersDropdown !== null
+                ? playersDropdown.map((player, index) => (
+                    <option key={index} value={player.name}>
+                      {player.name}
+                    </option>
+                  ))
+                : ""}
             </select>
           </div>
           <div className="error-message">
@@ -264,7 +348,16 @@ function UploadPage() {
               </div>
             ))}
           </div>
-          <button id="analyse-button">Analyse Replays</button>
+          <button
+            id="analyse-button"
+            disabled={analysing}
+            onClick={handleSubmit}
+          >
+            Analyse Replays
+          </button>
+          <p hidden={!analysing}>
+            Parsed {uploadCounter} / {replayCounter}
+          </p>
         </div>
       </div>
     </section>

@@ -2,7 +2,7 @@ used design react component hierarchy to help
 
 carball parser was outdated, spent a lot of time (with help of AI) to fix the parser so it is compatible with most recent replays (since they changed the format or added more information many times, and the parser was last updated 5 years ago). 
 
-found issues with accuracy, mostly fine, but due to nature of parser, some flags are missed, ballchasing uses its own much more complicated and accurate parser.
+found issues with accuracy, mostly fine, but due to nature of parser, some flags are missed, ballchasing uses its own much more complicated and accurate parser. might need to transform data slightly based on average difference
 some issues with people's names, some names break the parser, couldn't figure out how to fix, rare but annoying, application continues to work, just ignores it, will have to display error to user
 
 CACHING + separate requests for header and full (because parsing takes longer than expected (6 sec per replay))

@@ -103,7 +103,7 @@ app.add_middleware(
 
 # parses, turns into csv
 @app.post("/api/upload")
-def upload_replay(file: UploadFile = File(...)):
+async def upload_replay(file: UploadFile = File(...)):
 
     with tempfile.NamedTemporaryFile(delete=False, suffix=".replay") as temp_file:
         shutil.copyfileobj(file.file, temp_file)
