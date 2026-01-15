@@ -1,6 +1,6 @@
 cache csv in indexedDB DONE
   check if in cache before uploading DONE
-  clear cache button (as IDB grown indefinitely)
+  clear cache button (as IDB grown indefinitely) DONE
 player dropdown DONE
 removing replays DONE
 handling erroneous replays (non-working and non .replay) DONE

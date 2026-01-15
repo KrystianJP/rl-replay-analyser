@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { set, get } from "idb-keyval";
+import { set, get, clear } from "idb-keyval";
 import { Mutex } from "async-mutex";
 /* eslint-disable  @typescript-eslint/no-explicit-any */
 
@@ -235,6 +235,18 @@ function UploadPage() {
     setAnalysing(true);
   };
 
+  const clearCache = async () => {
+    if (window.confirm("Are you sure you want to clear all cached replays?")) {
+      try {
+        await clear();
+        alert("Cache cleared");
+      } catch (e) {
+        console.error("Failed to clear cache:", e);
+        alert("Failed to clear cache.");
+      }
+    }
+  };
+
   return (
     <section className="section alt" id="upload">
       <div className="container">
@@ -268,7 +280,7 @@ function UploadPage() {
           <div style={{ textAlign: "center", opacity: 0.7, marginTop: "5px" }}>
             (Click on a replay to remove it)
           </div>
-          <div className="replay-list">
+          <div className={"replay-list" + (analysing ? " disabled" : "")}>
             <ol id="replay-names">
               {replayList.map((replay, index) => (
                 <li key={index} onClick={() => deleteReplay(index)}>
@@ -277,7 +289,10 @@ function UploadPage() {
               ))}
             </ol>
           </div>
-          <div className="rank-selection">
+          <p id="clear-cache" onClick={clearCache}>
+            clear cache
+          </p>
+          <div className="rank-selection" hidden={!replayList.length}>
             <select
               id="rank"
               name="rank"
@@ -320,7 +335,7 @@ function UploadPage() {
               <option value="ssl">Supersonic Legend</option>
             </select>
           </div>
-          <div className="rank-selection">
+          <div className="rank-selection" hidden={!replayList.length}>
             <select
               id="player"
               name="player"
