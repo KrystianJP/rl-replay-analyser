@@ -64,7 +64,7 @@ function UploadPage() {
     }
   };
 
-  const uploadFile = async (file: File, match_guid: string) => {
+  const uploadFile = async (file: File, match_guid: string, name: string) => {
     const idbReplay = await get(`replay-${match_guid}`);
     if (idbReplay) {
       console.log(`Replay ${match_guid} found in cache, skipping upload.`);
@@ -100,14 +100,14 @@ function UploadPage() {
       } else {
         setErrorList((prevErrors) => [
           ...prevErrors,
-          "Error uploading " + file.name + " (try different replay)",
+          "Error uploading " + name + " (remove and try different replay)",
         ]);
       }
     } catch (error) {
       console.error("Error uploading file:", error);
       setErrorList((prevErrors) => [
         ...prevErrors,
-        "Error uploading " + file.name + " (try different replay)",
+        "Error uploading " + name + " (remove and try different replay)",
       ]);
     }
   };
@@ -129,7 +129,7 @@ function UploadPage() {
 
       setReplayCounter((prev) => prev + 1);
 
-      uploadFile(file, data.game_id);
+      uploadFile(file, data.game_id, data.name);
 
       setReplayList((prevList) => [
         ...prevList,
@@ -250,7 +250,12 @@ function UploadPage() {
   return (
     <section className="section alt" id="upload">
       <div className="container">
-        <h2>Upload Your Replays</h2>
+        <h2>
+          Upload Your Replays{" "}
+          <span id="clear-cache" onClick={clearCache}>
+            (clear cache)
+          </span>
+        </h2>
         <p className="note">
           Please upload replays from <u>a single playlist</u> (e.g: only 2v2)
           for accurate analysis
@@ -289,9 +294,7 @@ function UploadPage() {
               ))}
             </ol>
           </div>
-          <p id="clear-cache" onClick={clearCache}>
-            clear cache
-          </p>
+
           <div className="rank-selection" hidden={!replayList.length}>
             <select
               id="rank"
@@ -367,6 +370,7 @@ function UploadPage() {
             id="analyse-button"
             disabled={analysing}
             onClick={handleSubmit}
+            hidden={!replayList.length}
           >
             Analyse Replays
           </button>

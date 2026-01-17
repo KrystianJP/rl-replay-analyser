@@ -4,7 +4,7 @@ import AnalysisPage from "./AnalysisPage";
 import { useState } from "react";
 
 function MainContent() {
-  const [currentPage] = useState<"upload" | "analysis">("upload");
+  const [currentPage] = useState<"upload" | "analysis">("analysis");
 
   return (
     <main className="main-content">

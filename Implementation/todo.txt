@@ -8,3 +8,10 @@ remove duplicate / .replay errors when clicking upload button DONE
 parsing progress DONE
 visible parsing meter DONE
 redo dropdown when deleting
+show full name on erroneous replay (since header still works)
+
+find best way to display the charts (thinking 2 charts per line) DONE
+different tabs DONE
+send data through and calculate values
+transition
+wins vs losses switch (3.2)

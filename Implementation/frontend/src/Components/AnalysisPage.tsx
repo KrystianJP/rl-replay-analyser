@@ -1,30 +1,9 @@
+import DataOverview from "./DataOverview";
+
 function AnalysisPage() {
   return (
     <div>
-      <section className="section alt" id="overview">
-        <div className="container">
-          <h2>
-            Data Overview{" "}
-            <span className="material-icons">arrow_drop_down</span>
-          </h2>
-
-          <div className="category-buttons">
-            <button className="active">Boost Usage</button>
-            <button>Option 2</button>
-            <button>Option 3</button>
-            <button>Option 4</button>
-          </div>
-
-          <h3>Boost Usage</h3>
-
-          <div className="charts-container">
-            <div className="bar-chart-container">Chart</div>
-            <div className="bar-chart-container">Chart</div>
-            <div className="bar-chart-container">Chart</div>
-            <div className="bar-chart-container">Chart</div>
-          </div>
-        </div>
-      </section>
+      <DataOverview />
 
       <section className="section" id="playstyle">
         <div className="container">
@@ -148,14 +127,14 @@ function AnalysisPage() {
 
                 <option value="ssl">Supersonic Legend</option>
               </select>
-              <div className="spider-charts">
-                <div className="spider-chart-container">Spider Chart</div>
-                <div className="spider-chart-container">Spider Chart</div>
-                <div className="spider-chart-container">Spider Chart</div>
-                <div className="spider-chart-container">Spider Chart</div>
-              </div>
             </div>
           </h3>
+          <div className="spider-charts">
+            <div className="spider-chart-container">Spider Chart</div>
+            <div className="spider-chart-container">Spider Chart</div>
+            <div className="spider-chart-container">Spider Chart</div>
+            <div className="spider-chart-container">Spider Chart</div>
+          </div>
         </div>
       </section>
     </div>
