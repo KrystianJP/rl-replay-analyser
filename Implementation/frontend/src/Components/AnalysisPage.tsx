@@ -1,9 +1,10 @@
 import DataOverview from "./DataOverview";
+/* eslint-disable  @typescript-eslint/no-explicit-any */
 
-function AnalysisPage() {
+function AnalysisPage({ replayData }: any) {
   return (
     <div>
-      <DataOverview />
+      <DataOverview replayData={replayData} />
 
       <section className="section" id="playstyle">
         <div className="container">

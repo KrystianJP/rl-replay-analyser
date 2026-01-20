@@ -1,73 +1,125 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { set, get, clear } from "idb-keyval";
 import { Mutex } from "async-mutex";
+import Papa from "papaparse";
 /* eslint-disable  @typescript-eslint/no-explicit-any */
 
 const dropdownMutex = new Mutex();
 
-function UploadPage() {
+function UploadPage({ setCurrentPage, setReplayData }: any) {
   const [replayList, setReplayList] = useState<any[]>([]);
-  const [playersDropdown, setPlayersDropdown] = useState<any[] | null>(null);
+  const [playersDropdown, setPlayersDropdown] = useState<any[]>([]);
   const [errorList, setErrorList] = useState<string[]>([]);
   const [selectedRank, setSelectedRank] = useState<string>("");
-  const [selectedPlayer, setSelectedPlayer] = useState<string>("");
+  const [selectedPlayer, setSelectedPlayer] = useState<number>(0);
   const [replayCounter, setReplayCounter] = useState<number>(0);
   const [uploadCounter, setUploadCounter] = useState<number>(0);
   const [analysing, setAnalysing] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (replayCounter > 0 && uploadCounter === replayCounter && analysing) {
+      // filter out all the replays without the player
+      const player = playersDropdown[selectedPlayer - 1];
+      setReplayData((replayData: any) => {
+        return replayData.filter((replay: any) =>
+          replay.players.some((replayPlayer: any) => {
+            if (
+              player.online_id !== "0" &&
+              replayPlayer.online_id !== "0" &&
+              player.online_id !== "" &&
+              replayPlayer.online_id !== ""
+            ) {
+              if (player.online_id === replayPlayer.online_id) return true;
+              return false;
+            }
+            if (
+              player.epic_id !== "0" &&
+              replayPlayer.epic_id !== "0" &&
+              player.epic_id !== "" &&
+              replayPlayer.epic_id !== ""
+            ) {
+              if (player.epic_id === replayPlayer.epic_id) return true;
+              return false;
+            }
+            return player.name === replayPlayer.name;
+          }),
+        );
+      });
+      console.log("Changing page to analysis.");
+      setCurrentPage("analysis");
+    }
+  }, [
+    replayCounter,
+    uploadCounter,
+    analysing,
+    playersDropdown,
+    selectedPlayer,
+    setReplayData,
+    setCurrentPage,
+  ]);
 
   const updatePlayerDropdown = async (playersList: any[]) => {
     const release = await dropdownMutex.acquire();
     try {
       setPlayersDropdown((currentDropdown) => {
-        if (currentDropdown === null) {
-          return playersList;
-        }
-        // online_id defaults at "0", epic_id defaults at ""
-        const recurringPlayers = playersList.filter((player) => {
-          return currentDropdown.some((existing) => {
-            if (
-              player.online_id &&
-              player.online_id !== "0" &&
-              existing.online_id !== "0"
-            ) {
-              if (player.online_id === existing.online_id) return true;
-            }
+        if (currentDropdown === null) return playersList;
 
+        const newDropdown = [...currentDropdown];
+
+        playersList.forEach((newPlayer) => {
+          const exists = newDropdown.some((existing) => {
+            // match by OnlineID (Steam/PSN/Xbox)
             if (
-              player.epic_id &&
-              player.epic_id !== "" &&
+              newPlayer.online_id !== "0" &&
+              existing.online_id !== "0" &&
+              newPlayer.online_id !== "" &&
+              existing.online_id !== ""
+            ) {
+              if (newPlayer.online_id === existing.online_id) return true;
+              return false;
+            }
+            // match by EpicID
+            if (
+              newPlayer.epic_id !== "0" &&
+              existing.epic_id !== "0" &&
+              newPlayer.epic_id !== "" &&
               existing.epic_id !== ""
             ) {
-              if (player.epic_id === existing.epic_id) return true;
+              if (newPlayer.epic_id === existing.epic_id) return true;
+              return false;
             }
-
-            // no online id implies epic player, so name unique
-            const playerHasNoIds =
-              (!player.online_id || player.online_id === "0") &&
-              !player.epic_id;
-            const existingHasNoIds =
-              (!existing.online_id || existing.online_id === "0") &&
-              !existing.epic_id;
-
-            // if either player has no ids, then match by name (because one is epic on old replay)
-            if (playerHasNoIds || existingHasNoIds) {
-              return player.name === existing.name;
-            }
-
-            return false;
+            // fallback to name if IDs are missing (older replays or specific platforms)
+            return newPlayer.name === existing.name;
           });
+
+          if (!exists) {
+            newDropdown.push(newPlayer);
+          }
         });
-        return recurringPlayers;
+
+        return newDropdown.sort((a, b) => a.name.localeCompare(b.name));
       });
     } finally {
       release();
     }
   };
 
-  const uploadFile = async (file: File, match_guid: string, name: string) => {
+  const uploadFile = async (
+    file: File,
+    match_guid: string,
+    name: string,
+    players: any[],
+  ) => {
     const idbReplay = await get(`replay-${match_guid}`);
     if (idbReplay) {
       console.log(`Replay ${match_guid} found in cache, skipping upload.`);
+
+      const parsed = Papa.parse(idbReplay, { header: true });
+      setReplayData((prev: any) => [
+        ...prev,
+        { id: match_guid, players: players, data: parsed.data },
+      ]);
+
       setUploadCounter((prev) => prev + 1);
 
       return;
@@ -87,16 +139,19 @@ function UploadPage() {
 
       const result = await response.json();
 
-      setUploadCounter((prev) => prev + 1);
-
       if (result.status === "success") {
         const key = `replay-${result.match_guid}`;
         await set(key, result.csv); // store csv in IndexedDB
         console.log(`Stored replay data with key: ${key}`);
 
-        // const csv = await get(key);
-        // const parsed = Papa.parse(csv, { header: true });
-        // console.log("Parsed CSV Data:", parsed.data);
+        const csv = await get(key);
+        const parsed = Papa.parse(csv, { header: true });
+
+        setReplayData((prev: any) => [
+          ...prev,
+          { id: result.match_guid, players: players, data: parsed.data },
+        ]);
+        setUploadCounter((prev) => prev + 1);
       } else {
         setErrorList((prevErrors) => [
           ...prevErrors,
@@ -129,7 +184,7 @@ function UploadPage() {
 
       setReplayCounter((prev) => prev + 1);
 
-      uploadFile(file, data.game_id, data.name);
+      uploadFile(file, data.game_id, data.name, data.players);
 
       setReplayList((prevList) => [
         ...prevList,
@@ -224,7 +279,7 @@ function UploadPage() {
       setErrorList((prevErrors) => [...prevErrors, "Please select your rank"]);
       return;
     }
-    if (selectedPlayer === "") {
+    if (selectedPlayer === 0) {
       setErrorList((prevErrors) => [
         ...prevErrors,
         "Please select your player",
@@ -345,14 +400,14 @@ function UploadPage() {
               disabled={analysing}
               value={selectedPlayer}
               onChange={(e) => {
-                setSelectedPlayer(e.target.value);
+                setSelectedPlayer(Number(e.target.value));
                 clearErrors();
               }}
             >
-              <option value="">-- Select Player --</option>
+              <option value={0}>-- Select Player --</option>
               {playersDropdown !== null
                 ? playersDropdown.map((player, index) => (
-                    <option key={index} value={player.name}>
+                    <option key={index} value={index + 1}>
                       {player.name}
                     </option>
                   ))

@@ -14,6 +14,8 @@ from datetime import datetime
 from mappings import get_map_name, get_playlist_name
 import base64
 import io
+import anyio
+import asyncio
 
 app = FastAPI()
 
@@ -23,6 +25,8 @@ origins = [
 ]
 
 RRROCKET_PATH = "./rrrocket.exe"
+
+upload_lock = asyncio.Lock()
 
 def get_replay_proto(replay_path: str):
     if not os.path.exists(RRROCKET_PATH):
@@ -53,6 +57,36 @@ def get_replay_proto(replay_path: str):
 
     return {"proto": proto, "id": id}
 
+def process_replay(temp_file_path):
+    data = get_replay_proto(temp_file_path)
+    proto = data["proto"]
+    match_guid = data["id"]
+
+    all_players_data = []
+    for player in proto.players:
+        player_dict = {
+            "player_name": player.name,
+            "team": "Orange" if player.is_orange else "Blue",
+            "score": player.score,
+            "goals": player.goals,
+            "assists": player.assists,
+            "saves": player.saves,
+            "shots": player.shots
+        }
+        for category_field, category_value in player.stats.ListFields():
+            category_name = category_field.name
+            if hasattr(category_value, "ListFields"):
+                for stat_field, stat_value in category_value.ListFields():
+                    if not hasattr(stat_value, "ListFields"):
+                        player_dict[f"{category_name}_{stat_field.name}"] = stat_value
+            else:
+                player_dict[category_name] = category_value
+        all_players_data.append(player_dict)
+
+    df = pd.DataFrame(all_players_data).fillna(0)
+    stream = io.StringIO()
+    df.to_csv(stream, index=False)
+    return {"status": "success", "match_guid": match_guid, "csv": stream.getvalue()}
 
 def get_replay_header(replay_path: str):
     if not os.path.exists(RRROCKET_PATH):
@@ -104,52 +138,18 @@ app.add_middleware(
 # parses, turns into csv
 @app.post("/api/upload")
 async def upload_replay(file: UploadFile = File(...)):
-
+    # We use 'async def' here so we can use the lock
     with tempfile.NamedTemporaryFile(delete=False, suffix=".replay") as temp_file:
         shutil.copyfileobj(file.file, temp_file)
         temp_file.flush()
+        temp_path = temp_file.name
 
         try:
-            data = get_replay_proto(temp_file.name)
-            proto = data["proto"]
-            match_guid = data["id"]
-
-            # get all carball data
-            all_players_data = []
-
-            for player in proto.players:
-                player_dict = {
-                    "player_name": player.name,
-                    "team": "Orange" if player.is_orange else "Blue",
-                    "score": player.score,
-                    "goals": player.goals,
-                    "assists": player.assists,
-                    "saves": player.saves,
-                    "shots": player.shots
-                }
-
-                for category_field, category_value in player.stats.ListFields():
-                    category_name = category_field.name
-                    if hasattr(category_value, "ListFields"):
-                        for stat_field, stat_value in category_value.ListFields():
-                            if not hasattr(stat_value, "ListFields"):
-                                column_name = f"{category_name}_{stat_field.name}"
-                                player_dict[column_name] = stat_value
-                    else:
-                        player_dict[category_name] = category_value
-                
-                all_players_data.append(player_dict)
-
-            df = pd.DataFrame(all_players_data).fillna(0)
-            
-            stream = io.StringIO()
-            df.to_csv(stream, index=False) # save csv to string stream
-
-            return {"status": "success", "match_guid": match_guid, "csv": stream.getvalue()}
-
+            async with upload_lock:
+                result = await anyio.to_thread.run_sync(process_replay, temp_path)
+                return result
         except Exception as e:
-            return {"status": "error", "message": f"Failed to process replay: {e}"}
-        
+            return {"status": "error", "message": f"Failed to process: {e}"}
     
 @app.post("/api/header")
 def get_header(file: UploadFile = File(...)):

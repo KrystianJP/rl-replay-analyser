@@ -1,7 +1,8 @@
 import CustomBarChart from "./CustomBarChart";
 import CustomStackChart from "./CustomStackChart";
 import CustomPieChart from "./CustomPieChart";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+/* eslint-disable  @typescript-eslint/no-explicit-any */
 
 const data = [
   { name: "You", BPM: 532 },
@@ -52,10 +53,16 @@ const CATEGORY_CHARTS = {
   ],
 };
 
-function DataOverview() {
+function DataOverview({ replayData }: any) {
   const [category, setCategory] = useState<
     "boost" | "movement" | "positioning" | "demos" | "possession"
   >("boost");
+
+  useEffect(() => {
+    replayData.forEach((replay: any) => {
+      console.log(replay);
+    });
+  }, [replayData]);
 
   const renderChart = (title: string, chart: string) => {
     switch (chart) {

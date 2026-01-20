@@ -16,3 +16,7 @@ different header formats so use different ways to compare: onlineID -> EpicID ->
 
 header parsing and full parsing are done asynchronously as header parsing is super fast, while full parsing (using carball) takes multiple seconds, so it allows the replays to be listed immediately while the full parsing occurs in the background. full parsing is serial to each other to give a more accurate progress representation to the user, also it was found to be a about 15% faster than doing it fully asynchronously for some reason.
 (maybe mention map names)
+
+
+just before switching pages filter the replay data to only include replays with the given user
+include "players" in the replay data, check 
