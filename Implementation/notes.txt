@@ -18,5 +18,15 @@ header parsing and full parsing are done asynchronously as header parsing is sup
 (maybe mention map names)
 
 
-just before switching pages filter the replay data to only include replays with the given user
-include "players" in the replay data, check 
+
+data calculation
+data = {}
+for each replay
+  find player
+    add player data to each chart
+  get player's teammates
+    add each tm8's data to each chart / by the number of tm8s
+  get player's opps
+    add each opp's data to each chart / by no. of opps
+divide all values by no. of replays
+display charts

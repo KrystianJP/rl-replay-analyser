@@ -9,6 +9,7 @@ function MainContent() {
     "upload",
   );
   const [replayData, setReplayData] = useState<any>([]);
+  const [player, setPlayer] = useState<any>({});
 
   return (
     <main className="main-content">
@@ -16,9 +17,10 @@ function MainContent() {
         <UploadPage
           setCurrentPage={setCurrentPage}
           setReplayData={setReplayData}
+          setPlayer={setPlayer}
         />
       ) : (
-        <AnalysisPage replayData={replayData} />
+        <AnalysisPage replayData={replayData} player={player} />
       )}
     </main>
   );

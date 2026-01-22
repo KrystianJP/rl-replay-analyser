@@ -6,20 +6,21 @@ import {
   Tooltip,
   ResponsiveContainer,
   Cell,
+  LabelList,
 } from "recharts";
 /* eslint-disable  @typescript-eslint/no-explicit-any */
 
 const barColors = ["#f0de7aff", "#83dae9ff", "#f87171"];
 
 // position: outsideLeft not included in YAxis
-function CustomBarChart({ title, data }: any) {
+function CustomBarChart({ title, data, dataKey }: any) {
   return (
     <div className="bar-chart-container">
       <h4 style={{ textAlign: "center", paddingBottom: "10px" }}>{title}</h4>
-      <ResponsiveContainer height={350}>
+      <ResponsiveContainer height={350} className="chart">
         <BarChart
           data={data}
-          margin={{ top: 0, right: 20, left: 10, bottom: 20 }}
+          margin={{ top: 20, right: 20, left: 10, bottom: 20 }}
           barCategoryGap={0}
           barGap={0}
         >
@@ -49,20 +50,21 @@ function CustomBarChart({ title, data }: any) {
             labelStyle={{ color: "#fff", fontFamily: "Arial, sans-serif" }}
             itemStyle={{ color: "#fff", fontFamily: "Arial, sans-serif" }}
             cursor={{ fill: "rgba(255, 255, 255, 0.1)" }}
+            formatter={(value) => typeof value === "number" && value.toFixed(1)}
           />
-          <Bar
-            dataKey="BPM"
-            barSize={120}
-            radius={[5, 5, 0, 0]}
-            label={{
-              position: "top",
-              fill: "white",
-              fontFamily: "Arial, sans-serif",
-            }}
-          >
+          <Bar dataKey={dataKey} barSize={120} radius={[5, 5, 0, 0]}>
             {data.map((entry: any, index: any) => (
               <Cell key={entry.name} fill={barColors[index]} />
             ))}
+            <LabelList
+              dataKey={dataKey}
+              position="top"
+              fill="white"
+              fontFamily="Arial, sans-serif"
+              formatter={(value) =>
+                typeof value === "number" && value.toFixed(1)
+              }
+            />
           </Bar>
         </BarChart>
       </ResponsiveContainer>

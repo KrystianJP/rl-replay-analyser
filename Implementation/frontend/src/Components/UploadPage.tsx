@@ -6,7 +6,7 @@ import Papa from "papaparse";
 
 const dropdownMutex = new Mutex();
 
-function UploadPage({ setCurrentPage, setReplayData }: any) {
+function UploadPage({ setCurrentPage, setReplayData, setPlayer }: any) {
   const [replayList, setReplayList] = useState<any[]>([]);
   const [playersDropdown, setPlayersDropdown] = useState<any[]>([]);
   const [errorList, setErrorList] = useState<string[]>([]);
@@ -20,6 +20,7 @@ function UploadPage({ setCurrentPage, setReplayData }: any) {
     if (replayCounter > 0 && uploadCounter === replayCounter && analysing) {
       // filter out all the replays without the player
       const player = playersDropdown[selectedPlayer - 1];
+      setPlayer(player);
       setReplayData((replayData: any) => {
         return replayData.filter((replay: any) =>
           replay.players.some((replayPlayer: any) => {
@@ -56,6 +57,7 @@ function UploadPage({ setCurrentPage, setReplayData }: any) {
     selectedPlayer,
     setReplayData,
     setCurrentPage,
+    setPlayer,
   ]);
 
   const updatePlayerDropdown = async (playersList: any[]) => {
