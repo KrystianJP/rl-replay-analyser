@@ -1,16 +1,11 @@
 /* eslint-disable  @typescript-eslint/no-explicit-any */
 
-const legendOrder = ["ground", "low", "high"]; // same as bar bottom-to-top
-const legendColors = {
-  ground: "#f0de7aff",
-  low: "#a59436ff",
-  high: "#504509ff",
-};
+const legendColors = ["#f0de7aff", "#a59436ff", "#504509ff"];
 
-const CustomLegend = ({ payload }: any) => {
+const CustomLegend = ({ payload, dataKeys }: any) => {
   return (
     <div style={{ display: "flex", justifyContent: "center" }}>
-      {legendOrder.map((key) => {
+      {dataKeys.map((key: any, index: number) => {
         const entry = payload.find((p: any) => p.value === key);
         if (!entry) return null;
         return (
@@ -22,7 +17,7 @@ const CustomLegend = ({ payload }: any) => {
               style={{
                 width: 12,
                 height: 12,
-                backgroundColor: legendColors[key as keyof typeof legendColors],
+                backgroundColor: legendColors[index],
                 display: "inline-block",
                 marginRight: 5,
               }}

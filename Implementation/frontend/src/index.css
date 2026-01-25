@@ -376,10 +376,10 @@ section#comparison .container {
   display: none !important;
 }
 
-.bar-chart-container svg {
+/* .bar-chart-container svg {
   filter: none !important;
   overflow: hidden !important;
-}
+} */
 
 .bar-chart-container {
   isolation: isolate;

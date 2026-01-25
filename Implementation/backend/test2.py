@@ -8,7 +8,7 @@ from carball.analysis.analysis_manager import AnalysisManager
 from carball.json_parser.game import Game
 
 # --- CONFIGURATION ---
-REPLAY_FILE = "assets/example2.replay"  
+REPLAY_FILE = "assets/new.replay"  
 RRROCKET_PATH = "./rrrocket.exe" 
 OUTPUT_CSV = "match_results_summary.csv"
 

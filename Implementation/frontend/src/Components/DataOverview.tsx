@@ -2,18 +2,135 @@ import CustomBarChart from "./CustomBarChart";
 import CustomStackChart from "./CustomStackChart";
 import CustomPieChart from "./CustomPieChart";
 import { useState, useEffect, useMemo } from "react";
+import {
+  populateBoost,
+  populateMovement,
+  populatePositioning,
+  populateDemos,
+  populatePossession,
+} from "./dataPopulating";
 /* eslint-disable  @typescript-eslint/no-explicit-any */
 
-const data2 = [
-  { name: "You", ground: 51, low: 38, high: 11 },
-  { name: "Teammates", ground: 46, low: 48, high: 6 },
-  { name: "Opponents", ground: 73, low: 25, high: 2 },
-];
-const data3 = [
-  { name: "most back", value: 40 },
-  { name: "between players", value: 27 },
-  { name: "most forward", value: 33 },
-];
+const DATA_SKELETON = {
+  boost: {
+    bpm: [
+      { name: "You", BPM: 0 },
+      { name: "Teammates", BPM: 0 },
+      { name: "Opponents", BPM: 0 },
+    ],
+    smallPads: [
+      { name: "You", "Small pads": 0 },
+      { name: "Teammates", "Small pads": 0 },
+      { name: "Opponents", "Small pads": 0 },
+    ],
+    largePads: [
+      { name: "You", "Large pads": 0 },
+      { name: "Teammates", "Large pads": 0 },
+      { name: "Opponents", "Large pads": 0 },
+    ],
+    timeAt0: [
+      { name: "You", "Time at 0": 0 },
+      { name: "Teammates", "Time at 0": 0 },
+      { name: "Opponents", "Time at 0": 0 },
+    ],
+    timeAtLow: [
+      { name: "You", "Time at Low": 0 },
+      { name: "Teammates", "Time at Low": 0 },
+      { name: "Opponents", "Time at Low": 0 },
+    ],
+    timeAtFull: [
+      { name: "You", "Time at Full": 0 },
+      { name: "Teammates", "Time at Full": 0 },
+      { name: "Opponents", "Time at Full": 0 },
+    ],
+  },
+  movement: {
+    averageSpeed: [
+      { name: "You", "Average Speed": 0 },
+      { name: "Teammates", "Average Speed": 0 },
+      { name: "Opponents", "Average Speed": 0 },
+    ],
+    timeSupersonic: [
+      { name: "You", "Time Supersonic": 0 },
+      { name: "Teammates", "Time Supersonic": 0 },
+      { name: "Opponents", "Time Supersonic": 0 },
+    ],
+    timeHeights: [
+      { name: "You", Ground: 0, Low: 0, High: 0 },
+      { name: "Teammates", Ground: 0, Low: 0, High: 0 },
+      { name: "Opponents", Ground: 0, Low: 0, High: 0 },
+    ],
+  },
+  positioning: {
+    positionRelativeToTeam: [
+      { name: "Most Back", value: 0 },
+      { name: "Between Players", value: 0 },
+      { name: "Most Forward", value: 0 },
+    ],
+    distanceFromBall: [
+      { name: "Time Closest", value: 0 },
+      { name: "Time Farthest", value: 0 },
+    ],
+    aheadOfBall: [
+      { name: "You", "Time Ahead": 0, "Time Behind": 0 },
+      { name: "Teammates", "Time Ahead": 0, "Time Behind": 0 },
+      { name: "Opponents", "Time Ahead": 0, "Time Behind": 0 },
+    ],
+    timeEachThird: [
+      {
+        name: "You",
+        "Defending Third": 0,
+        "Neutral Third": 0,
+        "Attacking Third": 0,
+      },
+      {
+        name: "Teammates",
+        "Defending Third": 0,
+        "Neutral Third": 0,
+        "Attacking Third": 0,
+      },
+      {
+        name: "Opponents",
+        "Defending Third": 0,
+        "Neutral Third": 0,
+        "Attacking Third": 0,
+      },
+    ],
+  },
+  demos: {
+    demosInflicted: [
+      { name: "You", "Demos Inflicted": 0 },
+      { name: "Teammates", "Demos Inflicted": 0 },
+      { name: "Opponents", "Demos Inflicted": 0 },
+    ],
+    demosTaken: [
+      { name: "You", "Demos Taken": 0 },
+      { name: "Teammates", "Demos Taken": 0 },
+      { name: "Opponents", "Demos Taken": 0 },
+    ],
+    stolenBoosts: [
+      { name: "You", "Stolen Boosts": 0 },
+      { name: "Teammates", "Stolen Boosts": 0 },
+      { name: "Opponents", "Stolen Boosts": 0 },
+    ],
+  },
+  possession: {
+    teamPossession: [
+      { name: "Your Team", value: 0 },
+      { name: "Opponent Team", value: 0 },
+    ],
+    possessionTime: [
+      { name: "You", "Possession Time": 0 },
+      { name: "Teammates", "Possession Time": 0 },
+      { name: "Opponents", "Possession Time": 0 },
+    ],
+    averagePossessionTime: [
+      { name: "You", "Avg. Poss. Time": 0 },
+      { name: "Teammates", "Avg. Poss. Time": 0 },
+      { name: "Opponents", "Avg. Poss. Time": 0 },
+    ],
+  },
+};
 
 function DataOverview({ replayData, player }: any) {
   const [category, setCategory] = useState<
@@ -26,106 +143,29 @@ function DataOverview({ replayData, player }: any) {
     if (!replayData || replayData.length === 0) return;
     const numReplays = replayData.length;
 
-    const data = {
-      boost: {
-        bpm: [
-          { name: "You", BPM: 0 },
-          { name: "Teammates", BPM: 0 },
-          { name: "Opponents", BPM: 0 },
-        ],
-        smallPads: [
-          { name: "You", "Small pads": 0 },
-          { name: "Teammates", "Small pads": 0 },
-          { name: "Opponents", "Small pads": 0 },
-        ],
-        largePads: [
-          { name: "You", "Large pads": 0 },
-          { name: "Teammates", "Large pads": 0 },
-          { name: "Opponents", "Large pads": 0 },
-        ],
-        timeAt0: [
-          { name: "You", "Time at 0": 0 },
-          { name: "Teammates", "Time at 0": 0 },
-          { name: "Opponents", "Time at 0": 0 },
-        ],
-        timeAtLow: [
-          { name: "You", "Time at Low": 0 },
-          { name: "Teammates", "Time at Low": 0 },
-          { name: "Opponents", "Time at Low": 0 },
-        ],
-        timeAtFull: [
-          { name: "You", "Time at Full": 0 },
-          { name: "Teammates", "Time at Full": 0 },
-          { name: "Opponents", "Time at Full": 0 },
-        ],
-      },
-      movement: [],
-      positioning: [],
-      demos: [],
-      possession: [],
-    };
+    const data = JSON.parse(JSON.stringify(DATA_SKELETON));
 
     replayData.forEach((replayObject: any) => {
       const replay = replayObject.data.filter((p: any) => p.team);
 
-      // populate player data
       const playerData = replay.find((p: any) => p.player_name === player.name);
 
-      (data.boost.bpm[0] as any)["BPM"] +=
-        playerData.boost_boost_usage / numReplays;
-      (data.boost.smallPads[0] as any)["Small pads"] +=
-        playerData.boost_num_small_boosts / numReplays;
-      (data.boost.largePads[0] as any)["Large pads"] +=
-        playerData.boost_num_large_boosts / numReplays;
-      (data.boost.timeAt0[0] as any)["Time at 0"] +=
-        playerData.boost_time_no_boost / numReplays;
-      (data.boost.timeAtLow[0] as any)["Time at Low"] +=
-        playerData.boost_time_low_boost / numReplays;
-      (data.boost.timeAtFull[0] as any)["Time at Full"] +=
-        playerData.boost_time_full_boost / numReplays;
-
-      // populate teammate data
       const teammates = replay.filter(
         (p: any) => p.player_name !== player.name && p.team === playerData.team,
       );
-      const numTeammates = teammates.length;
 
-      teammates.forEach((tm8: any) => {
-        (data.boost.bpm[1] as any)["BPM"] +=
-          tm8.boost_boost_usage / numTeammates / numReplays;
-        (data.boost.smallPads[1] as any)["Small pads"] +=
-          tm8.boost_num_small_boosts / numTeammates / numReplays;
-        (data.boost.largePads[1] as any)["Large pads"] +=
-          tm8.boost_num_large_boosts / numTeammates / numReplays;
-        (data.boost.timeAt0[1] as any)["Time at 0"] +=
-          tm8.boost_time_no_boost / numTeammates / numReplays;
-        (data.boost.timeAtLow[1] as any)["Time at Low"] +=
-          tm8.boost_time_low_boost / numTeammates / numReplays;
-        (data.boost.timeAtFull[1] as any)["Time at Full"] +=
-          tm8.boost_time_full_boost / numTeammates / numReplays;
-      });
-
-      // populate opponent data
       const opponents = replay.filter(
         (p: any) => p.player_name !== player.name && p.team !== playerData.team,
       );
-      const numOpponents = opponents.length;
 
-      opponents.forEach((opponent: any) => {
-        (data.boost.bpm[2] as any)["BPM"] +=
-          opponent.boost_boost_usage / numOpponents / numReplays;
-        (data.boost.smallPads[2] as any)["Small pads"] +=
-          opponent.boost_num_small_boosts / numOpponents / numReplays;
-        (data.boost.largePads[2] as any)["Large pads"] +=
-          opponent.boost_num_large_boosts / numOpponents / numReplays;
-        (data.boost.timeAt0[2] as any)["Time at 0"] +=
-          opponent.boost_time_no_boost / numOpponents / numReplays;
-        (data.boost.timeAtLow[2] as any)["Time at Low"] +=
-          opponent.boost_time_low_boost / numOpponents / numReplays;
-        (data.boost.timeAtFull[2] as any)["Time at Full"] +=
-          opponent.boost_time_full_boost / numOpponents / numReplays;
-      });
+      populateBoost(data, numReplays, playerData, teammates, opponents);
+      populateMovement(data, numReplays, playerData, teammates, opponents);
+      populatePositioning(data, numReplays, playerData, teammates, opponents);
+      populateDemos(data, numReplays, playerData, teammates, opponents);
+      populatePossession(data, numReplays, playerData, teammates, opponents);
     });
+
+    // format height
 
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setChartData(data);
@@ -169,25 +209,77 @@ function DataOverview({ replayData, player }: any) {
         },
       ],
       movement: [
-        { title: "Average Speed", chart: "bar-chart" },
-        { title: "Time Supersonic Speed", chart: "bar-chart" },
-        { title: "Time at different Heights", chart: "stack-chart" },
+        {
+          title: "Average Speed",
+          chart: "bar-chart",
+          data: chartData.movement.averageSpeed,
+        },
+        {
+          title: "Time Supersonic Speed",
+          chart: "bar-chart",
+          data: chartData.movement.timeSupersonic,
+        },
+        {
+          title: "Time at different Heights",
+          chart: "stack-chart",
+          data: chartData.movement.timeHeights,
+        },
       ],
       positioning: [
-        { title: "Position Relative to Teammates", chart: "pie-chart" },
-        { title: "Distance from Ball", chart: "pie-chart" },
-        { title: "Behind/Ahead of Ball", chart: "pie-chart" },
-        { title: "General Position on Field", chart: "stack-chart" },
+        {
+          title: "Position Relative to Teammates",
+          chart: "pie-chart",
+          data: chartData.positioning.positionRelativeToTeam,
+        },
+        {
+          title: "Distance from Ball",
+          chart: "pie-chart",
+          data: chartData.positioning.distanceFromBall,
+        },
+        {
+          title: "Behind/Ahead of Ball",
+          chart: "stack-chart",
+          data: chartData.positioning.aheadOfBall,
+        },
+        {
+          title: "General Position on Field",
+          chart: "stack-chart",
+          data: chartData.positioning.timeEachThird,
+        },
       ],
       demos: [
-        { title: "Demos Inflicted", chart: "bar-chart" },
-        { title: "Demos Taken", chart: "bar-chart" },
-        { title: "Large Boost Pads Stolen", chart: "bar-chart" },
+        {
+          title: "Demos Inflicted",
+          chart: "bar-chart",
+          data: chartData.demos.demosInflicted,
+        },
+        {
+          title: "Demos Taken",
+          chart: "bar-chart",
+          data: chartData.demos.demosTaken,
+        },
+        {
+          title: "Large Boost Pads Stolen",
+          chart: "bar-chart",
+          data: chartData.demos.stolenBoosts,
+        },
       ],
       possession: [
-        { title: "Team Possession", chart: "pie-chart" },
-        { title: "Total Possession Time", chart: "bar-chart" },
-        { title: "Average Possession Duration", chart: "bar-chart" },
+        {
+          title: "Team Possession",
+          chart: "pie-chart-v2",
+          data: chartData.possession.teamPossession,
+        },
+        {
+          title: "Total Possession Time",
+          chart: "bar-chart",
+          data: chartData.possession.possessionTime,
+        },
+        {
+          title: "Average Possession Duration",
+          chart: "bar-chart",
+          data: chartData.possession.averagePossessionTime,
+        },
       ],
     };
 
@@ -206,9 +298,20 @@ function DataOverview({ replayData, player }: any) {
           />
         );
       case "stack-chart":
-        return <CustomStackChart key={title} title={title} data={data2} />;
+        return (
+          <CustomStackChart
+            key={title}
+            title={title}
+            data={data}
+            dataKeys={Object.keys(data[0]).slice(1)}
+          />
+        );
       case "pie-chart":
-        return <CustomPieChart key={title} title={title} data={data3} />;
+        return <CustomPieChart key={title} title={title} data={data} />;
+      case "pie-chart-v2":
+        return (
+          <CustomPieChart key={title} title={title} data={data} v2={true} />
+        );
     }
   };
 

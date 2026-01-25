@@ -2,8 +2,9 @@ import { PieChart, Pie, Tooltip, ResponsiveContainer, Cell } from "recharts";
 /* eslint-disable  @typescript-eslint/no-explicit-any */
 
 const pieChartColours = ["#f0de7aff", "#a59436ff", "#665a15ff"];
+const pieChartColours2 = ["#83dae9ff", "#f87171"];
 
-function CustomPieChart({ title, data }: any) {
+function CustomPieChart({ title, data, v2 }: any) {
   return (
     <div className="bar-chart-container">
       <h4 style={{ textAlign: "center", paddingBottom: "10px" }}>{title}</h4>
@@ -23,7 +24,10 @@ function CustomPieChart({ title, data }: any) {
             animationEasing="ease-out"
           >
             {data.map((entry: any, index: any) => (
-              <Cell key={entry.name} fill={pieChartColours[index]} />
+              <Cell
+                key={entry.name}
+                fill={v2 ? pieChartColours2[index] : pieChartColours[index]}
+              />
             ))}
           </Pie>
           <Tooltip
@@ -33,7 +37,7 @@ function CustomPieChart({ title, data }: any) {
               borderRadius: "6px",
             }}
             formatter={(value) =>
-              typeof value === "number" ? value.toFixed(1) + "%" : value
+              typeof value === "number" ? value.toFixed(1) : value
             }
             labelStyle={{ color: "#fff", fontFamily: "Arial, sans-serif" }}
             itemStyle={{ color: "#fff", fontFamily: "Arial, sans-serif" }}

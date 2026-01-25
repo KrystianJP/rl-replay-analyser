@@ -12,10 +12,8 @@ show full name on erroneous replay (since header still works) DONE
 
 find best way to display the charts (thinking 2 charts per line) DONE
 different tabs DONE
-send data through and calculate values
+send data through and calculate values DONE
 transition DONE
 wins vs losses switch (3.2)
 find way to pair player data with their id's
-
-fix undefined behaviour
-change string to number before adding
+calculate percentages
