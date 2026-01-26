@@ -139,6 +139,16 @@ function DataOverview({ replayData, player }: any) {
 
   const [chartData, setChartData] = useState<any>(null);
 
+  const isPlayer = (p: any, player: any) => {
+    if (player.online_id !== "0" && player.online_id !== "" && "id" in p) {
+      return player.online_id === p.id;
+    }
+    if (player.epic_id !== "0" && player.epic_id !== "" && "id" in p) {
+      return player.epic_id === p.id;
+    }
+    return player.name === p.player_name;
+  };
+
   useEffect(() => {
     if (!replayData || replayData.length === 0) return;
     const numReplays = replayData.length;
@@ -148,15 +158,13 @@ function DataOverview({ replayData, player }: any) {
     replayData.forEach((replayObject: any) => {
       const replay = replayObject.data.filter((p: any) => p.team);
 
-      const playerData = replay.find((p: any) => p.player_name === player.name);
+      const playerData = replay.find((p: any) => isPlayer(p, player));
 
       const teammates = replay.filter(
-        (p: any) => p.player_name !== player.name && p.team === playerData.team,
+        (p: any) => !isPlayer(p, player) && p.team === playerData.team,
       );
 
-      const opponents = replay.filter(
-        (p: any) => p.player_name !== player.name && p.team !== playerData.team,
-      );
+      const opponents = replay.filter((p: any) => p.team !== playerData.team);
 
       populateBoost(data, numReplays, playerData, teammates, opponents);
       populateMovement(data, numReplays, playerData, teammates, opponents);

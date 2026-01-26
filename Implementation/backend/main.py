@@ -16,6 +16,7 @@ import base64
 import io
 import anyio
 import asyncio
+from google.protobuf.json_format import MessageToDict
 
 app = FastAPI()
 
@@ -65,6 +66,7 @@ def process_replay(temp_file_path):
     all_players_data = []
     for player in proto.players:
         player_dict = {
+            "id": player.id.id,
             "player_name": player.name,
             "team": "Orange" if player.is_orange else "Blue",
             "score": player.score,
