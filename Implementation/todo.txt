@@ -16,7 +16,7 @@ send data through and calculate values DONE
 transition DONE
 wins vs losses switch (3.2)
 find way to pair player data with their id's DONE
-calculate percentages
+calculate percentages?
 example6 demos dont work, position relative to tm8 doesnt work example5
 
 

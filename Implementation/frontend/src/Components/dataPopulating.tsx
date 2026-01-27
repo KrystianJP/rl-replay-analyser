@@ -287,7 +287,6 @@ function populatePossession(
   teammates.forEach((tm8: any) => {
     playerTeamPossession += Number(tm8["possession_possession_time"]);
   });
-  console.log(playerTeamPossession);
   data.possession.teamPossession[0].value += playerTeamPossession / numReplays;
 
   let opponentTeamPossession = 0;

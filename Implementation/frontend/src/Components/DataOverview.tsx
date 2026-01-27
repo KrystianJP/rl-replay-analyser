@@ -138,6 +138,7 @@ function DataOverview({ replayData, player }: any) {
   >("boost");
 
   const [chartData, setChartData] = useState<any>(null);
+  const [demoCategory, setDemoCategory] = useState<boolean>(false);
 
   const isPlayer = (p: any, player: any) => {
     if (player.online_id !== "0" && player.online_id !== "" && "id" in p) {
@@ -171,6 +172,11 @@ function DataOverview({ replayData, player }: any) {
       populatePositioning(data, numReplays, playerData, teammates, opponents);
       populateDemos(data, numReplays, playerData, teammates, opponents);
       populatePossession(data, numReplays, playerData, teammates, opponents);
+
+      // if demo data exists, then show demo category
+      if (!isNaN(data.demos.demosInflicted[0]["Demos Inflicted"])) {
+        setDemoCategory(true);
+      }
     });
 
     // format height
@@ -279,7 +285,7 @@ function DataOverview({ replayData, player }: any) {
           data: chartData.possession.teamPossession,
         },
         {
-          title: "Total Possession Time",
+          title: "Total Possession Time (per player)",
           chart: "bar-chart",
           data: chartData.possession.possessionTime,
         },
@@ -295,6 +301,10 @@ function DataOverview({ replayData, player }: any) {
   }, [chartData, category]);
 
   const renderChart = (title: string, chart: string, data: any) => {
+    if (!Object.keys(data[0]).length) return null;
+    const valueKey = Object.keys(data[0]).find((k: string) => k !== "name");
+    if (!valueKey) return null;
+    if (isNaN(data[0][valueKey])) return null;
     switch (chart) {
       case "bar-chart":
         return (
@@ -351,6 +361,7 @@ function DataOverview({ replayData, player }: any) {
           </button>
           <button
             className={category === "demos" ? "active" : ""}
+            hidden={!demoCategory}
             onClick={() => setCategory("demos")}
           >
             Demos
