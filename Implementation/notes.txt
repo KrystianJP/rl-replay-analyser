@@ -18,3 +18,12 @@ header parsing and full parsing are done asynchronously as header parsing is sup
 (maybe mention map names)
 
 used separate file for populating the chart data and exported because Data Overview file got too bulky
+
+
+GETTING REPLAYS (test)
+filter last 10 replays for now by champ 3
+for each replay (min rank and max rank = desired rank)
+  get all players (add their id to existing list to avoid same players)
+  take last 10 of their replays
+  output average of their speed with their name for example
+

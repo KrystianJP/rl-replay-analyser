@@ -224,7 +224,7 @@ function DataOverview({ replayData, player }: any) {
       ],
       movement: [
         {
-          title: "Average Speed",
+          title: "Average Speed (% of Max)",
           chart: "bar-chart",
           data: chartData.movement.averageSpeed,
         },

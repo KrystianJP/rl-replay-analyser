@@ -46,6 +46,15 @@ function UploadPage({ setCurrentPage, setReplayData, setPlayer }: any) {
           }),
         );
       });
+      // filter out replays not in replay list
+      setReplayData((replayData: any) => {
+        return replayData.filter((replay: any) =>
+          replayList.some(
+            (replayObject: any) => replayObject.game_id === replay.id,
+          ),
+        );
+      });
+
       console.log("Changing page to analysis.");
       setCurrentPage("analysis");
     }
@@ -58,6 +67,7 @@ function UploadPage({ setCurrentPage, setReplayData, setPlayer }: any) {
     setReplayData,
     setCurrentPage,
     setPlayer,
+    replayList,
   ]);
 
   const updatePlayerDropdown = async (playersList: any[]) => {
@@ -159,6 +169,7 @@ function UploadPage({ setCurrentPage, setReplayData, setPlayer }: any) {
           ...prevErrors,
           "Error uploading " + name + " (remove and try different replay)",
         ]);
+        setReplayCounter((prev) => prev - 1);
       }
     } catch (error) {
       console.error("Error uploading file:", error);
@@ -166,6 +177,7 @@ function UploadPage({ setCurrentPage, setReplayData, setPlayer }: any) {
         ...prevErrors,
         "Error uploading " + name + " (remove and try different replay)",
       ]);
+      setReplayCounter((prev) => prev - 1);
     }
   };
 
@@ -257,7 +269,7 @@ function UploadPage({ setCurrentPage, setReplayData, setPlayer }: any) {
 
     // remove error messages related to this replay
     const updatedErrors = errorList.filter(
-      (error) => !error.includes(replayList[index].fileName),
+      (error) => !error.includes(replayList[index].name),
     );
     setErrorList(updatedErrors);
   };

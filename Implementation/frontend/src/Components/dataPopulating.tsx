@@ -112,8 +112,10 @@ function populateMovement(
   const numTeammates = teammates.length;
   const numOpponents = opponents.length;
 
-  for (const column of COLUMN_NAMES.movement) {
-    if (column.length > 3) {
+  const MAX_SPEED = 23000;
+
+  for (const [index, column] of COLUMN_NAMES.movement.entries()) {
+    if (index === 2) {
       // stacked bar chart (height)
       ((data.movement as any)[column[0]] as any)[0][column[1]] +=
         playerData[column[4]] / numReplays;
@@ -123,13 +125,19 @@ function populateMovement(
         playerData[column[6]] / numReplays;
       continue;
     }
+    if (index === 0) {
+      // average speed
+      ((data.movement as any)[column[0]] as any)[0][column[1]] +=
+        (playerData[column[2]] * 100) / numReplays / MAX_SPEED;
+      continue;
+    }
     ((data.movement as any)[column[0]] as any)[0][column[1]] +=
       playerData[column[2]] / numReplays;
   }
 
   teammates.forEach((tm8: any) => {
-    for (const column of COLUMN_NAMES.movement) {
-      if (column.length > 3) {
+    for (const [index, column] of COLUMN_NAMES.movement.entries()) {
+      if (index === 2) {
         // stacked bar chart (height)
         ((data.movement as any)[column[0]] as any)[1][column[1]] +=
           tm8[column[4]] / numTeammates / numReplays;
@@ -140,13 +148,20 @@ function populateMovement(
         continue;
       }
 
+      if (index === 0) {
+        // average speed
+        ((data.movement as any)[column[0]] as any)[1][column[1]] +=
+          (tm8[column[2]] * 100) / numTeammates / numReplays / MAX_SPEED;
+        continue;
+      }
+
       ((data.movement as any)[column[0]] as any)[1][column[1]] +=
         tm8[column[2]] / numTeammates / numReplays;
     }
   });
   opponents.forEach((opponent: any) => {
-    for (const column of COLUMN_NAMES.movement) {
-      if (column.length > 3) {
+    for (const [index, column] of COLUMN_NAMES.movement.entries()) {
+      if (index == 2) {
         // stacked bar chart (height)
         ((data.movement as any)[column[0]] as any)[2][column[1]] +=
           opponent[column[4]] / numOpponents / numReplays;
@@ -154,6 +169,13 @@ function populateMovement(
           opponent[column[5]] / numOpponents / numReplays;
         ((data.movement as any)[column[0]] as any)[2][column[3]] +=
           opponent[column[6]] / numOpponents / numReplays;
+        continue;
+      }
+
+      if (index === 0) {
+        // average speed
+        ((data.movement as any)[column[0]] as any)[2][column[1]] +=
+          (opponent[column[2]] * 100) / numOpponents / numReplays / MAX_SPEED;
         continue;
       }
 

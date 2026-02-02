@@ -7,17 +7,35 @@ handling erroneous replays (non-working and non .replay) DONE
 remove duplicate / .replay errors when clicking upload button DONE
 parsing progress DONE
 visible parsing meter DONE
-redo dropdown when deleting
+update dropdown when deleting ---------
 show full name on erroneous replay (since header still works) DONE
+deleting replay breaks data overview DONE ---- (started working randomly)
+handle case of clicking analyse while parsing erroneous replay ------
 
 find best way to display the charts (thinking 2 charts per line) DONE
 different tabs DONE
 send data through and calculate values DONE
 transition DONE
-wins vs losses switch (3.2)
+wins vs losses switch (3.2) ------------
 find way to pair player data with their id's DONE
-calculate percentages?
-example6 demos dont work, position relative to tm8 doesnt work example5
+example6 demos dont work, position relative to tm8 doesnt work example5 DONE
+get total length of match to get BPM and percentages / standardised data for next section ---------- (use time spent in each half added together)
+fix average speed DONE
+
+
+get data with BallChasing API
+make script to get player averages (approx 20 players per rank (start with few ranks))
+check if data needs transforming for accuracy
+manually label data
+train test model and test it
+get lots data
+calculate percentiles
+make labelling app
+train better model
+add in reasoning (feature significance)
+add advice and other playstyles
+add advice evidence
+
 
 
 TO TEST:
