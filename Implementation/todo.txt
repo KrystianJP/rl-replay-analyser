@@ -11,6 +11,7 @@ update dropdown when deleting ---------
 show full name on erroneous replay (since header still works) DONE
 deleting replay breaks data overview DONE ---- (started working randomly)
 handle case of clicking analyse while parsing erroneous replay ------
+ballchasing mode?? -> provide instructions and allow id's be to provided instead of files and use those ------------
 
 find best way to display the charts (thinking 2 charts per line) DONE
 different tabs DONE
@@ -23,8 +24,9 @@ get total length of match to get BPM and percentages / standardised data for nex
 fix average speed DONE
 
 
-get data with BallChasing API
-make script to get player averages (approx 20 players per rank (start with few ranks))
+get data with BallChasing API DONE
+make script to get player averages (approx 20 players per rank (start with few ranks)) DONE
+compare duration in ballchasing to carball for accurate standardising DONE (filtered out shorter than 5 min games and added on overtime to 5 minutes)
 check if data needs transforming for accuracy
 manually label data
 train test model and test it
@@ -41,3 +43,6 @@ add advice evidence
 TO TEST:
 all stats for different versions of replays
 if player is found properly with new id matching
+
+TO FIX:
+removing replays

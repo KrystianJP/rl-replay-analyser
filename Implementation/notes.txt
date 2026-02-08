@@ -15,10 +15,14 @@ saved in IndexedDB
 different header formats so use different ways to compare: onlineID -> EpicID -> name (since old replays dont have epic ids, specific to epic players which have unique names)
 
 header parsing and full parsing are done asynchronously as header parsing is super fast, while full parsing (using carball) takes multiple seconds, so it allows the replays to be listed immediately while the full parsing occurs in the background. full parsing is serial to each other to give a more accurate progress representation to the user, also it was found to be a about 15% faster than doing it fully asynchronously for some reason.
-(maybe mention map names)
+how this works:
+By not using async when defining the get_header function, FastAPI automatically places this task on a separate worker thread
+By using it on upload_replay, i start on the event loop, however, by using the anyio.to_thread..., i manually assign the task to run on a worker thread instead of the event loop, to allow the header threads to return their results to the event loop and therefore send their data to the frontend quickly
+This would've been done automatically by FastAPI if i excluded the async, however I wanted the uploads to be serial to each other, so I included an upload_lock, which forces each upload request to wait for their turn (this is why starting on the main event loop was required, so i can fully wait for each upload)
 
 used separate file for populating the chart data and exported because Data Overview file got too bulky
 
+some replays don't give certain statistics, in this case, ignore the replay for that specific statistic if possible (as a start, fill these values in with average stats for low effect)
 
 GETTING REPLAYS (test)
 filter last 10 replays for now by champ 3
@@ -27,3 +31,35 @@ for each replay (min rank and max rank = desired rank)
   take last 10 of their replays
   output average of their speed with their name for example
 
+ballchasing relevant stat names: (note percentages are used instead of time because game lengths can vary drastically) (!! means it needs to be divided by time manually)
+
+boost.bpm
+boost.amount_used_while_supersonic !!
+boost.count_collected_small !!
+boost.count_collected_big !!
+boost.percent_zero_boost
+boost.percent_boost_0_25 (check range on carball)
+boost.percent_full_boost
+
+movement.avg_speed
+movement.percent_supersonic_speed
+movement.percent_ground
+movement.percent_low_air
+movement.percent_high_air
+
+positioning.percent_most_back
+positioning.percent_most_forward
+positioning.percent_closest_to_ball
+positioning.percent_farthest_from ball
+positioning.percent_behind_ball
+positioning.percent_infront_ball
+positioning.percent_defensive_third
+positioning.percent_neutral_third
+positioning.percent_offensive_third
+
+demo.inflicted !!
+demo.taken !!
+boost.count_stolen_big !!
+NO POSSESSION STATS FROM BALLCHASING
+
+since no possession stats (and possibly no demo stats), combine the movement radar chart with the aggression radar chart
