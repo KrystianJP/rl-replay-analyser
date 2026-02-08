@@ -24,12 +24,14 @@ used separate file for populating the chart data and exported because Data Overv
 
 some replays don't give certain statistics, in this case, ignore the replay for that specific statistic if possible (as a start, fill these values in with average stats for low effect)
 
-GETTING REPLAYS (test)
-filter last 10 replays for now by champ 3
+GETTING REPLAYS
+filter last 10 replays for each rank group
 for each replay (min rank and max rank = desired rank)
   get all players (add their id to existing list to avoid same players)
-  take last 10 of their replays
-  output average of their speed with their name for example
+  take last 10-15 of their replays
+  filter out short games
+  output all relevant statistics
+save results in csv
 
 ballchasing relevant stat names: (note percentages are used instead of time because game lengths can vary drastically) (!! means it needs to be divided by time manually)
 

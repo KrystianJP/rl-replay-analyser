@@ -46,3 +46,8 @@ if player is found properly with new id matching
 
 TO FIX:
 removing replays
+
+AFTER BASIC VERSION OF EACH:
+fix low-priority issues
+add a ballchasing upload mode
+add wins vs losses feature
