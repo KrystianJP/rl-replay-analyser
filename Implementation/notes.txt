@@ -33,7 +33,14 @@ for each replay (min rank and max rank = desired rank)
   output all relevant statistics
 save results in csv
 
-ballchasing relevant stat names: (note percentages are used instead of time because game lengths can vary drastically) (!! means it needs to be divided by time manually)
+ballchasing relevant stat names: (note percentages are used instead of time because game lengths can vary drastically)
+!! = per minute
+
+core.shots !!
+core.goals -> goal to total goals (team) ratio (percentage of goals you scored)
+core.saves !!
+core.assists -> assist to total goal (team) ratio (percentage of goals that you assist)
+core.shooting_percentage
 
 boost.bpm
 boost.amount_used_while_supersonic !!
@@ -43,7 +50,7 @@ boost.percent_zero_boost
 boost.percent_boost_0_25 (check range on carball)
 boost.percent_full_boost
 
-movement.avg_speed
+movement.avg_speed_percentage
 movement.percent_supersonic_speed
 movement.percent_ground
 movement.percent_low_air
@@ -65,3 +72,4 @@ boost.count_stolen_big !!
 NO POSSESSION STATS FROM BALLCHASING
 
 since no possession stats (and possibly no demo stats), combine the movement radar chart with the aggression radar chart
+issue: ballchasing provides no possession, carry, near wall data, so Dribbler playstyle may have to be removed
