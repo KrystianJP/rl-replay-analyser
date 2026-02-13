@@ -73,3 +73,8 @@ NO POSSESSION STATS FROM BALLCHASING
 
 since no possession stats (and possibly no demo stats), combine the movement radar chart with the aggression radar chart
 issue: ballchasing provides no possession, carry, near wall data, so Dribbler playstyle may have to be removed
+
+equation for 3v3 number of requests when data collecting: (1 + (6 * count * (1 + per_player))) * no_ranks
+
+use prototype model to help label large data in labeller
+advice for enforcer if spending a lot of time in offensive 3rd but low boost stolen
