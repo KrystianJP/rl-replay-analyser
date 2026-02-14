@@ -6,7 +6,7 @@ from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import StandardScaler
 import numpy as np
 
-df = pd.read_csv("player_stats.csv")
+df = pd.read_csv("player_stats_prototype.csv")
 
 X = df.drop(columns=["playstyle", "rank", "player_id", "player_name"])
 y = df["playstyle"]

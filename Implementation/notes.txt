@@ -80,7 +80,7 @@ use prototype model to help label large data in labeller
 advice for enforcer if spending a lot of time in offensive 3rd but low boost stolen
 
 
-results from prototype cross-validation of logistic regression:
+results from prototype cross-validation of logistic regression and random forest classifier:
 
 Logistic Regression Results
 mean: 0.68
