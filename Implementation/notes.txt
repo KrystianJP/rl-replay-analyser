@@ -78,3 +78,101 @@ equation for 3v3 number of requests when data collecting: (1 + (6 * count * (1 +
 
 use prototype model to help label large data in labeller
 advice for enforcer if spending a lot of time in offensive 3rd but low boost stolen
+
+
+results from prototype cross-validation of logistic regression:
+
+Logistic Regression Results
+mean: 0.68
+std: 0.10945394140576303
+-------------------
+Random Forest Results
+mean: 0.6054545454545455
+std: 0.10018165319240663
+-------------------
+
+=== ball_chaser ===
+Top positive features:
+  positioning_percent_closest_to_ball: 0.938
+  positioning_percent_offensive_third: 0.456
+  rank-no: 0.454
+  positioning_percent_most_forward: 0.290
+  positioning_percent_between_players: 0.250
+Top negative features:
+  positioning_percent_farthest_from_ball: -0.939
+  positioning_percent_most_back: -0.402
+  boost_bpm: -0.369
+  core_shooting_percentage: -0.244
+  core_goals: -0.235
+
+=== defender ===
+Top positive features:
+  positioning_percent_most_back: 0.642
+  positioning_percent_defensive_third: 0.564
+  core_saves: 0.528
+  positioning_percent_farthest_from_ball: 0.234
+  movement_percent_supersonic_speed: 0.225
+Top negative features:
+  core_shots: -0.522
+  positioning_percent_offensive_third: -0.502
+  boost_count_stolen_big: -0.501
+  core_goals: -0.467
+  positioning_percent_most_forward: -0.445
+
+=== enforcer ===
+Top positive features:
+  demo_inflicted: 1.204
+  positioning_percent_most_forward: 0.791
+  boost_bpm: 0.371
+  core_shooting_percentage: 0.308
+  core_shots: 0.289
+Top negative features:
+  positioning_percent_most_back: -0.479
+  rank-no: -0.428
+  boost_count_stolen_big: -0.361
+  positioning_percent_defensive_third: -0.323
+  positioning_percent_behind_ball: -0.266
+
+=== freestyler ===
+Top positive features:
+  movement_percent_high_air: 1.036
+  boost_count_stolen_big: 0.816
+  core_goals: 0.599
+  core_shooting_percentage: 0.390
+  positioning_percent_offensive_third: 0.221
+Top negative features:
+  rank-no: -0.992
+  demo_inflicted: -0.599
+  core_shots: -0.557
+  positioning_percent_defensive_third: -0.475
+  positioning_percent_most_forward: -0.159
+
+=== playmaker ===
+Top positive features:
+  core_assists: 1.138
+  positioning_percent_farthest_from_ball: 0.521
+  rank-no: 0.429
+  positioning_percent_between_players: 0.400
+  positioning_percent_infront_ball: 0.214
+Top negative features:
+  positioning_percent_closest_to_ball: -0.538
+  boost_bpm: -0.452
+  core_shooting_percentage: -0.410
+  core_goals: -0.360
+  core_saves: -0.298
+
+=== striker ===
+Top positive features:
+  core_shots: 0.770
+  rank-no: 0.602
+  core_goals: 0.455
+  boost_bpm: 0.394
+  positioning_percent_defensive_third: 0.353
+Top negative features:
+  movement_percent_high_air: -0.786
+  core_assists: -0.753
+  movement_percent_supersonic_speed: -0.541
+  demo_inflicted: -0.380
+  positioning_percent_closest_to_ball: -0.330
+
+indicates that the features are working (there is signal), this should be a valid model with large sample (random would be 0.167)
