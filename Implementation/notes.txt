@@ -176,3 +176,5 @@ Top negative features:
   positioning_percent_closest_to_ball: -0.330
 
 indicates that the features are working (there is signal), this should be a valid model with large sample (random would be 0.167)
+
+document labeller, also includes prototype prediction as a guide

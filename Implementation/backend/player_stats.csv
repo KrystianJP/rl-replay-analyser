@@ -1,7 +1,7 @@
 rank,rank-no,player_id,core_shots,core_goals,core_saves,core_assists,core_shooting_percentage,boost_bpm,boost_count_stolen_big,movement_avg_speed_percentage,movement_percent_supersonic_speed,movement_percent_high_air,positioning_percent_most_back,positioning_percent_between_players,positioning_percent_most_forward,positioning_percent_closest_to_ball,positioning_percent_farthest_from_ball,positioning_percent_behind_ball,positioning_percent_infront_ball,positioning_percent_defensive_third,positioning_percent_offensive_third,demo_inflicted,playstyle
 supersonic-legend,22,76561198271524740,0.618,23.333,0.344,28.333,21.999,356.4,0.579,64.691,14.672,8.033,34.606,31.232,34.162,31.889,38.086,74.061,25.938,42.876,24.212,0.057,freestyler
-supersonic-legend,22,76561198076736523,0.739,31.481,0.26,35.185,21.666,425.3,0.7,69.956,18.583,8.126,32.437,31.466,36.097,36.947,29.935,71.293,28.706,44.052,23.735,0.14,
-supersonic-legend,22,76561198162286169,0.534,27.0,0.234,42.666,18.333,397.1,0.614,67.16,16.219,7.116,37.884,31.999,30.117,33.829,33.01,74.734,25.265,50.78,17.719,0.294,
+supersonic-legend,22,76561198076736523,0.739,31.481,0.26,35.185,21.666,425.3,0.7,69.956,18.583,8.126,32.437,31.466,36.097,36.947,29.935,71.293,28.706,44.052,23.735,0.14,freestyler
+supersonic-legend,22,76561198162286169,0.534,27.0,0.234,42.666,18.333,397.1,0.614,67.16,16.219,7.116,37.884,31.999,30.117,33.829,33.01,74.734,25.265,50.78,17.719,0.294,playmaker
 supersonic-legend,22,76561199022253180,0.514,27.777,0.263,16.666,22.499,471.5,1.018,67.695,15.149,6.459,30.287,32.902,36.811,33.268,32.203,67.487,32.512,42.696,23.745,0.15,
 supersonic-legend,22,76561198887002043,0.56,35.833,0.2,35.0,23.19,448.4,0.859,67.865,19.033,6.943,32.779,33.708,33.513,35.445,30.987,71.829,28.17,44.601,22.506,0.12,
 supersonic-legend,22,cf78e7f3566c440192a2b2dd4d957cdb,0.38,22.222,0.387,37.962,25.357,461.1,0.61,69.573,18.753,5.952,40.698,33.007,26.295,28.788,38.068,75.973,24.026,49.851,17.428,0.324,

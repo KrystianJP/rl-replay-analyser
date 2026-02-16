@@ -80,6 +80,24 @@ function Labeller() {
     return <div>Loading...</div>;
   }
 
+  function percentileColor(percentile: number) {
+    if (percentile <= 50) {
+      // red → gray
+      const ratio = percentile / 50;
+      const r = Math.round(239 + (107 - 239) * ratio);
+      const g = Math.round(68 + (114 - 68) * ratio);
+      const b = Math.round(68 + (128 - 68) * ratio);
+      return `rgb(${r}, ${g}, ${b})`;
+    } else {
+      // gray → green
+      const ratio = (percentile - 50) / 50;
+      const r = Math.round(107 + (34 - 107) * ratio);
+      const g = Math.round(114 + (197 - 114) * ratio);
+      const b = Math.round(128 + (94 - 128) * ratio);
+      return `rgb(${r}, ${g}, ${b})`;
+    }
+  }
+
   return (
     <div className="labeller">
       <div className="rank">{players[currentPlayer].rank}</div>
@@ -114,10 +132,17 @@ function Labeller() {
                 %
               </div>
               <div className="percentile-bar">
-                <progress
-                  value={players[currentPlayer][key + "_percentile"]}
-                  max={100}
-                ></progress>
+                <div className="percentile-bar-wrapper">
+                  <div
+                    className="percentile-bar"
+                    style={{
+                      width: `${players[currentPlayer][key + "_percentile"] as number}%`,
+                      backgroundColor: percentileColor(
+                        players[currentPlayer][key + "_percentile"] as number,
+                      ),
+                    }}
+                  />
+                </div>
               </div>
             </div>
           ))}

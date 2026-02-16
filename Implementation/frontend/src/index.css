@@ -435,3 +435,15 @@ section#comparison .container {
   width: 200px;
   cursor: pointer;
 }
+
+.labeller .percentile-bar-wrapper {
+  height: 12px;
+  background-color: #222;
+  border-radius: 6px;
+  margin: 6px 0;
+}
+
+.labeller .percentile-bar {
+  height: 100%;
+  border-radius: 6px 0 0 6px;
+}
