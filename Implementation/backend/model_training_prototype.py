@@ -5,12 +5,12 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import StandardScaler
 import numpy as np
+import joblib
 
 df = pd.read_csv("player_stats_prototype.csv")
 
 X = df.drop(columns=["playstyle", "rank", "player_id", "player_name"])
 y = df["playstyle"]
-
 
 model = make_pipeline(
     StandardScaler(),
@@ -45,6 +45,8 @@ print(scores2.std())
 print("-------------------")
 
 model.fit(X, y)
+joblib.dump(model, "model_prototype.joblib")
+
 feature_names = X.columns
 logreg = model.named_steps["logisticregression"]
 coefs = logreg.coef_

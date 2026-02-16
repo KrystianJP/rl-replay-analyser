@@ -385,3 +385,53 @@ section#comparison .container {
   isolation: isolate;
   transform: translateZ(0);
 }
+
+.labeller {
+  background-color: var(--bg-main);
+  color: #fff;
+}
+.labeller .rank {
+  font-size: 2rem;
+  text-align: center;
+}
+.labeller .prototype-prediction {
+  text-align: center;
+  margin-bottom: 2rem;
+  opacity: 0.8;
+}
+.labeller .stats-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.8rem;
+  margin-top: 1rem;
+  padding-left: 15%;
+  padding-right: 15%;
+}
+
+.labeller .stats-container .stat {
+  text-align: center;
+  font-weight: bold;
+  font-size: 1.2rem;
+  color: #fff;
+  padding: 0.5rem;
+  border-radius: 15px;
+  border: 3px solid #fff;
+  width: 300px;
+}
+.labeller .playstyles-container {
+  margin-top: 3rem;
+  display: flex;
+  gap: 1.5rem;
+  justify-content: center;
+}
+.labeller .playstyle {
+  text-align: center;
+  font-weight: bold;
+  font-size: 1.2rem;
+  color: #fff;
+  padding: 0.5rem;
+  border-radius: 10px;
+  border: 3px solid #fff;
+  width: 200px;
+  cursor: pointer;
+}

@@ -17,6 +17,7 @@ import io
 import anyio
 import asyncio
 from google.protobuf.json_format import MessageToDict
+import joblib
 
 app = FastAPI()
 
@@ -176,3 +177,40 @@ def get_header(file: UploadFile = File(...)):
 
         except Exception as e:
             raise HTTPException(status_code=500, detail=f"Failed to get header: {e}")
+
+@app.get("/api/stats_csv")
+def get_stats_csv():
+    df = pd.read_csv("player_stats.csv")
+    df_copy = df.copy()
+
+    cols_to_calc = df.drop(columns=["rank", "rank-no", "player_id","playstyle"])
+    for i, row in df.iterrows():
+        rank = row["rank-no"]
+
+        group_cond = df["rank-no"].isin([rank-1, rank, rank+1])
+        group_subset = df[group_cond]
+
+        for col in cols_to_calc:
+            percentile = (group_subset[col] <= row[col]).mean() * 100
+            df.at[i, f"{col}_percentile"] = percentile
+
+
+    df = df[df["playstyle"].isna()]
+    df_copy = df_copy[df_copy["playstyle"].isna()]
+    df = df.fillna(0)
+    df_copy = df_copy.fillna(0)
+
+    prototype = joblib.load("model_prototype.joblib")
+    df["prototype-prediction"] = prototype.predict(df_copy.drop(columns=["rank", "player_id", "playstyle"]))
+
+    return df.to_dict(orient="records")
+
+@app.post("/api/label_player/{player_id}")
+def label_player(player_id: str, label: str):
+    df = pd.read_csv("player_stats.csv")
+
+    df.loc[df["player_id"] == player_id, "playstyle"] = label
+
+    df.to_csv("player_stats.csv", index=False)
+
+    return {"status": "success"}
