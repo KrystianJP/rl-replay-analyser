@@ -178,3 +178,12 @@ Top negative features:
 indicates that the features are working (there is signal), this should be a valid model with large sample (random would be 0.167)
 
 document labeller, also includes prototype prediction as a guide
+
+radar chart core: shots/min, goals%, saves/min, assists%, shooting%
+radar chart boost: bpm, wasted usage, small pads collected, big pads stolen/min, large pads collected, % no boost, % low boost, % full boost
+radar chart movement/aggression: average speed, % supersonic speed, % on ground, % low in air, % high in air, demos taken/min, demos inflicted/min 
+radar chart positioning: % most back, % most forward, % closest to ball, % furthest from ball, % behind ball, % ahead of ball, % defending third, % attacking third
+(maybe do gradient colour like percentiles but for each vertex name)
+(maybe implement grid view (labeller view but for rank comparison))
+(values to show radius on chart will be percentiles in comparison to EVERY rank)
+(percentage values should just be themselves)

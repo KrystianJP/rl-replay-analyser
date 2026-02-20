@@ -8,7 +8,7 @@ load_dotenv()
 
 URL = "https://ballchasing.com/api/replays/"
 TOKEN = os.getenv("BALLCHASING_TOKEN")
-output_file = "player_stats.csv"
+output_file = "temp.csv"
 
 RANK_TO_INT = {
     "bronze-1": 1,
@@ -204,10 +204,8 @@ ranks = ["silver-1"]
 
 start = time.time()
 
-for rank in ranks:
-    result = test_script(rank=rank, count=30, each_player_count=10)
-
-
+# for rank in ranks:
+#     result = test_script(rank=rank, count=30, each_player_count=10)
 
 print(f"Time taken: {time.time() - start}")
 

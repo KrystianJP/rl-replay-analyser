@@ -26,17 +26,25 @@ fix average speed DONE
 
 get data with BallChasing API DONE
 make script to get player averages (approx 20 players per rank (start with few ranks)) DONE
-compare duration in ballchasing to carball for accurate standardising DONE (filtered out shorter than 5 min games and added on overtime to 5 minutes)
+compare duration in ballchasing to carball for accurate standardising (filtered out shorter than 5 min games and added on overtime to 5 minutes) DONE
 check if data needs transforming for accuracy
-manually label data
-train test model and test it
-get lots data
-calculate percentiles
-make labelling app
+manually label data DONE
+train test model and test it DONE
+get lots data DONE
+calculate percentiles DONE
+make labelling app DONE
 train better model
 add in reasoning (feature significance)
 add advice and other playstyles
 add advice evidence
+
+
+make each radar chart with example data DONE
+populate each radar chart with user data
+populate each radar chart with rank average data
+make different rank filtering work
+have coloured axes
+make grid view
 
 
 

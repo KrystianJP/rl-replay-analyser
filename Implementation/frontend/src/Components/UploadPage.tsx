@@ -6,7 +6,12 @@ import Papa from "papaparse";
 
 const dropdownMutex = new Mutex();
 
-function UploadPage({ setCurrentPage, setReplayData, setPlayer }: any) {
+function UploadPage({
+  setCurrentPage,
+  setReplayData,
+  setPlayer,
+  setRank,
+}: any) {
   const [replayList, setReplayList] = useState<any[]>([]);
   const [playersDropdown, setPlayersDropdown] = useState<any[]>([]);
   const [errorList, setErrorList] = useState<string[]>([]);
@@ -21,6 +26,7 @@ function UploadPage({ setCurrentPage, setReplayData, setPlayer }: any) {
       // filter out all the replays without the player
       const player = playersDropdown[selectedPlayer - 1];
       setPlayer(player);
+      setRank(selectedRank);
       setReplayData((replayData: any) => {
         return replayData.filter((replay: any) =>
           replay.players.some((replayPlayer: any) => {
@@ -68,6 +74,8 @@ function UploadPage({ setCurrentPage, setReplayData, setPlayer }: any) {
     setCurrentPage,
     setPlayer,
     replayList,
+    selectedRank,
+    setRank,
   ]);
 
   const updatePlayerDropdown = async (playersList: any[]) => {
@@ -376,35 +384,32 @@ function UploadPage({ setCurrentPage, setReplayData, setPlayer }: any) {
               }}
             >
               <option value="">-- Choose Your Rank --</option>
-              <option value="bronze1">Bronze I</option>
-              <option value="bronze2">Bronze II</option>
-              <option value="bronze3">Bronze III</option>
 
-              <option value="silver1">Silver I</option>
-              <option value="silver2">Silver II</option>
-              <option value="silver3">Silver III</option>
+              <option value="silver-1">Silver I</option>
+              <option value="silver-2">Silver II</option>
+              <option value="silver-3">Silver III</option>
 
-              <option value="gold1">Gold I</option>
-              <option value="gold2">Gold II</option>
-              <option value="gold3">Gold III</option>
+              <option value="gold-1">Gold I</option>
+              <option value="gold-2">Gold II</option>
+              <option value="gold-3">Gold III</option>
 
-              <option value="plat1">Platinum I</option>
-              <option value="plat2">Platinum II</option>
-              <option value="plat3">Platinum III</option>
+              <option value="platinum-1">Platinum I</option>
+              <option value="platinum-2">Platinum II</option>
+              <option value="platinum-3">Platinum III</option>
 
-              <option value="diamond1">Diamond I</option>
-              <option value="diamond2">Diamond II</option>
-              <option value="diamond3">Diamond III</option>
+              <option value="diamond-1">Diamond I</option>
+              <option value="diamond-2">Diamond II</option>
+              <option value="diamond-3">Diamond III</option>
 
-              <option value="champ1">Champion I</option>
-              <option value="champ2">Champion II</option>
-              <option value="champ3">Champion III</option>
+              <option value="champion-1">Champion I</option>
+              <option value="champion-2">Champion II</option>
+              <option value="champion-3">Champion III</option>
 
-              <option value="gc1">Grand Champ I</option>
-              <option value="gc2">Grand Champ II</option>
-              <option value="gc3">Grand Champ III</option>
+              <option value="grand-champion-1">Grand Champ I</option>
+              <option value="grand-champion-2">Grand Champ II</option>
+              <option value="grand-champion-3">Grand Champ III</option>
 
-              <option value="ssl">Supersonic Legend</option>
+              <option value="supersonic-legend">Supersonic Legend</option>
             </select>
           </div>
           <div className="rank-selection" hidden={!replayList.length}>

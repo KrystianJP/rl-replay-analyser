@@ -10,6 +10,7 @@ function MainContent() {
   );
   const [replayData, setReplayData] = useState<any>([]);
   const [player, setPlayer] = useState<any>({});
+  const [rank, setRank] = useState<string>("");
 
   return (
     <main className="main-content">
@@ -18,9 +19,10 @@ function MainContent() {
           setCurrentPage={setCurrentPage}
           setReplayData={setReplayData}
           setPlayer={setPlayer}
+          setRank={setRank}
         />
       ) : (
-        <AnalysisPage replayData={replayData} player={player} />
+        <AnalysisPage replayData={replayData} player={player} rank={rank} />
       )}
     </main>
   );

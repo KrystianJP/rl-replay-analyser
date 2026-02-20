@@ -210,7 +210,7 @@ section#upload h2 {
 
 .spider-charts {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  grid-template-columns: repeat(2, minmax(300px, 1fr));
   gap: 1.5rem;
   justify-content: center;
 }
@@ -446,4 +446,12 @@ section#comparison .container {
 .labeller .percentile-bar {
   height: 100%;
   border-radius: 6px 0 0 6px;
+}
+
+.spider-chart-container {
+  padding: 0px;
+}
+
+.outliers-container {
+  padding-top: 2rem;
 }
