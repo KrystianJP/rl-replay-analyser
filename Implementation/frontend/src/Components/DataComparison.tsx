@@ -133,7 +133,7 @@ const dataMovement = [
     You_Original: 0,
     RankAverage: 0,
     RankAverage_Original: 0,
-    unit: "",
+    unit: "%",
   },
   {
     category: "% Supersonic Speed",
@@ -273,9 +273,9 @@ function DataComparison({ rank, replayData, player }: any) {
       data: any,
     ) => {
       data.core[0].You_Original += playerData["shots"] / duration / numReplays;
-      data.core[1].You_Original += playerData["goals"];
+      data.core[1].You_Original += Number(playerData["goals"]);
       data.core[2].You_Original += playerData["saves"] / duration / numReplays;
-      data.core[3].You_Original += playerData["assists"];
+      data.core[3].You_Original += Number(playerData["assists"]);
       data.core[4].You_Original +=
         ((playerData["goals"] /
           (playerData["shots"] > 0 ? playerData["shots"] : 1)) *
@@ -301,7 +301,7 @@ function DataComparison({ rank, replayData, player }: any) {
         100;
 
       data.movement[0].You_Original +=
-        playerData["averages_average_speed"] / numReplays;
+        playerData["averages_average_speed"] / numReplays / 230; // 230 = max speed/100
       data.movement[1].You_Original +=
         (playerData["speed_time_at_super_sonic"] /
           (duration * 60) /
@@ -438,7 +438,7 @@ function DataComparison({ rank, replayData, player }: any) {
       }
     };
 
-    const fetchReplayData = async (rank: string, radarData: any) => {
+    const fetchRankAverageData = async (rank: string, radarData: any) => {
       try {
         const response = await fetch(
           "http://127.0.0.1:8000/api/rank_average/" + rank,
@@ -449,6 +449,33 @@ function DataComparison({ rank, replayData, player }: any) {
 
         const data = await response.json();
         populateRankAverageBoth(radarData, data);
+      } catch (error) {
+        console.error("Error fetching stats:", error);
+      }
+    };
+
+    const fetchUserPercentiles = async (radarData: any) => {
+      try {
+        const response = await fetch(
+          "http://127.0.0.1:8000/api/user_percentiles",
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(radarData),
+          },
+        );
+        if (!response.ok) {
+          throw new Error("Network response not ok");
+        }
+
+        const percentiles = await response.json();
+
+        const categories = ["core", "boost", "movement", "positioning"];
+        categories.forEach((category: string) => {
+          for (let i = 0; i < percentiles[category].length; i++) {
+            radarData[category][i].You = percentiles[category][i];
+          }
+        });
       } catch (error) {
         console.error("Error fetching stats:", error);
       }
@@ -467,7 +494,7 @@ function DataComparison({ rank, replayData, player }: any) {
       };
 
       // populating rank average
-      await fetchReplayData(rank, radarData);
+      await fetchRankAverageData(rank, radarData);
 
       // populating user's data
       replayData.forEach((replayObject: any) => {
@@ -486,13 +513,18 @@ function DataComparison({ rank, replayData, player }: any) {
         // add user's team goals per replay to divide at end
         totalGoals += replay
           .filter((p: any) => p.team === playerData.team)
-          .reduce((a: number, b: any) => a + b.goals, 0);
+          .reduce((a: number, b: any) => a + Number(b.goals), 0);
 
         populateYou_Original(numReplays, playerData, duration, radarData);
       });
 
-      radarData.core[1].You_Original /= totalGoals > 0 ? totalGoals : 1;
-      radarData.core[3].You_Original /= totalGoals > 0 ? totalGoals : 1;
+      radarData.core[1].You_Original =
+        (radarData.core[1].You_Original * 100) / totalGoals;
+      radarData.core[3].You_Original =
+        (radarData.core[3].You_Original * 100) / totalGoals;
+
+      // populating user's percentiles
+      await fetchUserPercentiles(radarData);
 
       setChartData(radarData);
     };

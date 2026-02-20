@@ -186,5 +186,3 @@ radar chart positioning: % most back, % most forward, % closest to ball, % furth
 (maybe do gradient colour like percentiles but for each vertex name)
 (maybe implement grid view (labeller view but for rank comparison))
 (values to show radius on chart will be percentiles in comparison to EVERY rank)
-
-change average speed to percentage carball !!!!!!!!!!!!!!

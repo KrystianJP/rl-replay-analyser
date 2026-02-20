@@ -1,4 +1,4 @@
-from fastapi import FastAPI, UploadFile, File, HTTPException
+from fastapi import FastAPI, UploadFile, File, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 import carball
 import pandas as pd
@@ -17,6 +17,8 @@ import anyio
 import asyncio
 from google.protobuf.json_format import MessageToDict
 import joblib
+from pydantic import BaseModel
+from typing import List
 
 app = FastAPI()
 
@@ -26,6 +28,16 @@ origins = [
 ]
 
 RRROCKET_PATH = "./rrrocket.exe"
+
+class StatItem(BaseModel):
+    category: str
+    You_Original: float
+
+class RadarData(BaseModel):
+    core: List[StatItem]
+    boost: List[StatItem]
+    movement: List[StatItem]
+    positioning: List[StatItem]
 
 upload_lock = asyncio.Lock()
 
@@ -231,5 +243,75 @@ def get_rank_average(rank: str):
 
     return result
 
+@app.post("/api/user_percentiles")
+async def get_user_percentiles(radar: RadarData):
 
+    df = pd.read_csv("player_stats_3v3_original.csv")
 
+    result = {
+        "core": [],
+        "boost": [],
+        "movement": [],
+        "positioning": [],
+    }
+
+    # CORE
+    core_columns = [
+        "core_shots",
+        "core_goals",
+        "core_saves",
+        "core_assists",
+        "core_shooting_percentage",
+    ]
+
+    for item, col in zip(radar.core, core_columns):
+        percentile = (df[col] <= item.You_Original).mean() * 100
+        result["core"].append(percentile)
+
+    #  BOOST 
+    boost_columns = [
+        "boost_bpm",
+        "boost_count_collected_small",
+        "boost_count_collected_big",
+        "boost_count_stolen_big",
+        "boost_percent_zero_boost",
+        "boost_percent_boost_0_25",
+        "boost_percent_full_boost",
+      ]
+
+    for item, col in zip(radar.boost, boost_columns):
+        percentile = (df[col] <= item.You_Original).mean() * 100
+        result["boost"].append(percentile)
+
+    # MOVEMENT 
+    movement_columns = [
+        "movement_avg_speed_percentage",
+        "movement_percent_supersonic_speed",
+        "movement_percent_ground",
+        "movement_percent_low_air",
+        "movement_percent_high_air",
+        "demo_taken",
+        "demo_inflicted",
+      ]
+
+    for item, col in zip(radar.movement, movement_columns):
+        percentile = (df[col] <= item.You_Original).mean() * 100
+        result["movement"].append(percentile)
+
+    # POSITIONING 
+    positioning_columns = [
+        "positioning_percent_most_back",
+        "positioning_percent_most_forward",
+        "positioning_percent_closest_to_ball",
+        "positioning_percent_farthest_from_ball",
+        "positioning_percent_behind_ball",
+        "positioning_percent_infront_ball",
+        "positioning_percent_defensive_third",
+        "positioning_percent_offensive_third",
+      ]
+
+    for item, col in zip(radar.positioning, positioning_columns):
+        percentile = (df[col] <= item.You_Original).mean() * 100
+        result["positioning"].append(percentile)
+
+    return result
