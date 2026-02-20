@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import CustomRadarChart from "./CustomRadarChart";
 /* eslint-disable  @typescript-eslint/no-explicit-any */
 
@@ -128,7 +128,7 @@ const dataBoost = [
 
 const dataMovement = [
   {
-    category: "Average Speed",
+    category: "Average Speed %",
     You: 0,
     You_Original: 0,
     RankAverage: 0,
@@ -253,6 +253,8 @@ const dataPositioning = [
 ];
 
 function DataComparison({ rank, replayData, player }: any) {
+  const [chartData, setChartData] = useState<any>(null);
+
   useEffect(() => {
     const isPlayer = (p: any, player: any) => {
       if (player.online_id !== "0" && player.online_id !== "" && "id" in p) {
@@ -367,39 +369,137 @@ function DataComparison({ rank, replayData, player }: any) {
         100;
     };
 
-    if (!replayData || replayData.length === 0) return;
-    const numReplays = replayData.length;
-    let totalGoals = 0;
+    const populateRankAverageBoth = (radarData: any, averageData: any) => {
+      const coreStats = [
+        "core_shots",
+        "core_goals",
+        "core_saves",
+        "core_assists",
+        "core_shooting_percentage",
+      ];
 
-    const data = {
-      core: JSON.parse(JSON.stringify(dataCore)),
-      boost: JSON.parse(JSON.stringify(dataBoost)),
-      movement: JSON.parse(JSON.stringify(dataMovement)),
-      positioning: JSON.parse(JSON.stringify(dataPositioning)),
+      for (let i = 0; i < coreStats.length; i++) {
+        radarData.core[i].RankAverage +=
+          averageData[coreStats[i] + "_percentile"];
+        radarData.core[i].RankAverage_Original +=
+          averageData[coreStats[i] + "_avg"];
+      }
+
+      const boostStats = [
+        "boost_bpm",
+        "boost_count_collected_small",
+        "boost_count_collected_big",
+        "boost_count_stolen_big",
+        "boost_percent_zero_boost",
+        "boost_percent_boost_0_25",
+        "boost_percent_full_boost",
+      ];
+
+      for (let i = 0; i < boostStats.length; i++) {
+        radarData.boost[i].RankAverage +=
+          averageData[boostStats[i] + "_percentile"];
+        radarData.boost[i].RankAverage_Original +=
+          averageData[boostStats[i] + "_avg"];
+      }
+
+      const movementStats = [
+        "movement_avg_speed_percentage",
+        "movement_percent_supersonic_speed",
+        "movement_percent_ground",
+        "movement_percent_low_air",
+        "movement_percent_high_air",
+        "demo_taken",
+        "demo_inflicted",
+      ];
+
+      for (let i = 0; i < movementStats.length; i++) {
+        radarData.movement[i].RankAverage +=
+          averageData[movementStats[i] + "_percentile"];
+        radarData.movement[i].RankAverage_Original +=
+          averageData[movementStats[i] + "_avg"];
+      }
+
+      const positioningStats = [
+        "positioning_percent_most_back",
+        "positioning_percent_most_forward",
+        "positioning_percent_closest_to_ball",
+        "positioning_percent_farthest_from_ball",
+        "positioning_percent_behind_ball",
+        "positioning_percent_infront_ball",
+        "positioning_percent_defensive_third",
+        "positioning_percent_offensive_third",
+      ];
+
+      for (let i = 0; i < positioningStats.length; i++) {
+        radarData.positioning[i].RankAverage +=
+          averageData[positioningStats[i] + "_percentile"];
+        radarData.positioning[i].RankAverage_Original +=
+          averageData[positioningStats[i] + "_avg"];
+      }
     };
 
-    replayData.forEach((replayObject: any) => {
-      const replay = replayObject.data.filter((p: any) => p.team);
+    const fetchReplayData = async (rank: string, radarData: any) => {
+      try {
+        const response = await fetch(
+          "http://127.0.0.1:8000/api/rank_average/" + rank,
+        );
+        if (!response.ok) {
+          throw new Error("Network response not ok");
+        }
 
-      const playerData = replay.find((p: any) => isPlayer(p, player));
+        const data = await response.json();
+        populateRankAverageBoth(radarData, data);
+      } catch (error) {
+        console.error("Error fetching stats:", error);
+      }
+    };
 
-      // in mins
-      const duration =
-        (playerData["positional_tendencies_time_in_attacking_half"] +
-          playerData["positional_tendencies_time_in_defending_half"]) /
-        60;
+    const run = async () => {
+      if (!replayData || replayData.length === 0) return;
+      const numReplays = replayData.length;
+      let totalGoals = 0;
 
-      // add user's team goals per replay to divide at end
-      totalGoals += replay
-        .filter((p: any) => p.team === playerData.team)
-        .reduce((a: number, b: any) => a + b.goals, 0);
+      const radarData = {
+        core: JSON.parse(JSON.stringify(dataCore)),
+        boost: JSON.parse(JSON.stringify(dataBoost)),
+        movement: JSON.parse(JSON.stringify(dataMovement)),
+        positioning: JSON.parse(JSON.stringify(dataPositioning)),
+      };
 
-      populateYou_Original(numReplays, playerData, duration, data);
-    });
+      // populating rank average
+      await fetchReplayData(rank, radarData);
 
-    dataCore[1].You_Original /= totalGoals > 0 ? totalGoals : 1;
-    dataCore[3].You_Original /= totalGoals > 0 ? totalGoals : 1;
+      // populating user's data
+      replayData.forEach((replayObject: any) => {
+        const replay = replayObject.data.filter((p: any) => p.team);
+
+        const playerData = replay.find((p: any) => isPlayer(p, player));
+
+        // in mins
+        const duration =
+          (Number(playerData["positional_tendencies_time_in_attacking_half"]) +
+            Number(
+              playerData["positional_tendencies_time_in_defending_half"],
+            )) /
+          60;
+
+        // add user's team goals per replay to divide at end
+        totalGoals += replay
+          .filter((p: any) => p.team === playerData.team)
+          .reduce((a: number, b: any) => a + b.goals, 0);
+
+        populateYou_Original(numReplays, playerData, duration, radarData);
+      });
+
+      radarData.core[1].You_Original /= totalGoals > 0 ? totalGoals : 1;
+      radarData.core[3].You_Original /= totalGoals > 0 ? totalGoals : 1;
+
+      setChartData(radarData);
+    };
+    run();
   }, [replayData, player, rank]);
+
+  if (!chartData) return null;
 
   return (
     <section className="section alt" id="comparison">
@@ -412,10 +512,10 @@ function DataComparison({ rank, replayData, player }: any) {
           <u>{RANK_CODE_TO_NAME[rank as keyof typeof RANK_CODE_TO_NAME]}</u>
         </h3>
         <div className="spider-charts">
-          <CustomRadarChart data={dataCore} />
-          <CustomRadarChart data={dataBoost} />
-          <CustomRadarChart data={dataMovement} />
-          <CustomRadarChart data={dataPositioning} />
+          <CustomRadarChart data={chartData.core} />
+          <CustomRadarChart data={chartData.boost} />
+          <CustomRadarChart data={chartData.movement} />
+          <CustomRadarChart data={chartData.positioning} />
         </div>
         <div className="list-section outliers-container">
           <p className="list-heading">Outliers</p>
@@ -474,10 +574,10 @@ function DataComparison({ rank, replayData, player }: any) {
           </div>
         </h3>
         <div className="spider-charts">
-          <CustomRadarChart data={dataCore} />
-          <CustomRadarChart data={dataBoost} />
-          <CustomRadarChart data={dataMovement} />
-          <CustomRadarChart data={dataPositioning} />
+          <CustomRadarChart data={chartData.core} />
+          <CustomRadarChart data={chartData.boost} />
+          <CustomRadarChart data={chartData.movement} />
+          <CustomRadarChart data={chartData.positioning} />
         </div>
       </div>
     </section>

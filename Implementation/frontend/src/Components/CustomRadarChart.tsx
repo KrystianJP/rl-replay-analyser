@@ -33,10 +33,12 @@ const CustomTooltip = (props: any) => {
         }}
       >
         <p className="label">{label}</p>
-        <p style={{ color: "#FFC658" }}>{`You: ${yourScore} ${unit}`}</p>
+        <p
+          style={{ color: "#FFC658" }}
+        >{`You: ${yourScore.toFixed(2)} ${unit}`}</p>
         <p
           style={{ color: "#ff5e42ff" }}
-        >{`Rank Average: ${rankAvgScore} ${unit}`}</p>
+        >{`Rank Average: ${rankAvgScore.toFixed(2)} ${unit}`}</p>
       </div>
     );
   }
@@ -55,7 +57,7 @@ const CustomTick = (props: any) => {
         radius={radius}
         fill={color}
         x={x}
-        y={y}
+        y={y + 5}
         textAnchor={textAnchor}
         fontFamily="Arial"
         fontSize="14"
@@ -71,7 +73,7 @@ const CustomTick = (props: any) => {
 function CustomRadarChart({ data }: any) {
   return (
     <div className="spider-chart-container">
-      <ResponsiveContainer>
+      <ResponsiveContainer height={360}>
         <RadarChart
           outerRadius={150}
           width={500}

@@ -41,7 +41,8 @@ add advice evidence
 
 make each radar chart with example data DONE
 populate each radar chart with user data DONE
-populate each radar chart with rank average data
+populate each radar chart with rank average data DONE
+have user data percentiles as radii
 make different rank filtering work
 have coloured axes
 make grid view
@@ -53,6 +54,7 @@ all stats for different versions of replays
 if player is found properly with new id matching
 
 TO FIX:
+boost used per minute data overview
 removing replays
 (try fixing demos)
 disparity between parser and ballchasing values

@@ -12,7 +12,6 @@ from carball.json_parser.game import Game
 from carball.generated.api import game_pb2
 from datetime import datetime
 from mappings import get_map_name, get_playlist_name
-import base64
 import io
 import anyio
 import asyncio
@@ -214,3 +213,23 @@ def label_player(player_id: str, label: str):
     df.to_csv("player_stats.csv", index=False)
 
     return {"status": "success"}
+
+@app.get("/api/rank_average/{rank}")
+def get_rank_average(rank: str):
+    df = pd.read_csv("player_stats_3v3_original.csv")
+    rank_subset  = df[df["rank"] == rank]
+    cols_to_calc = df.drop(columns=["rank", "rank-no", "player_id"])
+
+    result = {"rank": rank, }
+
+    for col in cols_to_calc:
+        rank_avg = rank_subset[col].mean()
+        percentile = (df[col] <= rank_avg).mean() * 100
+
+        result[f"{col}_avg"] = rank_avg
+        result[f"{col}_percentile"] = percentile
+
+    return result
+
+
+
