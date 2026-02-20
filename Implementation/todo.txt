@@ -40,7 +40,7 @@ add advice evidence
 
 
 make each radar chart with example data DONE
-populate each radar chart with user data
+populate each radar chart with user data DONE
 populate each radar chart with rank average data
 make different rank filtering work
 have coloured axes
@@ -54,6 +54,9 @@ if player is found properly with new id matching
 
 TO FIX:
 removing replays
+(try fixing demos)
+disparity between parser and ballchasing values
+if demos dont work, just count as 0, just add the others
 
 AFTER BASIC VERSION OF EACH:
 fix low-priority issues

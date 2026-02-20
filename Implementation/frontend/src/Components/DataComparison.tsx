@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import CustomRadarChart from "./CustomRadarChart";
 /* eslint-disable  @typescript-eslint/no-explicit-any */
 
@@ -26,42 +27,42 @@ const RANK_CODE_TO_NAME = {
 const dataCore = [
   {
     category: "Shots /min",
-    You: 82,
-    You_Original: 0.78,
-    RankAverage: 76,
-    RankAverage_Original: 0.72,
+    You: 0,
+    You_Original: 0,
+    RankAverage: 0,
+    RankAverage_Original: 0,
     unit: "",
   },
   {
     category: "Goals %",
-    You: 61,
-    You_Original: 28.5,
-    RankAverage: 64,
-    RankAverage_Original: 29.8,
+    You: 0,
+    You_Original: 0,
+    RankAverage: 0,
+    RankAverage_Original: 0,
     unit: "%",
   },
   {
     category: "Saves /min",
-    You: 38,
-    You_Original: 0.32,
-    RankAverage: 72,
-    RankAverage_Original: 0.48,
+    You: 0,
+    You_Original: 0,
+    RankAverage: 0,
+    RankAverage_Original: 0,
     unit: "",
   },
   {
     category: "Assists %",
-    You: 47,
-    You_Original: 18.2,
-    RankAverage: 69,
-    RankAverage_Original: 23.4,
+    You: 0,
+    You_Original: 0,
+    RankAverage: 0,
+    RankAverage_Original: 0,
     unit: "%",
   },
   {
     category: "Shooting %",
-    You: 58,
-    You_Original: 27.1,
-    RankAverage: 63,
-    RankAverage_Original: 29.0,
+    You: 0,
+    You_Original: 0,
+    RankAverage: 0,
+    RankAverage_Original: 0,
     unit: "%",
   },
 ];
@@ -69,66 +70,58 @@ const dataCore = [
 const dataBoost = [
   {
     category: "BPM",
-    You: 88,
-    You_Original: 448,
-    RankAverage: 83,
-    RankAverage_Original: 430,
+    You: 0,
+    You_Original: 0,
+    RankAverage: 0,
+    RankAverage_Original: 0,
     unit: "",
   },
   {
-    category: "Wasted Usage",
-    You: 74,
-    You_Original: 14.1,
-    RankAverage: 71,
-    RankAverage_Original: 15.3,
-    unit: "%",
+    category: "Small Pads /min",
+    You: 0,
+    You_Original: 0,
+    RankAverage: 0,
+    RankAverage_Original: 0,
+    unit: "",
   },
   {
-    category: "Small Pads collected",
-    You: 91,
-    You_Original: 41,
-    RankAverage: 85,
-    RankAverage_Original: 37,
+    category: "Large Pads /min",
+    You: 0,
+    You_Original: 0,
+    RankAverage: 0,
+    RankAverage_Original: 0,
     unit: "",
   },
   {
     category: "Big Pads stolen /min",
-    You: 79,
-    You_Original: 1.4,
-    RankAverage: 75,
-    RankAverage_Original: 1.2,
-    unit: "",
-  },
-  {
-    category: "Large Pads collected",
-    You: 67,
-    You_Original: 9,
-    RankAverage: 74,
-    RankAverage_Original: 10,
+    You: 0,
+    You_Original: 0,
+    RankAverage: 0,
+    RankAverage_Original: 0,
     unit: "",
   },
   {
     category: "% No Boost",
-    You: 29,
-    You_Original: 11.2,
-    RankAverage: 78,
-    RankAverage_Original: 9.1,
+    You: 0,
+    You_Original: 0,
+    RankAverage: 0,
+    RankAverage_Original: 0,
     unit: "%",
   },
   {
     category: "% Low Boost",
-    You: 52,
-    You_Original: 24.6,
-    RankAverage: 73,
-    RankAverage_Original: 22.8,
+    You: 0,
+    You_Original: 0,
+    RankAverage: 0,
+    RankAverage_Original: 0,
     unit: "%",
   },
   {
     category: "% Full Boost",
-    You: 63,
-    You_Original: 22.5,
-    RankAverage: 77,
-    RankAverage_Original: 25.1,
+    You: 0,
+    You_Original: 0,
+    RankAverage: 0,
+    RankAverage_Original: 0,
     unit: "%",
   },
 ];
@@ -136,58 +129,58 @@ const dataBoost = [
 const dataMovement = [
   {
     category: "Average Speed",
-    You: 93,
-    You_Original: 1635,
-    RankAverage: 88,
-    RankAverage_Original: 1600,
+    You: 0,
+    You_Original: 0,
+    RankAverage: 0,
+    RankAverage_Original: 0,
     unit: "",
   },
   {
     category: "% Supersonic Speed",
-    You: 86,
-    You_Original: 29.4,
-    RankAverage: 84,
-    RankAverage_Original: 27.8,
+    You: 0,
+    You_Original: 0,
+    RankAverage: 0,
+    RankAverage_Original: 0,
     unit: "%",
   },
   {
     category: "% On Ground",
-    You: 41, // prefers air more than avg
-    You_Original: 54.2,
-    RankAverage: 69,
-    RankAverage_Original: 60.5,
+    You: 0,
+    You_Original: 0,
+    RankAverage: 0,
+    RankAverage_Original: 0,
     unit: "%",
   },
   {
     category: "% Low In Air",
-    You: 77,
-    You_Original: 27.5,
-    RankAverage: 74,
-    RankAverage_Original: 24.1,
+    You: 0,
+    You_Original: 0,
+    RankAverage: 0,
+    RankAverage_Original: 0,
     unit: "%",
   },
   {
     category: "% High In Air",
-    You: 82,
-    You_Original: 18.3,
-    RankAverage: 79,
-    RankAverage_Original: 15.6,
+    You: 0,
+    You_Original: 0,
+    RankAverage: 0,
+    RankAverage_Original: 0,
     unit: "%",
   },
   {
     category: "Demos Taken /min",
-    You: 34, // gets caught sometimes
-    You_Original: 0.41,
-    RankAverage: 65,
-    RankAverage_Original: 0.33,
+    You: 0,
+    You_Original: 0,
+    RankAverage: 0,
+    RankAverage_Original: 0,
     unit: "",
   },
   {
     category: "Demos Inflicted /min",
-    You: 91, // very aggressive
-    You_Original: 0.92,
-    RankAverage: 86,
-    RankAverage_Original: 0.78,
+    You: 0,
+    You_Original: 0,
+    RankAverage: 0,
+    RankAverage_Original: 0,
     unit: "",
   },
 ];
@@ -195,71 +188,219 @@ const dataMovement = [
 const dataPositioning = [
   {
     category: "% Most Back",
-    You: 28, // rarely last man
-    You_Original: 27.3,
-    RankAverage: 74,
-    RankAverage_Original: 32.8,
+    You: 0,
+    You_Original: 0,
+    RankAverage: 0,
+    RankAverage_Original: 0,
     unit: "%",
   },
   {
     category: "% Most Forward",
-    You: 89, // very aggressive
-    You_Original: 41.2,
-    RankAverage: 81,
-    RankAverage_Original: 36.5,
+    You: 0,
+    You_Original: 0,
+    RankAverage: 0,
+    RankAverage_Original: 0,
     unit: "%",
   },
   {
     category: "% Closest To Ball",
-    You: 84,
-    You_Original: 38.4,
-    RankAverage: 79,
-    RankAverage_Original: 34.9,
+    You: 0,
+    You_Original: 0,
+    RankAverage: 0,
+    RankAverage_Original: 0,
     unit: "%",
   },
   {
     category: "% Furthest From Ball",
-    You: 33,
-    You_Original: 26.8,
-    RankAverage: 72,
-    RankAverage_Original: 31.7,
+    You: 0,
+    You_Original: 0,
+    RankAverage: 0,
+    RankAverage_Original: 0,
     unit: "%",
   },
   {
     category: "% Behind Ball",
-    You: 45,
-    You_Original: 49.6,
-    RankAverage: 76,
-    RankAverage_Original: 53.2,
+    You: 0,
+    You_Original: 0,
+    RankAverage: 0,
+    RankAverage_Original: 0,
     unit: "%",
   },
   {
     category: "% Ahead Of Ball",
-    You: 88,
-    You_Original: 50.4,
-    RankAverage: 83,
-    RankAverage_Original: 46.8,
+    You: 0,
+    You_Original: 0,
+    RankAverage: 0,
+    RankAverage_Original: 0,
     unit: "%",
   },
   {
     category: "% Defending Third",
-    You: 37,
-    You_Original: 29.8,
-    RankAverage: 71,
-    RankAverage_Original: 33.4,
+    You: 0,
+    You_Original: 0,
+    RankAverage: 0,
+    RankAverage_Original: 0,
     unit: "%",
   },
   {
     category: "% Attacking Third",
-    You: 90,
-    You_Original: 38.6,
-    RankAverage: 84,
-    RankAverage_Original: 35.2,
+    You: 0,
+    You_Original: 0,
+    RankAverage: 0,
+    RankAverage_Original: 0,
     unit: "%",
   },
 ];
 
-function DataComparison({ rank }: any) {
+function DataComparison({ rank, replayData, player }: any) {
+  useEffect(() => {
+    const isPlayer = (p: any, player: any) => {
+      if (player.online_id !== "0" && player.online_id !== "" && "id" in p) {
+        return player.online_id === p.id;
+      }
+      if (player.epic_id !== "0" && player.epic_id !== "" && "id" in p) {
+        return player.epic_id === p.id;
+      }
+      return player.name === p.player_name;
+    };
+
+    const populateYou_Original = (
+      numReplays: number,
+      playerData: any,
+      duration: number,
+      data: any,
+    ) => {
+      data.core[0].You_Original += playerData["shots"] / duration / numReplays;
+      data.core[1].You_Original += playerData["goals"];
+      data.core[2].You_Original += playerData["saves"] / duration / numReplays;
+      data.core[3].You_Original += playerData["assists"];
+      data.core[4].You_Original +=
+        ((playerData["goals"] /
+          (playerData["shots"] > 0 ? playerData["shots"] : 1)) *
+          100) /
+        numReplays;
+
+      data.boost[0].You_Original +=
+        playerData["boost_boost_usage"] / duration / numReplays;
+      data.boost[1].You_Original +=
+        playerData["boost_num_small_boosts"] / duration / numReplays;
+      data.boost[2].You_Original +=
+        playerData["boost_num_large_boosts"] / duration / numReplays;
+      data.boost[3].You_Original +=
+        playerData["boost_num_stolen_boosts"] / duration / numReplays;
+      data.boost[4].You_Original +=
+        (playerData["boost_time_no_boost"] / (duration * 60) / numReplays) *
+        100;
+      data.boost[5].You_Original +=
+        (playerData["boost_time_low_boost"] / (duration * 60) / numReplays) *
+        100;
+      data.boost[6].You_Original +=
+        (playerData["boost_time_full_boost"] / (duration * 60) / numReplays) *
+        100;
+
+      data.movement[0].You_Original +=
+        playerData["averages_average_speed"] / numReplays;
+      data.movement[1].You_Original +=
+        (playerData["speed_time_at_super_sonic"] /
+          (duration * 60) /
+          numReplays) *
+        100;
+      data.movement[2].You_Original +=
+        (playerData["positional_tendencies_time_on_ground"] /
+          (duration * 60) /
+          numReplays) *
+        100;
+      data.movement[3].You_Original +=
+        (playerData["positional_tendencies_time_low_in_air"] /
+          (duration * 60) /
+          numReplays) *
+        100;
+      data.movement[4].You_Original +=
+        (playerData["positional_tendencies_time_high_in_air"] /
+          (duration * 60) /
+          numReplays) *
+        100;
+      data.movement[5].You_Original +=
+        playerData["demo_stats_num_demos_inflicted"] / numReplays / duration;
+      data.movement[6].You_Original +=
+        playerData["demo_stats_num_demos_taken"] / numReplays / duration;
+
+      data.positioning[0].You_Original +=
+        (playerData["relative_positioning_time_most_back_player"] /
+          (duration * 60) /
+          numReplays) *
+        100;
+      data.positioning[1].You_Original +=
+        (playerData["relative_positioning_time_most_forward_player"] /
+          (duration * 60) /
+          numReplays) *
+        100;
+      data.positioning[2].You_Original +=
+        (playerData["distance_time_closest_to_ball"] /
+          (duration * 60) /
+          numReplays) *
+        100;
+      data.positioning[3].You_Original +=
+        (playerData["distance_time_furthest_from_ball"] /
+          (duration * 60) /
+          numReplays) *
+        100;
+      data.positioning[4].You_Original +=
+        (playerData["positional_tendencies_time_behind_ball"] /
+          (duration * 60) /
+          numReplays) *
+        100;
+      data.positioning[5].You_Original +=
+        (playerData["positional_tendencies_time_in_front_ball"] /
+          (duration * 60) /
+          numReplays) *
+        100;
+      data.positioning[6].You_Original +=
+        (playerData["positional_tendencies_time_in_defending_third"] /
+          (duration * 60) /
+          numReplays) *
+        100;
+      data.positioning[7].You_Original +=
+        (playerData["positional_tendencies_time_in_attacking_third"] /
+          (duration * 60) /
+          numReplays) *
+        100;
+    };
+
+    if (!replayData || replayData.length === 0) return;
+    const numReplays = replayData.length;
+    let totalGoals = 0;
+
+    const data = {
+      core: JSON.parse(JSON.stringify(dataCore)),
+      boost: JSON.parse(JSON.stringify(dataBoost)),
+      movement: JSON.parse(JSON.stringify(dataMovement)),
+      positioning: JSON.parse(JSON.stringify(dataPositioning)),
+    };
+
+    replayData.forEach((replayObject: any) => {
+      const replay = replayObject.data.filter((p: any) => p.team);
+
+      const playerData = replay.find((p: any) => isPlayer(p, player));
+
+      // in mins
+      const duration =
+        (playerData["positional_tendencies_time_in_attacking_half"] +
+          playerData["positional_tendencies_time_in_defending_half"]) /
+        60;
+
+      // add user's team goals per replay to divide at end
+      totalGoals += replay
+        .filter((p: any) => p.team === playerData.team)
+        .reduce((a: number, b: any) => a + b.goals, 0);
+
+      populateYou_Original(numReplays, playerData, duration, data);
+    });
+
+    dataCore[1].You_Original /= totalGoals > 0 ? totalGoals : 1;
+    dataCore[3].You_Original /= totalGoals > 0 ? totalGoals : 1;
+  }, [replayData, player, rank]);
+
   return (
     <section className="section alt" id="comparison">
       <div className="container">

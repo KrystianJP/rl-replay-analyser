@@ -58,7 +58,7 @@ function AnalysisPage({ replayData, player, rank }: any) {
           </div>
         </div>
       </section>
-      <DataComparison rank={rank} />
+      <DataComparison replayData={replayData} player={player} rank={rank} />
     </div>
   );
 }
