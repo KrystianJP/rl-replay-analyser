@@ -254,6 +254,8 @@ const dataPositioning = [
 
 function DataComparison({ rank, replayData, player }: any) {
   const [chartData, setChartData] = useState<any>(null);
+  const [rankChartData, setRankChartData] = useState<any>(null);
+  const [selectedRank, setSelectedRank] = useState<string>("");
 
   useEffect(() => {
     const isPlayer = (p: any, player: any) => {
@@ -531,6 +533,129 @@ function DataComparison({ rank, replayData, player }: any) {
     run();
   }, [replayData, player, rank]);
 
+  useEffect(() => {
+    const populateRankAverageBoth = (radarData: any, averageData: any) => {
+      const coreStats = [
+        "core_shots",
+        "core_goals",
+        "core_saves",
+        "core_assists",
+        "core_shooting_percentage",
+      ];
+
+      for (let i = 0; i < coreStats.length; i++) {
+        radarData.core[i].RankAverage +=
+          averageData[coreStats[i] + "_percentile"];
+        radarData.core[i].RankAverage_Original +=
+          averageData[coreStats[i] + "_avg"];
+      }
+
+      const boostStats = [
+        "boost_bpm",
+        "boost_count_collected_small",
+        "boost_count_collected_big",
+        "boost_count_stolen_big",
+        "boost_percent_zero_boost",
+        "boost_percent_boost_0_25",
+        "boost_percent_full_boost",
+      ];
+
+      for (let i = 0; i < boostStats.length; i++) {
+        radarData.boost[i].RankAverage +=
+          averageData[boostStats[i] + "_percentile"];
+        radarData.boost[i].RankAverage_Original +=
+          averageData[boostStats[i] + "_avg"];
+      }
+
+      const movementStats = [
+        "movement_avg_speed_percentage",
+        "movement_percent_supersonic_speed",
+        "movement_percent_ground",
+        "movement_percent_low_air",
+        "movement_percent_high_air",
+        "demo_taken",
+        "demo_inflicted",
+      ];
+
+      for (let i = 0; i < movementStats.length; i++) {
+        radarData.movement[i].RankAverage +=
+          averageData[movementStats[i] + "_percentile"];
+        radarData.movement[i].RankAverage_Original +=
+          averageData[movementStats[i] + "_avg"];
+      }
+
+      const positioningStats = [
+        "positioning_percent_most_back",
+        "positioning_percent_most_forward",
+        "positioning_percent_closest_to_ball",
+        "positioning_percent_farthest_from_ball",
+        "positioning_percent_behind_ball",
+        "positioning_percent_infront_ball",
+        "positioning_percent_defensive_third",
+        "positioning_percent_offensive_third",
+      ];
+
+      for (let i = 0; i < positioningStats.length; i++) {
+        radarData.positioning[i].RankAverage +=
+          averageData[positioningStats[i] + "_percentile"];
+        radarData.positioning[i].RankAverage_Original +=
+          averageData[positioningStats[i] + "_avg"];
+      }
+    };
+
+    const fetchRankAverageData = async (rank: string, radarData: any) => {
+      try {
+        const response = await fetch(
+          "http://127.0.0.1:8000/api/rank_average/" + rank,
+        );
+        if (!response.ok) {
+          throw new Error("Network response not ok");
+        }
+
+        const data = await response.json();
+        populateRankAverageBoth(radarData, data);
+      } catch (error) {
+        console.error("Error fetching stats:", error);
+      }
+    };
+
+    const run = async () => {
+      if (!selectedRank || !chartData || chartData.length === 0) return;
+
+      const radarData = {
+        core: JSON.parse(JSON.stringify(dataCore)),
+        boost: JSON.parse(JSON.stringify(dataBoost)),
+        movement: JSON.parse(JSON.stringify(dataMovement)),
+        positioning: JSON.parse(JSON.stringify(dataPositioning)),
+      };
+
+      // populating rank average
+      await fetchRankAverageData(selectedRank, radarData);
+
+      // populating user's data
+      const categories = ["core", "boost", "movement", "positioning"];
+      categories.forEach((category: string) => {
+        for (
+          let i = 0;
+          i < radarData[category as keyof typeof radarData].length;
+          i++
+        ) {
+          radarData[category as keyof typeof radarData][i].You +=
+            chartData[category][i].You;
+          radarData[category as keyof typeof radarData][i].You_Original +=
+            chartData[category][i].You_Original;
+        }
+      });
+
+      setRankChartData(radarData);
+    };
+    run();
+  }, [selectedRank, chartData]);
+
+  const handleRankChange = (event: any) => {
+    setSelectedRank(event.target.value);
+  };
+
   if (!chartData) return null;
 
   return (
@@ -575,7 +700,7 @@ function DataComparison({ rank, replayData, player }: any) {
         <h3 style={{ marginTop: "5rem" }}>
           You vs Average
           <div className="rank-selection">
-            <select id="rank" name="rank">
+            <select id="rank" name="rank" onChange={handleRankChange}>
               <option value="">-- Choose A Rank --</option>
               <option value="silver-1">Silver I</option>
               <option value="silver-2">Silver II</option>
@@ -606,10 +731,20 @@ function DataComparison({ rank, replayData, player }: any) {
           </div>
         </h3>
         <div className="spider-charts">
-          <CustomRadarChart data={chartData.core} />
-          <CustomRadarChart data={chartData.boost} />
-          <CustomRadarChart data={chartData.movement} />
-          <CustomRadarChart data={chartData.positioning} />
+          <CustomRadarChart
+            data={rankChartData ? rankChartData.core : chartData.core}
+          />
+          <CustomRadarChart
+            data={rankChartData ? rankChartData.boost : chartData.boost}
+          />
+          <CustomRadarChart
+            data={rankChartData ? rankChartData.movement : chartData.movement}
+          />
+          <CustomRadarChart
+            data={
+              rankChartData ? rankChartData.positioning : chartData.positioning
+            }
+          />
         </div>
       </div>
     </section>

@@ -42,8 +42,8 @@ add advice evidence
 make each radar chart with example data DONE
 populate each radar chart with user data DONE
 populate each radar chart with rank average data DONE
-have user data percentiles as radii
-make different rank filtering work
+have user data percentiles as radii DONE
+make different rank filtering work DONE
 have coloured axes
 make grid view
 
