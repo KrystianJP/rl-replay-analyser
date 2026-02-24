@@ -302,7 +302,7 @@ footer {
 
 .playstyle-sureness {
   font-weight: bold;
-  color: rgb(233, 233, 247);
+  color: rgba(233, 233, 247, 0.7);
 }
 
 section#overview .container,

@@ -41,6 +41,8 @@ class RadarData(BaseModel):
     positioning: List[StatItem]
 
 class PlayerStats(BaseModel):
+    rank_no: int
+
     core_shots: float
     core_goals: float
     core_saves: float
@@ -50,8 +52,8 @@ class PlayerStats(BaseModel):
     boost_bpm: float
     boost_count_stolen_big: float
 
-    movement_average_speed: float
-    movement_percent_high_in_air: float
+    movement_avg_speed_percentage: float
+    movement_percent_high_air: float
 
     positioning_percent_most_back: float
     positioning_percent_most_forward: float
@@ -63,6 +65,8 @@ class PlayerStats(BaseModel):
     demo_inflicted: float
 
 upload_lock = asyncio.Lock()
+
+model_3v3 = joblib.load("model_3v3.joblib")
 
 def get_replay_proto(replay_path: str):
     if not os.path.exists(RRROCKET_PATH):
@@ -264,7 +268,7 @@ def label_player(row_index: int, label: str):
 def get_rank_average(rank: str):
     df = pd.read_csv("player_stats_3v3_original.csv")
     rank_subset  = df[df["rank"] == rank]
-    cols_to_calc = df.drop(columns=["index","rank", "rank-no", "player_id"])
+    cols_to_calc = df.drop(columns=["rank", "rank-no", "player_id"])
 
     result = {"rank": rank, }
 
@@ -352,18 +356,20 @@ async def get_user_percentiles(radar: RadarData):
 
 @app.post("/api/playstyle_3v3")
 def get_playstyle_3v3(player: PlayerStats):
-    model = joblib.load("model_3v3.joblib")
 
     df = pd.DataFrame(player.dict(), index=[0])
-    df = df.drop(columns=["index", "rank", "player_id", "playstyle"])
+    df = df.rename(columns={"rank_no": "rank-no"})
 
-    probs = model.predict_proba(df)
-    classes = model.named_steps["logisticregression"].classes_
+
+    probs = model_3v3.predict_proba(df)
+    classes = model_3v3.named_steps["logisticregression"].classes_
 
 
     ordered_idx = np.argsort(probs[0])[::-1] # high to low
     ordered_classes = classes[ordered_idx]
     ordered_probs = probs[0][ordered_idx]
 
+    print(ordered_classes.tolist())
+    print(ordered_probs.tolist())
 
     return {"ordered_classes": ordered_classes.tolist(), "ordered_probs": ordered_probs.tolist()}

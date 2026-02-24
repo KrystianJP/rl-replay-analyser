@@ -57,6 +57,7 @@ TO FIX:
 boost used per minute data overview
 removing replays
 private games not working
+just in general some games dont work
 (try fixing demos)
 disparity between parser and ballchasing values
 if demos dont work, just count as 0, just add the others

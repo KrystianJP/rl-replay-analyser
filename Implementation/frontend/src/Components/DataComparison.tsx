@@ -520,6 +520,8 @@ function DataComparison({ rank, replayData, player }: any) {
         populateYou_Original(numReplays, playerData, duration, radarData);
       });
 
+      if (totalGoals === 0) totalGoals = 1;
+
       radarData.core[1].You_Original =
         (radarData.core[1].You_Original * 100) / totalGoals;
       radarData.core[3].You_Original =
