@@ -2,6 +2,7 @@ from fastapi import FastAPI, UploadFile, File, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 import carball
 import pandas as pd
+import numpy as np
 import json
 import subprocess
 import os
@@ -38,6 +39,28 @@ class RadarData(BaseModel):
     boost: List[StatItem]
     movement: List[StatItem]
     positioning: List[StatItem]
+
+class PlayerStats(BaseModel):
+    core_shots: float
+    core_goals: float
+    core_saves: float
+    core_assists: float
+    core_shooting_percentage: float
+
+    boost_bpm: float
+    boost_count_stolen_big: float
+
+    movement_average_speed: float
+    movement_percent_high_in_air: float
+
+    positioning_percent_most_back: float
+    positioning_percent_most_forward: float
+    positioning_percent_closest_to_ball: float
+    positioning_percent_infront_ball: float
+    positioning_percent_offensive_third: float
+    positioning_percent_defensive_third: float
+
+    demo_inflicted: float
 
 upload_lock = asyncio.Lock()
 
@@ -191,10 +214,10 @@ def get_header(file: UploadFile = File(...)):
 
 @app.get("/api/stats_csv")
 def get_stats_csv():
-    df = pd.read_csv("player_stats.csv")
+    df = pd.read_csv("player_stats_3v3.csv")
     df_copy = df.copy()
 
-    cols_to_calc = df.drop(columns=["rank", "rank-no", "player_id","playstyle"])
+    cols_to_calc = df.drop(columns=["index","rank", "rank-no", "player_id","playstyle"])
     for i, row in df.iterrows():
         rank = row["rank-no"]
 
@@ -212,17 +235,28 @@ def get_stats_csv():
     df_copy = df_copy.fillna(0)
 
     prototype = joblib.load("model_prototype.joblib")
-    df["prototype-prediction"] = prototype.predict(df_copy.drop(columns=["rank", "player_id", "playstyle"]))
+    df_copy["positioning_percent_between_players"] = (
+    100
+    - df_copy["positioning_percent_most_forward"]
+    - df_copy["positioning_percent_most_back"]
+    )
+    df_copy = df_copy.drop(columns=["index","rank", "player_id", "playstyle", "movement_percent_ground"])
+    feature_order = prototype.feature_names_in_
+    df_model = df_copy[feature_order] # reordering because scikit strict
+    df["prototype-prediction"] = prototype.predict(df_model)
 
     return df.to_dict(orient="records")
 
-@app.post("/api/label_player/{player_id}")
-def label_player(player_id: str, label: str):
-    df = pd.read_csv("player_stats.csv")
+@app.post("/api/label_player/{row_index}")
+def label_player(row_index: int, label: str):
+    df = pd.read_csv("player_stats_3v3.csv")
 
-    df.loc[df["player_id"] == player_id, "playstyle"] = label
+    if row_index not in df.index:
+        return {"error": "Invalid row index"}
 
-    df.to_csv("player_stats.csv", index=False)
+    df.loc[df["index"] == row_index, "playstyle"] = label
+
+    df.to_csv("player_stats_3v3.csv", index=False)
 
     return {"status": "success"}
 
@@ -230,7 +264,7 @@ def label_player(player_id: str, label: str):
 def get_rank_average(rank: str):
     df = pd.read_csv("player_stats_3v3_original.csv")
     rank_subset  = df[df["rank"] == rank]
-    cols_to_calc = df.drop(columns=["rank", "rank-no", "player_id"])
+    cols_to_calc = df.drop(columns=["index","rank", "rank-no", "player_id"])
 
     result = {"rank": rank, }
 
@@ -315,3 +349,21 @@ async def get_user_percentiles(radar: RadarData):
         result["positioning"].append(percentile)
 
     return result
+
+@app.post("/api/playstyle_3v3")
+def get_playstyle_3v3(player: PlayerStats):
+    model = joblib.load("model_3v3.joblib")
+
+    df = pd.DataFrame(player.dict(), index=[0])
+    df = df.drop(columns=["index", "rank", "player_id", "playstyle"])
+
+    probs = model.predict_proba(df)
+    classes = model.named_steps["logisticregression"].classes_
+
+
+    ordered_idx = np.argsort(probs[0])[::-1] # high to low
+    ordered_classes = classes[ordered_idx]
+    ordered_probs = probs[0][ordered_idx]
+
+
+    return {"ordered_classes": ordered_classes.tolist(), "ordered_probs": ordered_probs.tolist()}

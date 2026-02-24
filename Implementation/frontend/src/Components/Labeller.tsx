@@ -10,6 +10,7 @@ const STAT_NAMES = {
   boost_count_stolen_big: "Stolen Boosts /min",
   movement_avg_speed_percentage: "Avg. Speed %",
   movement_percent_supersonic_speed: "Supersonic Speed %",
+  movement_percent_ground: "Ground %",
   movement_percent_high_air: "High Air %",
   positioning_percent_most_back: "Most Back %",
   positioning_percent_between_players: "Between Players %",
@@ -24,7 +25,7 @@ const STAT_NAMES = {
 };
 
 interface Player {
-  player_id: number;
+  index: number;
   rank: string;
   playstyle?: string;
   [key: string]: number | string | undefined;
@@ -53,11 +54,11 @@ function Labeller() {
     fetchData();
   }, []);
 
-  const labelPlayer = async (playerId: number, playstyle: string) => {
+  const labelPlayer = async (index: number, playstyle: string) => {
     try {
       const response = await fetch(
         "http://127.0.0.1:8000/api/label_player/" +
-          playerId +
+          index +
           "?label=" +
           playstyle,
         {
@@ -115,6 +116,11 @@ function Labeller() {
                 "player_id",
                 "playstyle",
                 "prototype-prediction",
+                "index",
+                "movement_percent_ground",
+                "positioning_percent_farthest_from_ball",
+                "positioning_percent_behind_ball",
+                "movement_percent_supersonic_speed",
               ].includes(key),
           )
           .map((key) => (
@@ -152,18 +158,14 @@ function Labeller() {
         <div
           className="playstyle"
           style={{ background: "rgba(255, 0, 0, 0.2)", borderColor: "red" }}
-          onClick={() =>
-            labelPlayer(players[currentPlayer].player_id, "striker")
-          }
+          onClick={() => labelPlayer(players[currentPlayer].index, "striker")}
         >
           Striker
         </div>
         <div
           className="playstyle"
           style={{ background: "rgba(0, 89, 255, 0.2)", borderColor: "blue" }}
-          onClick={() =>
-            labelPlayer(players[currentPlayer].player_id, "defender")
-          }
+          onClick={() => labelPlayer(players[currentPlayer].index, "defender")}
         >
           Defender
         </div>
@@ -174,7 +176,7 @@ function Labeller() {
             borderColor: "rgb(255, 0, 255)",
           }}
           onClick={() =>
-            labelPlayer(players[currentPlayer].player_id, "freestyler")
+            labelPlayer(players[currentPlayer].index, "freestyler")
           }
         >
           Freestyler
@@ -186,7 +188,7 @@ function Labeller() {
             borderColor: "rgb(119, 255, 0)",
           }}
           onClick={() =>
-            labelPlayer(players[currentPlayer].player_id, "ball_chaser")
+            labelPlayer(players[currentPlayer].index, "ball_chaser")
           }
         >
           Ball Chaser
@@ -197,9 +199,7 @@ function Labeller() {
             background: "rgba(255, 136, 0, 0.2)",
             borderColor: "rgb(255, 136, 0)",
           }}
-          onClick={() =>
-            labelPlayer(players[currentPlayer].player_id, "enforcer")
-          }
+          onClick={() => labelPlayer(players[currentPlayer].index, "enforcer")}
         >
           Enforcer
         </div>
@@ -209,9 +209,7 @@ function Labeller() {
             background: "rgba(255, 247, 0, 0.2)",
             borderColor: "rgb(255, 247, 0)",
           }}
-          onClick={() =>
-            labelPlayer(players[currentPlayer].player_id, "playmaker")
-          }
+          onClick={() => labelPlayer(players[currentPlayer].index, "playmaker")}
         >
           Playmaker
         </div>

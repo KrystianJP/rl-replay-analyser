@@ -186,3 +186,6 @@ radar chart positioning: % most back, % most forward, % closest to ball, % furth
 (maybe do gradient colour like percentiles but for each vertex name)
 (maybe implement grid view (labeller view but for rank comparison))
 (values to show radius on chart will be percentiles in comparison to EVERY rank)
+
+
+After labelling and training a model to classify playstyle, I noticed the accuracy was surprisingly low (72-75%) (and ditched RFC), I theorized this is because of a similar issue I ran into when labelling, where a significant number of players could be classified into 2 different playstyles, so I decided to calculate the probabilities of each playstyle and see the accuracy of the model's top 2 picks instead of just the 1, and got a satisfactory 95.6% accuracy. Therefore, I have decided that a good inclusion to this section would be to include a primary and secondary playstyle if the probabilities of the 2 are close enough, so that the user can see they are a hybrid of 2.
