@@ -8,7 +8,7 @@ load_dotenv()
 
 URL = "https://ballchasing.com/api/replays/"
 TOKEN = os.getenv("BALLCHASING_TOKEN")
-output_file = "temp.csv"
+output_file = "player_stats_2v2_original.csv"
 
 RANK_TO_INT = {
     "bronze-1": 1,
@@ -71,7 +71,7 @@ def get_replay(id, token=TOKEN):
 
 def get_player_replays(id, platform, count=10, token=TOKEN):
     r = safe_get(URL, headers={
-                      'Authorization': token}, params={'player-id': f"{platform}:{id}", "count": count*4, "playlist": "ranked-standard"})
+                      'Authorization': token}, params={'player-id': f"{platform}:{id}", "count": count*4, "playlist": "ranked-doubles"})
 
     if r.status_code == 200:
         data =  r.json()
@@ -164,7 +164,7 @@ def test_script(rank, count, each_player_count):
     players_list = []
     seen_player_ids = set()
     r = safe_get(URL, headers={
-                      'Authorization': TOKEN}, params={"min-rank":rank, "max-rank": rank, "count": 100, "playlist": "ranked-standard"})
+                      'Authorization': TOKEN}, params={"min-rank":rank, "max-rank": rank, "count": 150, "playlist": "ranked-doubles"})
     if r.status_code == 200:
         data = r.json()
 
@@ -200,12 +200,12 @@ def test_script(rank, count, each_player_count):
     else:
         r.raise_for_status()
 
-ranks = ["silver-1"]
+ranks = ["platinum-1", "platinum-2", "platinum-3", "diamond-1", "diamond-2", "diamond-3", "champion-1", "champion-2", "champion-3", "grand-champion-1", "grand-champion-2", "grand-champion-3", "supersonic-legend"]
 
 start = time.time()
 
-# for rank in ranks:
-#     result = test_script(rank=rank, count=30, each_player_count=10)
+for rank in ranks:
+    result = test_script(rank=rank, count=30, each_player_count=10)
 
 print(f"Time taken: {time.time() - start}")
 

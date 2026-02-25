@@ -30,6 +30,55 @@ origins = [
 
 RRROCKET_PATH = "./rrrocket.exe"
 
+ML_COLS = [
+    "rank-no",
+    "core_shots",
+    "core_goals",
+    "core_saves",
+    "core_assists",
+    "core_shooting_percentage",
+    "boost_bpm",
+    "boost_count_stolen_big",
+    "movement_avg_speed_percentage",
+    "movement_percent_high_air",
+    "positioning_percent_most_back",
+    "positioning_percent_most_forward",
+    "positioning_percent_closest_to_ball",
+    "positioning_percent_infront_ball",
+    "positioning_percent_offensive_third",
+    "positioning_percent_defensive_third",
+    "demo_inflicted"
+    ]
+
+COMP_COLS = ["core_shots",
+        "core_goals",
+        "core_saves",
+        "core_assists",
+        "core_shooting_percentage",
+        "boost_bpm",
+        "boost_count_collected_small",
+        "boost_count_collected_big",
+        "boost_count_stolen_big",
+        "boost_percent_zero_boost",
+        "boost_percent_boost_0_25",
+        "boost_percent_full_boost", 
+        "movement_avg_speed_percentage",
+        "movement_percent_supersonic_speed",
+        "movement_percent_ground",
+        "movement_percent_low_air",
+        "movement_percent_high_air",
+        "demo_taken",
+        "demo_inflicted",
+        "positioning_percent_most_back",
+        "positioning_percent_most_forward",
+        "positioning_percent_closest_to_ball",
+        "positioning_percent_farthest_from_ball",
+        "positioning_percent_behind_ball",
+        "positioning_percent_infront_ball",
+        "positioning_percent_defensive_third",
+        "positioning_percent_offensive_third",
+        ]
+
 class StatItem(BaseModel):
     category: str
     You_Original: float
@@ -221,7 +270,7 @@ def get_stats_csv():
     df = pd.read_csv("player_stats_3v3.csv")
     df_copy = df.copy()
 
-    cols_to_calc = df.drop(columns=["index","rank", "rank-no", "player_id","playstyle"])
+    cols_to_calc = df[ML_COLS].drop(columns=["rank-no"])
     for i, row in df.iterrows():
         rank = row["rank-no"]
 
@@ -269,6 +318,7 @@ def get_rank_average(rank: str):
     df = pd.read_csv("player_stats_3v3_original.csv")
     rank_subset  = df[df["rank"] == rank]
     cols_to_calc = df.drop(columns=["rank", "rank-no", "player_id"])
+    cols_to_calc = df[COMP_COLS]
 
     result = {"rank": rank, }
 
@@ -354,15 +404,15 @@ async def get_user_percentiles(radar: RadarData):
 
     return result
 
-@app.post("/api/playstyle_3v3")
-def get_playstyle_3v3(player: PlayerStats):
+@app.post("/api/playstyle/{mode}")
+def get_playstyle_3v3(player: PlayerStats, mode: int):
 
     df = pd.DataFrame(player.dict(), index=[0])
     df = df.rename(columns={"rank_no": "rank-no"})
 
-
-    probs = model_3v3.predict_proba(df)
-    classes = model_3v3.named_steps["logisticregression"].classes_
+    if mode == 3:
+        probs = model_3v3.predict_proba(df)
+        classes = model_3v3.named_steps["logisticregression"].classes_
 
 
     ordered_idx = np.argsort(probs[0])[::-1] # high to low

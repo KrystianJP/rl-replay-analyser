@@ -33,7 +33,7 @@ train test model and test it DONE
 get lots data DONE
 calculate percentiles DONE
 make labelling app DONE
-train better model
+train better model DONE
 add in reasoning (feature significance)
 add advice and other playstyles
 add advice evidence
@@ -47,6 +47,16 @@ make different rank filtering work DONE
 have coloured axes
 make grid view
 
+
+TO DO:
+fix parser
+play. class. feature importance, basic advice
+data comp. coloured axes
+data comp. grid view
+ballchasing upload
+2v2 integration
+2v2/3v3 decision
+etc.
 
 
 TO TEST:

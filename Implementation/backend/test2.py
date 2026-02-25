@@ -8,7 +8,7 @@ from carball.analysis.analysis_manager import AnalysisManager
 from carball.json_parser.game import Game
 
 # --- CONFIGURATION ---
-REPLAY_FILE = "assets/new.replay"  
+REPLAY_FILE = "assets/error.replay"  
 RRROCKET_PATH = "./rrrocket.exe" 
 OUTPUT_CSV = "match_results_summary.csv"
 
@@ -29,7 +29,13 @@ def analyze_match(replay_path):
             encoding='utf-8'
         )
         replay_dict = json.loads(result.stdout.splitlines()[0])
+        print("Return code:", result.returncode)
+        print("STDERR:\n", result.stderr)
         print("✅ Decompile successful.")
+    except subprocess.CalledProcessError as e:
+        print("❌ Decompile failed:", e.returncode)
+        print("STDOUT:\n", e.stdout)
+        print("STDERR:\n", e.stderr)
     except Exception as e:
         print(f"❌ Decompile failed: {e}")
         return None
