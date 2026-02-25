@@ -5,6 +5,7 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import classification_report, accuracy_score
+from sklearn.ensemble import RandomForestClassifier
 import joblib
 
 df = pd.read_csv("player_stats_3v3.csv")
@@ -20,46 +21,69 @@ X_train, X_test, y_train, y_test = train_test_split(
     X, y, test_size=0.2, stratify=y, random_state=1
 )
 
-model = make_pipeline(
+lr_model = make_pipeline(
     StandardScaler(),
     LogisticRegression(
         max_iter=2000,
         multi_class="multinomial",
         class_weight="balanced",
-        random_state=1
+        random_state=2
     )
 )
-model.fit(X_train, y_train)
+lr_model.fit(X_train, y_train)
 
-y_pred = model.predict(X_test)
-probs = model.predict_proba(X_test) # list of 
-classes = model.named_steps["logisticregression"].classes_
+rf_model = RandomForestClassifier(
+    n_estimators=300,
+    max_depth=None,
+    class_weight="balanced",
+    random_state=2,
+    n_jobs=-1
+)
 
-top2_classes_list = []
-top2_probs_list = []
+rf_model.fit(X_train, y_train)
 
-for i in range(len(y_test)):
-    top2_idx = np.argsort(probs[i])[-2:]
-    top_classes = classes[top2_idx]
-    top_probs = probs[i][top2_idx]
-    # if 2nd is > 85% of 1st add both, otherwise add just top
-    if top_probs[1] / top_probs[0] > 0.85:
-        top2_classes_list.append(top_classes.tolist())
-        top2_probs_list.append(top_probs.tolist())
-    else:
-        top2_classes_list.append([top_classes[1]])
-        top2_probs_list.append([top_probs[1]])
+def evaluate_model(model, name, X, y):
+    print(f"\n===== {name} =====")
 
-top2_correct = np.sum([y_test.iloc[i] in top2_classes_list[i] for i in range(len(y_test))])
-top2_acc = top2_correct / len(y_test)
+    y_pred = model.predict(X_test)
+    probs = model.predict_proba(X_test)
+    classes = model.classes_
 
-print("Test Accuracy:", accuracy_score(y_test, y_pred))
-print("Top-2 Accuracy:", top2_acc)
-print(classification_report(y_test, y_pred))
-print("-------------------")
+    print("Test Accuracy:", accuracy_score(y_test, y_pred))
+    print(classification_report(y_test, y_pred))
 
-cv = StratifiedKFold(n_splits=10, shuffle=True, random_state=1)
-cv_scores = cross_val_score(model, X_train, y_train, cv=cv)
-print("CV mean/std:", cv_scores.mean(), cv_scores.std())
+    # top-2 Accuracy
+    top2_classes_list = []
+    for i in range(len(y_test)):
+        sorted_idx = np.argsort(probs[i])[::-1]  # descending
+        top1_idx = sorted_idx[0]
+        top2_idx = sorted_idx[1]
+        
+        top1_prob = probs[i][top1_idx]
+        top2_prob = probs[i][top2_idx]
+        
+        top1_class = classes[top1_idx]
+        top2_class = classes[top2_idx]
+        
+        # apply 0.85 threshold
+        if top2_prob / top1_prob > 0.85:
+            top2_classes_list.append([top1_class, top2_class])
+        else:
+            top2_classes_list.append([top1_class])
+    
+    top2_correct = np.sum([y_test.iloc[i] in top2_classes_list[i] for i in range(len(y_test))])
+    print("Top-2 Accuracy (0.85 threshold):", top2_correct / len(y_test))
 
-joblib.dump(model, "model_3v3.joblib")
+    # Cross-validation
+    cv = StratifiedKFold(n_splits=10, shuffle=True, random_state=1)
+    cv_scores = cross_val_score(model, X, y, cv=cv)
+    print("CV mean/std:", cv_scores.mean(), cv_scores.std())
+
+evaluate_model(lr_model, "Logistic Regression", X, y)
+evaluate_model(rf_model, "Random Forest Classifier", X, y)
+
+lr_model.fit(X,y)
+rf_model.fit(X,y)
+
+joblib.dump(lr_model, "lr_model_3v3.joblib")
+joblib.dump(rf_model, "rf_model_3v3.joblib")

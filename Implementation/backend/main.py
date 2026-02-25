@@ -20,6 +20,7 @@ from google.protobuf.json_format import MessageToDict
 import joblib
 from pydantic import BaseModel
 from typing import List
+from sklearn.pipeline import Pipeline
 
 app = FastAPI()
 
@@ -115,7 +116,7 @@ class PlayerStats(BaseModel):
 
 upload_lock = asyncio.Lock()
 
-model_3v3 = joblib.load("model_3v3.joblib")
+model_3v3 = joblib.load("rf_model_3v3.joblib")
 
 def get_replay_proto(replay_path: str):
     if not os.path.exists(RRROCKET_PATH):
@@ -412,14 +413,14 @@ def get_playstyle_3v3(player: PlayerStats, mode: int):
 
     if mode == 3:
         probs = model_3v3.predict_proba(df)
-        classes = model_3v3.named_steps["logisticregression"].classes_
+        if isinstance(model_3v3, Pipeline):
+            classes = model_3v3.named_steps["logisticregression"].classes_
+        else:
+            classes = model_3v3.classes_
 
 
     ordered_idx = np.argsort(probs[0])[::-1] # high to low
     ordered_classes = classes[ordered_idx]
     ordered_probs = probs[0][ordered_idx]
-
-    print(ordered_classes.tolist())
-    print(ordered_probs.tolist())
 
     return {"ordered_classes": ordered_classes.tolist(), "ordered_probs": ordered_probs.tolist()}
