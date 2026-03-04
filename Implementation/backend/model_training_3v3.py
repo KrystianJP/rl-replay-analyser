@@ -10,6 +10,18 @@ import joblib
 
 df = pd.read_csv("player_stats_3v3.csv")
 
+# adding percentiles to high air to hopefully make model use it more for freestylers
+cols_to_calc = ["movement_percent_high_air"]
+for i, row in df.iterrows():
+        rank = row["rank-no"]
+
+        group_cond = df["rank-no"].isin([rank])
+        group_subset = df[group_cond]
+
+        for col in cols_to_calc:
+            percentile = (group_subset[col] <= row[col]).mean() * 100
+            df.at[i, f"{col}_percentile"] = percentile
+
 X = df.drop(columns=[
     "playstyle", "rank", "player_id", "index",
     "movement_percent_ground", "positioning_percent_farthest_from_ball",
@@ -85,8 +97,14 @@ evaluate_model(rf_model, "Random Forest Classifier", X, y)
 lr_model.fit(X,y)
 rf_model.fit(X,y)
 
-class_means = X.groupby(y).mean()
-class_means.to_json("class_means_3v3.json")
-
 # joblib.dump(lr_model, "lr_model_3v3.joblib")
 # joblib.dump(rf_model, "rf_model_3v3.joblib")
+
+import json
+
+rank_stats = {}
+for rank in df["rank-no"].unique():
+    rank_stats[int(rank)] = df[df["rank-no"] == rank]["movement_percent_high_air"].tolist()
+
+with open("rank_stats_3v3.json", "w") as f:
+    json.dump(rank_stats, f)

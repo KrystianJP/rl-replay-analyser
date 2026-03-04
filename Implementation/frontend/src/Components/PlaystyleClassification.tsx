@@ -23,6 +23,7 @@ const STAT_NAMES = {
   movement_percent_supersonic_speed: "Supersonic Speed %",
   movement_percent_ground: "Ground %",
   movement_percent_high_air: "High Air %",
+  movement_percent_high_air_percentile: "High Air Percentile",
   positioning_percent_most_back: "Most Back %",
   positioning_percent_between_players: "Between Players %",
   positioning_percent_most_forward: "Most Forward %",
@@ -106,7 +107,7 @@ const CLASS_DESCRIPTIONS = {
   ball_chaser:
     "Ball Chasers will relentlessly pursue the ball, constantly challenging opponents and applying pressure. Their aggressive playstyle can lead to unexpected opportunities, though it may disrupt team rotations.",
   enforcer:
-    "Enforcers focus on physical disruptions through demos and bumps, applying pressure off the ball. They create space by destabilizing their opponents' positioning, though their aggression can lead to overcommits",
+    "Enforcers focus on physical disruptions through demos and bumps, applying pressure off the ball. They create space by destabilizing their opponents' positioning, though their aggression can lead to overcommits.",
   playmaker:
     "Playmakers prioritise creating scoring opportunities through effective ball control and precise passes. They excel at reading opponents' positioning and setting up effective scoring chances.",
 };
@@ -290,7 +291,9 @@ function PlaystyleClassification({ replayData, player, rank }: any) {
             {featureImportance.map((feature: any, index: number) => (
               <li key={index}>
                 <strong>
-                  {STAT_NAMES[feature.feature as keyof typeof STAT_NAMES]}
+                  {feature.feature in STAT_NAMES
+                    ? STAT_NAMES[feature.feature as keyof typeof STAT_NAMES]
+                    : feature.feature}
                 </strong>
                 {feature.direction === "low" ? " (Low)" : ""} [
                 {feature.feature_value.toFixed(2)}] -{" "}

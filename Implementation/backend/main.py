@@ -47,7 +47,7 @@ ML_COLS = [
     "positioning_percent_closest_to_ball",
     "positioning_percent_infront_ball",
     "positioning_percent_offensive_third",
-    "positioning_percent_defensive_third",
+    # "positioning_percent_defensive_third",
     "demo_inflicted"
     ]
 
@@ -117,7 +117,12 @@ class PlayerStats(BaseModel):
 upload_lock = asyncio.Lock()
 
 model_3v3 = joblib.load("rf_model_3v3.joblib")
-class_means = pd.read_json("class_means_3v3.json")
+with open("rank_pools_3v3.json") as f:
+    rank_pools = json.load(f)
+
+def compute_percentile(value, rank):
+    pool = rank_pools.get(str(rank))
+    return (sum(v <= value for v in pool) / len(pool)) * 100
 
 def get_replay_proto(replay_path: str):
     if not os.path.exists(RRROCKET_PATH):
@@ -216,6 +221,27 @@ def get_replay_header(replay_path: str):
         header["players"].append(player_info)
 
     return header
+
+def get_tree_threshold_direction(model, df, feature_names, feature):
+    feature_idx = feature_names.index(feature)
+    player_value = df.iloc[0][feature]
+    
+    high_count = 0
+    low_count = 0
+    
+    for tree in model.estimators_:
+        # find all nodes where this feature was used
+        tree_feature = tree.tree_.feature
+        threshold = tree.tree_.threshold
+        
+        for node_id, feat_idx in enumerate(tree_feature):
+            if feat_idx == feature_idx:
+                if player_value > threshold[node_id]:
+                    high_count += 1
+                else:
+                    low_count += 1
+    
+    return "high" if high_count >= low_count else "low"
 
 
 
@@ -408,6 +434,11 @@ def get_playstyle_3v3(player: PlayerStats, mode: int):
     df = pd.DataFrame(player.dict(), index=[0])
     df = df.rename(columns={"rank_no": "rank-no"})
 
+    df["movement_percent_high_air_percentile"] = compute_percentile(
+        df["movement_percent_high_air"].iloc[0],
+        df["rank-no"].iloc[0]
+    )
+
     if mode == 3:
         probs = model_3v3.predict_proba(df)
         classes = model_3v3.classes_
@@ -424,6 +455,6 @@ def get_playstyle_3v3(player: PlayerStats, mode: int):
 
     shap_top = shap_values[ordered_idx[0]][0]
     top_shap_idxs = np.argsort(shap_top)[::-1][:3] # top 5
-    top_stats = [ {"feature": feature_names[i], "shap_value": shap_top[i], "feature_value": df.iloc[0][feature_names[i]], "direction": "high" if df.iloc[0][feature_names[i]] >= class_means.loc[ordered_classes[0], feature_names[i]] else "low"} for i in top_shap_idxs ]
+    top_stats = [ {"feature": feature_names[i], "shap_value": shap_top[i], "feature_value": df.iloc[0][feature_names[i]], "direction": get_tree_threshold_direction(model_3v3, df, feature_names, feature_names[i])} for i in top_shap_idxs ]
 
     return {"ordered_classes": ordered_classes.tolist(), "ordered_probs": ordered_probs.tolist(), "top_stats": top_stats}
