@@ -72,6 +72,21 @@ const RANK_TO_INT = {
   "supersonic-legend": 22,
 };
 
+const CLASS_DESCRIPTIONS = {
+  striker:
+    "Strikers specialise in shot volume and precision, often positioning in scoring areas where they capitalise on passes. They excel at converting offensive pressure into goals.",
+  defender:
+    "Defenders are typically the team's last line of defense. They focus on making effective clears, saves, and positioning to help their team overturn possession and prevent counterattacks.",
+  freestyler:
+    "Freestylers are known for their flashy mechanics. They excel at outplaying opponents in the air, forming favourable offensive situations, and sometimes scoring directly.",
+  ball_chaser:
+    "Ball Chasers will relentlessly pursue the ball, constantly challenging opponents and applying pressure. Their aggressive playstyle can lead to unexpected opportunities, though it may disrupt team rotations.",
+  enforcer:
+    "Enforcers focus on physical disruptions through demos and bumps, applying pressure off the ball. They create space by destabilizing their opponents' positioning, though their aggression can lead to overcommits",
+  playmaker:
+    "Playmakers prioritise creating scoring opportunities through effective ball control and precise passes. They excel at reading opponents' positioning and setting up effective scoring chances.",
+};
+
 function PlaystyleClassification({ replayData, player, rank }: any) {
   const [classes, setClasses] = useState([]);
   const [probabilities, setProbabilities] = useState([]);
@@ -240,10 +255,7 @@ function PlaystyleClassification({ replayData, player, rank }: any) {
           className="playstyle-description"
           style={{ color: CLASS_COLORS[classes[0]], filter: "brightness(1.6)" }}
         >
-          Freestylers are known for their flashy and acrobatic maneuvers, often
-          prioritizing style over efficiency. They excel in aerial plays and
-          creative shots but may sometimes neglect fundamental positioning and
-          teamwork.
+          {CLASS_DESCRIPTIONS[classes[0]]}
         </p>
 
         <div className="list-section">
