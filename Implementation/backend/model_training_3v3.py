@@ -85,5 +85,8 @@ evaluate_model(rf_model, "Random Forest Classifier", X, y)
 lr_model.fit(X,y)
 rf_model.fit(X,y)
 
-joblib.dump(lr_model, "lr_model_3v3.joblib")
-joblib.dump(rf_model, "rf_model_3v3.joblib")
+class_means = X.groupby(y).mean()
+class_means.to_json("class_means_3v3.json")
+
+# joblib.dump(lr_model, "lr_model_3v3.joblib")
+# joblib.dump(rf_model, "rf_model_3v3.joblib")

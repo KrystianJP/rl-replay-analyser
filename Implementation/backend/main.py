@@ -20,7 +20,7 @@ from google.protobuf.json_format import MessageToDict
 import joblib
 from pydantic import BaseModel
 from typing import List
-from sklearn.pipeline import Pipeline
+import shap
 
 app = FastAPI()
 
@@ -117,6 +117,7 @@ class PlayerStats(BaseModel):
 upload_lock = asyncio.Lock()
 
 model_3v3 = joblib.load("rf_model_3v3.joblib")
+class_means = pd.read_json("class_means_3v3.json")
 
 def get_replay_proto(replay_path: str):
     if not os.path.exists(RRROCKET_PATH):
@@ -268,7 +269,7 @@ def get_header(file: UploadFile = File(...)):
 
 @app.get("/api/stats_csv")
 def get_stats_csv():
-    df = pd.read_csv("player_stats_3v3.csv")
+    df = pd.read_csv("player_stats_2v2.csv")
     df_copy = df.copy()
 
     cols_to_calc = df[ML_COLS].drop(columns=["rank-no"])
@@ -288,29 +289,25 @@ def get_stats_csv():
     df = df.fillna(0)
     df_copy = df_copy.fillna(0)
 
-    prototype = joblib.load("model_prototype.joblib")
-    df_copy["positioning_percent_between_players"] = (
-    100
-    - df_copy["positioning_percent_most_forward"]
-    - df_copy["positioning_percent_most_back"]
-    )
-    df_copy = df_copy.drop(columns=["index","rank", "player_id", "playstyle", "movement_percent_ground"])
-    feature_order = prototype.feature_names_in_
-    df_model = df_copy[feature_order] # reordering because scikit strict
-    df["prototype-prediction"] = prototype.predict(df_model)
+    # prototype = joblib.load("model_prototype.joblib")
+    # df_copy = df_copy[ML_COLS].drop(columns=["rank-no"])
+    # feature_order = prototype.feature_names_in_
+    # df_model = df_copy[feature_order] # reordering because scikit strict
+    # df["prototype-prediction"] = prototype.predict(df_model)
 
     return df.to_dict(orient="records")
 
 @app.post("/api/label_player/{row_index}")
 def label_player(row_index: int, label: str):
-    df = pd.read_csv("player_stats_3v3.csv")
+    file = "player_stats_2v2.csv"
+    df = pd.read_csv(file)
 
     if row_index not in df.index:
         return {"error": "Invalid row index"}
 
     df.loc[df["index"] == row_index, "playstyle"] = label
 
-    df.to_csv("player_stats_3v3.csv", index=False)
+    df.to_csv(file, index=False)
 
     return {"status": "success"}
 
@@ -413,14 +410,20 @@ def get_playstyle_3v3(player: PlayerStats, mode: int):
 
     if mode == 3:
         probs = model_3v3.predict_proba(df)
-        if isinstance(model_3v3, Pipeline):
-            classes = model_3v3.named_steps["logisticregression"].classes_
-        else:
-            classes = model_3v3.classes_
+        classes = model_3v3.classes_
+        feature_names = df.columns.tolist()
 
 
     ordered_idx = np.argsort(probs[0])[::-1] # high to low
     ordered_classes = classes[ordered_idx]
     ordered_probs = probs[0][ordered_idx]
 
-    return {"ordered_classes": ordered_classes.tolist(), "ordered_probs": ordered_probs.tolist()}
+    # using shap to get feature importance
+    explainer = shap.TreeExplainer(model_3v3)
+    shap_values = explainer.shap_values(df)
+
+    shap_top = shap_values[ordered_idx[0]][0]
+    top_shap_idxs = np.argsort(shap_top)[::-1][:3] # top 5
+    top_stats = [ {"feature": feature_names[i], "shap_value": shap_top[i], "feature_value": df.iloc[0][feature_names[i]], "direction": "high" if df.iloc[0][feature_names[i]] >= class_means.loc[ordered_classes[0], feature_names[i]] else "low"} for i in top_shap_idxs ]
+
+    return {"ordered_classes": ordered_classes.tolist(), "ordered_probs": ordered_probs.tolist(), "top_stats": top_stats}
