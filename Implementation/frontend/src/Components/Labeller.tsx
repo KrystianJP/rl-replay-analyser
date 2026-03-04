@@ -24,6 +24,25 @@ const STAT_NAMES = {
   demo_inflicted: "Demos /min",
 };
 
+const ML_COLS = [
+  "core_shots",
+  "core_goals",
+  "core_saves",
+  "core_assists",
+  "core_shooting_percentage",
+  "boost_bpm",
+  "boost_count_stolen_big",
+  "movement_avg_speed_percentage",
+  "movement_percent_high_air",
+  "positioning_percent_most_back",
+  "positioning_percent_most_forward",
+  "positioning_percent_closest_to_ball",
+  "positioning_percent_infront_ball",
+  "positioning_percent_offensive_third",
+  "positioning_percent_defensive_third",
+  "demo_inflicted",
+];
+
 interface Player {
   index: number;
   rank: string;
@@ -103,25 +122,12 @@ function Labeller() {
     <div className="labeller">
       <div className="rank">{players[currentPlayer].rank}</div>
       <div className="prototype-prediction">
-        Prototype Prediction: {players[currentPlayer]["prototype-prediction"]}
+        {/* Prototype Prediction: {players[currentPlayer]["prototype-prediction"]} */}
       </div>
       <div className="stats-container">
         {Object.keys(players[currentPlayer])
           .filter(
-            (key) =>
-              !key.endsWith("_percentile") &&
-              ![
-                "rank",
-                "rank-no",
-                "player_id",
-                "playstyle",
-                "prototype-prediction",
-                "index",
-                "movement_percent_ground",
-                "positioning_percent_farthest_from_ball",
-                "positioning_percent_behind_ball",
-                "movement_percent_supersonic_speed",
-              ].includes(key),
+            (key) => !key.endsWith("_percentile") && ML_COLS.includes(key),
           )
           .map((key) => (
             <div key={key} className="stat">

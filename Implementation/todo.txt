@@ -49,13 +49,14 @@ make grid view
 
 
 TO DO:
-fix parser
+fix parser DONE
 play. class. feature importance, basic advice
+have percentiles calculated before page loading, then insert into playstyle and comparison
 data comp. coloured axes
 data comp. grid view
 ballchasing upload
-2v2 integration
 2v2/3v3 decision
+2v2 integration
 etc.
 
 

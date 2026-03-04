@@ -11,6 +11,30 @@ const CLASS_COLORS = {
   playmaker: "rgb(255,247,0)",
 };
 
+const STAT_NAMES = {
+  core_shots: "Shots /min",
+  core_goals: "Goals %",
+  core_assists: "Assists %",
+  core_saves: "Saves /min",
+  core_shooting_percentage: "Shooting %",
+  boost_bpm: "BPM",
+  boost_count_stolen_big: "Stolen Boosts /min",
+  movement_avg_speed_percentage: "Avg. Speed %",
+  movement_percent_supersonic_speed: "Supersonic Speed %",
+  movement_percent_ground: "Ground %",
+  movement_percent_high_air: "High Air %",
+  positioning_percent_most_back: "Most Back %",
+  positioning_percent_between_players: "Between Players %",
+  positioning_percent_most_forward: "Most Forward %",
+  positioning_percent_closest_to_ball: "Closest to Ball %",
+  positioning_percent_farthest_from_ball: "Farthest from Ball %",
+  positioning_percent_behind_ball: "Behind Ball %",
+  positioning_percent_infront_ball: "Infront of Ball %",
+  positioning_percent_defensive_third: "Defensive Third %",
+  positioning_percent_offensive_third: "Offensive Third %",
+  demo_inflicted: "Demos /min",
+};
+
 const CLASS_TO_DISPLAY = {
   striker: "STRIKER",
   defender: "DEFENDER",
@@ -75,6 +99,7 @@ const RANK_TO_INT = {
 function PlaystyleClassification({ replayData, player, rank }: any) {
   const [classes, setClasses] = useState([]);
   const [probabilities, setProbabilities] = useState([]);
+  const [featureImportance, setFeatureImportance] = useState([]);
 
   useEffect(() => {
     const isPlayer = (p: any, player: any) => {
@@ -211,6 +236,7 @@ function PlaystyleClassification({ replayData, player, rank }: any) {
 
       setClasses(playstyleData.ordered_classes);
       setProbabilities(playstyleData.ordered_probs);
+      setFeatureImportance(playstyleData.top_stats);
     };
 
     run();
@@ -249,9 +275,18 @@ function PlaystyleClassification({ replayData, player, rank }: any) {
         <div className="list-section">
           <p className="list-heading">Why this playstyle?</p>
           <ul>
-            <li>Statistic 1</li>
-            <li>Statistic 2</li>
-            <li>Statistic 3</li>
+            {featureImportance.map((feature: any, index: number) => (
+              <li key={index}>
+                <strong>
+                  {STAT_NAMES[feature.feature as keyof typeof STAT_NAMES]}
+                </strong>
+                {feature.direction === "low" ? " (Low)" : ""} [
+                {feature.feature_value.toFixed(2)}] -{" "}
+                <span style={{ opacity: 0.7 }}>
+                  Impact: {feature.shap_value.toFixed(2)}
+                </span>
+              </li>
+            ))}
           </ul>
         </div>
         <div className="list-section">
