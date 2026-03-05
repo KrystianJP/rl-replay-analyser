@@ -139,6 +139,7 @@ function DataOverview({ replayData, player }: any) {
 
   const [chartData, setChartData] = useState<any>(null);
   const [demoCategory, setDemoCategory] = useState<boolean>(false);
+  const [minimized, setMinimized] = useState<boolean>(true);
 
   const isPlayer = (p: any, player: any) => {
     if (player.online_id !== "0" && player.online_id !== "" && "id" in p) {
@@ -263,17 +264,17 @@ function DataOverview({ replayData, player }: any) {
       ],
       demos: [
         {
-          title: "Demos Inflicted",
+          title: "Demos Inflicted (total per game)",
           chart: "bar-chart",
           data: chartData.demos.demosInflicted,
         },
         {
-          title: "Demos Taken",
+          title: "Demos Taken (total per game)",
           chart: "bar-chart",
           data: chartData.demos.demosTaken,
         },
         {
-          title: "Large Boost Pads Stolen",
+          title: "Large Boost Pads Stolen (total per game)",
           chart: "bar-chart",
           data: chartData.demos.stolenBoosts,
         },
@@ -333,11 +334,22 @@ function DataOverview({ replayData, player }: any) {
     }
   };
 
+  if (minimized) {
+    return (
+      <section className="section alt" id="comparison">
+        <h2 style={{ cursor: "pointer" }} onClick={() => setMinimized(false)}>
+          Data Overview
+          <span className="material-icons">arrow_drop_down</span>
+        </h2>
+      </section>
+    );
+  }
+
   return (
     <section className="section alt" id="overview">
       <div className="container">
-        <h2>
-          Data Overview <span className="material-icons">arrow_drop_down</span>
+        <h2 style={{ cursor: "pointer" }} onClick={() => setMinimized(true)}>
+          Data Overview <span className="material-icons">arrow_drop_up</span>
         </h2>
 
         <div className="category-buttons">

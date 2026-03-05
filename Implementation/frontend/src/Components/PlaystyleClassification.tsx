@@ -101,7 +101,7 @@ const CLASS_DESCRIPTIONS = {
   striker:
     "Strikers specialise in shot volume and precision, often positioning in scoring areas where they capitalise on passes. They excel at converting offensive pressure into goals.",
   defender:
-    "Defenders are typically the team's last line of defense. They focus on making effective clears, saves, and positioning to help their team overturn possession and prevent counterattacks.",
+    "Defenders are typically the team's last line of defense. They focus on making effective clears and saves to help their team overturn possession and position more passively to prevent counterattacks.",
   freestyler:
     "Freestylers are known for their flashy mechanics. They excel at outplaying opponents in the air, forming favourable offensive situations, and sometimes scoring directly.",
   ball_chaser:
@@ -117,7 +117,7 @@ const CLASS_ADVICE = {
     {
       flaw: "Not back to defend counterattacks",
       advice:
-        "If you position too optimistically (far forward), you may be vulnerable to counterattacks from an intercepted pass or poor 50/50.",
+        "If you position too far forward, you may be vulnerable to counterattacks from an intercepted pass or poor 50/50.",
     },
     {
       flaw: "Shooting too often",
@@ -191,6 +191,7 @@ function PlaystyleClassification({ replayData, player, rank }: any) {
   const [classes, setClasses] = useState([]);
   const [probabilities, setProbabilities] = useState([]);
   const [featureImportance, setFeatureImportance] = useState([]);
+  const [minimized, setMinimized] = useState<boolean>(false);
 
   useEffect(() => {
     const isPlayer = (p: any, player: any) => {
@@ -335,12 +336,23 @@ function PlaystyleClassification({ replayData, player, rank }: any) {
 
   if (classes.length === 0) return null;
 
+  if (minimized) {
+    return (
+      <section className="section" id="comparison">
+        <h2 style={{ cursor: "pointer" }} onClick={() => setMinimized(false)}>
+          Playstyle Classification
+          <span className="material-icons">arrow_drop_down</span>
+        </h2>
+      </section>
+    );
+  }
+
   return (
     <section className="section" id="playstyle">
       <div className="container">
-        <h2>
+        <h2 style={{ cursor: "pointer" }} onClick={() => setMinimized(true)}>
           Playstyle Classification
-          <span className="material-icons">arrow_drop_down</span>
+          <span className="material-icons">arrow_drop_up</span>
         </h2>
         <p id="your-playstyle">Your Playstyle:</p>
         <div

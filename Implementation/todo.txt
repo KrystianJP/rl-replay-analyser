@@ -34,9 +34,8 @@ get lots data DONE
 calculate percentiles DONE
 make labelling app DONE
 train better model DONE
-add in reasoning (feature significance)
-add advice and other playstyles
-add advice evidence
+add in reasoning (feature significance) DONE
+add advice and other playstyles DONE
 
 
 make each radar chart with example data DONE
@@ -44,18 +43,15 @@ populate each radar chart with user data DONE
 populate each radar chart with rank average data DONE
 have user data percentiles as radii DONE
 make different rank filtering work DONE
-have coloured axes
+have coloured axes DONE
 make grid view
 
 
 TO DO:
-play. class. feature importance, basic advice
-have percentiles calculated before page loading, then insert into playstyle and comparison
-data comp. coloured axes
+play. class. feature importance, basic advice DONE
+data comp. coloured axes DONE
 ballchasing upload
-2v2/3v3 decision
-2v2 integration
-etc.
+2v2 stuff (label, train, decide)
 
 
 TO TEST:

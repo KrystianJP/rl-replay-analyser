@@ -310,6 +310,11 @@ section#comparison .container {
   max-width: 1400px;
 }
 
+section h2 {
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
 #comparison h3 {
   text-align: center;
   margin-top: 3rem;
@@ -454,4 +459,38 @@ section#comparison .container {
 
 .outliers-container {
   padding-top: 2rem;
+}
+
+.legend {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+}
+
+.legend .legend-you,
+.legend .legend-rank {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+.legend .legend-you {
+  color: #ffc658;
+}
+.legend .legend-rank {
+  color: #ff5e42ff;
+}
+
+.legend .legend-box {
+  width: 15px;
+  height: 15px;
+  border-radius: 3px;
+}
+.legend-you .legend-box {
+  background-color: #ffc658;
+}
+.legend-rank .legend-box {
+  background-color: #ff5e42ff;
 }

@@ -254,8 +254,10 @@ const dataPositioning = [
 
 function DataComparison({ rank, replayData, player }: any) {
   const [chartData, setChartData] = useState<any>(null);
+  const [userRankPercentiles, setUserRankPercentiles] = useState<any>(null);
   const [rankChartData, setRankChartData] = useState<any>(null);
   const [selectedRank, setSelectedRank] = useState<string>("");
+  const [minimized, setMinimized] = useState<boolean>(false);
 
   useEffect(() => {
     const isPlayer = (p: any, player: any) => {
@@ -456,10 +458,13 @@ function DataComparison({ rank, replayData, player }: any) {
       }
     };
 
-    const fetchUserPercentiles = async (radarData: any) => {
+    const fetchUserPercentiles = async (
+      radarData: any,
+      colourPercentiles: any,
+    ) => {
       try {
         const response = await fetch(
-          "http://127.0.0.1:8000/api/user_percentiles",
+          "http://127.0.0.1:8000/api/user_percentiles/" + rank,
           {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -470,12 +475,15 @@ function DataComparison({ rank, replayData, player }: any) {
           throw new Error("Network response not ok");
         }
 
-        const percentiles = await response.json();
+        const data = await response.json();
+        const percentilesAll = data.percentiles_all;
+        const percentilesRank = data.percentiles_rank;
 
         const categories = ["core", "boost", "movement", "positioning"];
         categories.forEach((category: string) => {
-          for (let i = 0; i < percentiles[category].length; i++) {
-            radarData[category][i].You = percentiles[category][i];
+          for (let i = 0; i < percentilesAll[category].length; i++) {
+            radarData[category][i].You = percentilesAll[category][i];
+            colourPercentiles[category][i].You = percentilesRank[category][i];
           }
         });
       } catch (error) {
@@ -489,6 +497,13 @@ function DataComparison({ rank, replayData, player }: any) {
       let totalGoals = 0;
 
       const radarData = {
+        core: JSON.parse(JSON.stringify(dataCore)),
+        boost: JSON.parse(JSON.stringify(dataBoost)),
+        movement: JSON.parse(JSON.stringify(dataMovement)),
+        positioning: JSON.parse(JSON.stringify(dataPositioning)),
+      };
+
+      const colourPercentiles = {
         core: JSON.parse(JSON.stringify(dataCore)),
         boost: JSON.parse(JSON.stringify(dataBoost)),
         movement: JSON.parse(JSON.stringify(dataMovement)),
@@ -528,9 +543,10 @@ function DataComparison({ rank, replayData, player }: any) {
         (radarData.core[3].You_Original * 100) / totalGoals;
 
       // populating user's percentiles
-      await fetchUserPercentiles(radarData);
+      await fetchUserPercentiles(radarData, colourPercentiles);
 
       setChartData(radarData);
+      setUserRankPercentiles(colourPercentiles);
     };
     run();
   }, [replayData, player, rank]);
@@ -658,25 +674,56 @@ function DataComparison({ rank, replayData, player }: any) {
     setSelectedRank(event.target.value);
   };
 
-  if (!chartData) return null;
+  if (!chartData || !userRankPercentiles) return null;
+
+  if (minimized) {
+    return (
+      <section className="section alt" id="comparison">
+        <h2 style={{ cursor: "pointer" }} onClick={() => setMinimized(false)}>
+          Rank Comparison
+          <span className="material-icons">arrow_drop_down</span>
+        </h2>
+      </section>
+    );
+  }
 
   return (
     <section className="section alt" id="comparison">
       <div className="container">
-        <h2>
+        <h2 style={{ cursor: "pointer" }} onClick={() => setMinimized(true)}>
           Rank Comparison<span className="material-icons">arrow_drop_up</span>
         </h2>
         <h3>
           You vs Average{" "}
           <u>{RANK_CODE_TO_NAME[rank as keyof typeof RANK_CODE_TO_NAME]}</u>
+          <div className="legend">
+            <div className="legend-you">
+              <div className="legend-box"></div>You
+            </div>{" "}
+            <div className="legend-rank">
+              <div className="legend-box"></div>Rank Average
+            </div>
+          </div>
         </h3>
         <div className="spider-charts">
-          <CustomRadarChart data={chartData.core} />
-          <CustomRadarChart data={chartData.boost} />
-          <CustomRadarChart data={chartData.movement} />
-          <CustomRadarChart data={chartData.positioning} />
+          <CustomRadarChart
+            data={chartData.core}
+            percentiles={userRankPercentiles.core}
+          />
+          <CustomRadarChart
+            data={chartData.boost}
+            percentiles={userRankPercentiles.boost}
+          />
+          <CustomRadarChart
+            data={chartData.movement}
+            percentiles={userRankPercentiles.movement}
+          />
+          <CustomRadarChart
+            data={chartData.positioning}
+            percentiles={userRankPercentiles.positioning}
+          />
         </div>
-        <div className="list-section outliers-container">
+        {/* <div className="list-section outliers-container">
           <p className="list-heading">Outliers</p>
           <ul>
             <li>
@@ -698,7 +745,7 @@ function DataComparison({ rank, replayData, player }: any) {
               - [Advice]
             </li>
           </ul>
-        </div>
+        </div> */}
         <h3 style={{ marginTop: "5rem" }}>
           You vs Average
           <div className="rank-selection">

@@ -117,12 +117,12 @@ class PlayerStats(BaseModel):
 upload_lock = asyncio.Lock()
 
 model_3v3 = joblib.load("rf_model_3v3.joblib")
-with open("rank_pools_3v3.json") as f:
-    rank_pools = json.load(f)
+with open("rank_stats_3v3.json") as f:
+    rank_high_air_stats = json.load(f)
 
 def compute_percentile(value, rank):
-    pool = rank_pools.get(str(rank))
-    return (sum(v <= value for v in pool) / len(pool)) * 100
+    pool = rank_high_air_stats.get(str(rank))
+    return (sum(v < value for v in pool) / len(pool)) * 100
 
 def get_replay_proto(replay_path: str):
     if not os.path.exists(RRROCKET_PATH):
@@ -355,12 +355,19 @@ def get_rank_average(rank: str):
 
     return result
 
-@app.post("/api/user_percentiles")
-async def get_user_percentiles(radar: RadarData):
+@app.post("/api/user_percentiles/{rank}")
+async def get_user_percentiles(radar: RadarData, rank: str):
 
     df = pd.read_csv("player_stats_3v3_original.csv")
 
-    result = {
+    percentiles_all = {
+        "core": [],
+        "boost": [],
+        "movement": [],
+        "positioning": [],
+    }
+
+    percentiles_rank = {
         "core": [],
         "boost": [],
         "movement": [],
@@ -377,8 +384,10 @@ async def get_user_percentiles(radar: RadarData):
     ]
 
     for item, col in zip(radar.core, core_columns):
-        percentile = (df[col] <= item.You_Original).mean() * 100
-        result["core"].append(percentile)
+        percentile_all = (df[col] <= item.You_Original).mean() * 100
+        percentile_rank = (df.loc[df["rank"] == rank][col] <= item.You_Original).mean() * 100
+        percentiles_all["core"].append(percentile_all)
+        percentiles_rank["core"].append(percentile_rank)
 
     #  BOOST 
     boost_columns = [
@@ -392,8 +401,10 @@ async def get_user_percentiles(radar: RadarData):
       ]
 
     for item, col in zip(radar.boost, boost_columns):
-        percentile = (df[col] <= item.You_Original).mean() * 100
-        result["boost"].append(percentile)
+        percentile_all = (df[col] <= item.You_Original).mean() * 100
+        percentile_rank = (df.loc[df["rank"] == rank][col] <= item.You_Original).mean() * 100
+        percentiles_all["boost"].append(percentile_all)
+        percentiles_rank["boost"].append(percentile_rank)
 
     # MOVEMENT 
     movement_columns = [
@@ -407,8 +418,10 @@ async def get_user_percentiles(radar: RadarData):
       ]
 
     for item, col in zip(radar.movement, movement_columns):
-        percentile = (df[col] <= item.You_Original).mean() * 100
-        result["movement"].append(percentile)
+        percentile_all = (df[col] <= item.You_Original).mean() * 100
+        percentile_rank = (df.loc[df["rank"] == rank][col] <= item.You_Original).mean() * 100
+        percentiles_all["movement"].append(percentile_all)
+        percentiles_rank["movement"].append(percentile_rank)
 
     # POSITIONING 
     positioning_columns = [
@@ -423,10 +436,12 @@ async def get_user_percentiles(radar: RadarData):
       ]
 
     for item, col in zip(radar.positioning, positioning_columns):
-        percentile = (df[col] <= item.You_Original).mean() * 100
-        result["positioning"].append(percentile)
+        percentile_all = (df[col] <= item.You_Original).mean() * 100
+        percentile_rank = (df.loc[df["rank"] == rank][col] <= item.You_Original).mean() * 100
+        percentiles_all["positioning"].append(percentile_all)
+        percentiles_rank["positioning"].append(percentile_rank)
 
-    return result
+    return {"percentiles_all": percentiles_all, "percentiles_rank":percentiles_rank}
 
 @app.post("/api/playstyle/{mode}")
 def get_playstyle_3v3(player: PlayerStats, mode: int):

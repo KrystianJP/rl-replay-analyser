@@ -102,14 +102,14 @@ function Labeller() {
 
   function percentileColor(percentile: number) {
     if (percentile <= 50) {
-      // red → gray
+      // red to gray
       const ratio = percentile / 50;
       const r = Math.round(239 + (107 - 239) * ratio);
       const g = Math.round(68 + (114 - 68) * ratio);
       const b = Math.round(68 + (128 - 68) * ratio);
       return `rgb(${r}, ${g}, ${b})`;
     } else {
-      // gray → green
+      // gray to green
       const ratio = (percentile - 50) / 50;
       const r = Math.round(107 + (34 - 107) * ratio);
       const g = Math.round(114 + (197 - 114) * ratio);

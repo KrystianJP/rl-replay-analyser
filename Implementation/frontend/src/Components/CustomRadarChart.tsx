@@ -5,18 +5,49 @@ import {
   PolarGrid,
   PolarAngleAxis,
   Radar,
-  Legend,
   PolarRadiusAxis,
 } from "recharts";
 /* eslint-disable  @typescript-eslint/no-explicit-any */
 
+const COLOR_HIGH = [34, 197, 94];
+const COLOR_MIDDLE = [194, 217, 248];
+const COLOR_LOW = [239, 68, 68];
+
+// function percentileColor(percentile: number) {
+//   if (percentile <= 50) {
+//     // red to gray
+//     const ratio = percentile / 50;
+//     const r = Math.round(
+//       COLOR_LOW[0] + (COLOR_MIDDLE[0] - COLOR_LOW[0]) * ratio,
+//     );
+//     const g = Math.round(
+//       COLOR_LOW[1] + (COLOR_MIDDLE[1] - COLOR_LOW[1]) * ratio,
+//     );
+//     const b = Math.round(
+//       COLOR_LOW[2] + (COLOR_MIDDLE[2] - COLOR_LOW[2]) * ratio,
+//     );
+//     return `rgb(${r}, ${g}, ${b})`;
+//   } else {
+//     // gray to green
+//     const ratio = (percentile - 50) / 50;
+//     const r = Math.round(
+//       COLOR_MIDDLE[0] + (COLOR_HIGH[0] - COLOR_MIDDLE[0]) * ratio,
+//     );
+//     const g = Math.round(
+//       COLOR_MIDDLE[1] + (COLOR_HIGH[1] - COLOR_MIDDLE[1]) * ratio,
+//     );
+//     const b = Math.round(
+//       COLOR_MIDDLE[2] + (COLOR_HIGH[2] - COLOR_MIDDLE[2]) * ratio,
+//     );
+//     return `rgb(${r}, ${g}, ${b})`;
+//   }
+// }
+
 const CustomTooltip = (props: any) => {
   const { active, payload, label } = props;
   if (active && payload && payload.length) {
-    // payload[0].payload holds the entire data object for the hovered category
     const data = payload[0].payload;
 
-    // We can extract the values for clean display
     const yourScore = data.You_Original;
     const rankAvgScore = data.RankAverage_Original;
     const unit = data.unit;
@@ -46,10 +77,25 @@ const CustomTooltip = (props: any) => {
 };
 
 const CustomTick = (props: any) => {
-  const { x, y, payload, radius, textAnchor } = props;
+  const { x, y, payload, radius, textAnchor, percentiles } = props;
   const label = payload.value;
 
-  const color = label === "" ? "#f73d3dff" : "#c2d9f8ff";
+  let percentile;
+  if (!percentiles) {
+    percentile = 50;
+  } else {
+    const match = percentiles.find((item: any) => item.category === label);
+    percentile = match?.You ?? 50;
+  }
+
+  let color;
+  if (percentile <= 20) {
+    color = `rgb(${COLOR_LOW[0]}, ${COLOR_LOW[1]}, ${COLOR_LOW[2]})`;
+  } else if (percentile >= 80) {
+    color = `rgb(${COLOR_HIGH[0]}, ${COLOR_HIGH[1]}, ${COLOR_HIGH[2]})`;
+  } else {
+    color = `rgb(${COLOR_MIDDLE[0]}, ${COLOR_MIDDLE[1]}, ${COLOR_MIDDLE[2]})`;
+  }
 
   return (
     <g>
@@ -70,7 +116,7 @@ const CustomTick = (props: any) => {
   );
 };
 
-function CustomRadarChart({ data }: any) {
+function CustomRadarChart({ data, percentiles }: any) {
   return (
     <div className="spider-chart-container">
       <ResponsiveContainer height={360}>
@@ -83,7 +129,10 @@ function CustomRadarChart({ data }: any) {
         >
           <PolarGrid />
 
-          <PolarAngleAxis dataKey="category" tick={<CustomTick />} />
+          <PolarAngleAxis
+            dataKey="category"
+            tick={<CustomTick percentiles={percentiles} />}
+          />
 
           <PolarRadiusAxis tick={false} axisLine={false} />
 
@@ -103,7 +152,7 @@ function CustomRadarChart({ data }: any) {
             fillOpacity={0.3}
           />
 
-          <Legend wrapperStyle={{ fontFamily: "Arial, sans-serif" }} />
+          {/* <Legend wrapperStyle={{ fontFamily: "Arial, sans-serif" }} /> */}
 
           <Tooltip
             content={<CustomTooltip />}

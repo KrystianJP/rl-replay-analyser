@@ -194,3 +194,5 @@ After testing out multiple sets of games and asking my friends for feedback, I r
 
 Removed the need for percentiles in the playstyle classification section, the user will immediately see the data comparison section anyway, so they can make their own judgement based on multiple statistics, making showing the percentiles redundant.
 Additionally, ballchasing does not a lot of data that I was considering to for the advice evidence, which since i plan to include a ballchasing upload method, will make this addition useless for many users.
+
+Outliers - after trying to provide advice for outliers, I realised that many are quite self explanatory, and many would reinstate the advice already mentioned in the playstyle section. The different colours to highlight the outliers to get the user's attention and motivate them to think about reasoning behind the outlier I deem sufficient.
