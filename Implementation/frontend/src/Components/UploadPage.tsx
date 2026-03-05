@@ -385,10 +385,6 @@ function UploadPage({
             >
               <option value="">-- Choose Your Rank --</option>
 
-              <option value="silver-1">Silver I</option>
-              <option value="silver-2">Silver II</option>
-              <option value="silver-3">Silver III</option>
-
               <option value="gold-1">Gold I</option>
               <option value="gold-2">Gold II</option>
               <option value="gold-3">Gold III</option>

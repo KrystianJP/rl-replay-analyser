@@ -112,6 +112,81 @@ const CLASS_DESCRIPTIONS = {
     "Playmakers prioritise creating scoring opportunities through effective ball control and precise passes. They excel at reading opponents' positioning and setting up effective scoring chances.",
 };
 
+const CLASS_ADVICE = {
+  striker: [
+    {
+      flaw: "Not back to defend counterattacks",
+      advice:
+        "If you position too optimistically (far forward), you may be vulnerable to counterattacks from an intercepted pass or poor 50/50.",
+    },
+    {
+      flaw: "Shooting too often",
+      advice:
+        "You may be wasting higher percentage opportunities by shooting to early, may be worth considering taking control or passing instead.",
+    },
+  ],
+  defender: [
+    {
+      flaw: "Not involved enough in offensive plays",
+      advice:
+        "By rotating back too early, you can miss chances to get involved supporting the attack and maintaining pressure. Consider the timing of your first man's rotation to know when to get involved.",
+    },
+    {
+      flaw: "Clearing the ball too early",
+      advice:
+        "By immediately clearing the ball, you may just be giving away possession. Consider taking control of the ball if you have the time to.",
+    },
+  ],
+  freestyler: [
+    {
+      flaw: "Overcomitting",
+      advice:
+        "You may be going for too many high-risk plays where you end up in front of the ball with low boost, leaving your teammates at a disadvantage.",
+    },
+    {
+      flaw: "Focusing too much on scoring directly",
+      advice:
+        "Often, your aerial outplays can be utilised more effectively if you consider using them to assist your teammates, especially if the opponent's goal is well defended.",
+    },
+  ],
+  ball_chaser: [
+    {
+      flaw: "Causing double-commits",
+      advice:
+        "When chasing the ball, you often end up having to break rotation. Ensure when you do so that your teammates don't have a better play on it, or clearly intend to go for the ball.",
+    },
+    {
+      flaw: "Confusing rotation",
+      advice:
+        "Although chasing the ball can often be effective, you can easily end up confusing your teammates by being out of position, which can end up in unexpected counterattacks.",
+    },
+  ],
+  enforcer: [
+    {
+      flaw: "Overcommitting",
+      advice:
+        "You may be going for a demo/bump when you are needed in defense, or the attack is unsuccessful. Ensure there is a low risk of the attack getting shut down early, demos/bumps are high-risk plays.",
+    },
+    {
+      flaw: "Insignificant demos/bumps",
+      advice:
+        "Be aware that going for a demo/bump will often take you out of position, doing so without creating an opportunity to take space, shut down the opponents' attack, or to score can be counterproductive.",
+    },
+  ],
+  playmaker: [
+    {
+      flaw: "Passes intercepted",
+      advice:
+        "Passes are more risky than they often seem, often 2 players must commit for a passing play, if intercepted, the opponents will have a strong counterattack. Ensure there is a low risk of a player reading/reaching your pass.",
+    },
+    {
+      flaw: "Not capitilising on opportunities to score",
+      advice:
+        "Passing is not always the more effective play, sometimes shooting directly and forcing an awkward save can be a better way to maintain pressure and bait double commits, which can lead to safer opportunities to score.",
+    },
+  ],
+};
+
 function PlaystyleClassification({ replayData, player, rank }: any) {
   const [classes, setClasses] = useState([]);
   const [probabilities, setProbabilities] = useState([]);
@@ -258,6 +333,8 @@ function PlaystyleClassification({ replayData, player, rank }: any) {
     run();
   }, [replayData, player, rank]);
 
+  if (classes.length === 0) return null;
+
   return (
     <section className="section" id="playstyle">
       <div className="container">
@@ -305,11 +382,16 @@ function PlaystyleClassification({ replayData, player, rank }: any) {
           </ul>
         </div>
         <div className="list-section">
-          <p className="list-heading">Improvement tips:</p>
-          <ul>
-            <li>Example advice - Statistic</li>
-            <li>Example advice - Statistic</li>
-            <li>General advice</li>
+          <p className="list-heading">Possible flaws:</p>
+          <ul style={{ fontSize: "0.95rem" }}>
+            {CLASS_ADVICE[classes[0] as keyof typeof CLASS_ADVICE].map(
+              (advice: any, index: number) => (
+                <li key={index}>
+                  <strong>{advice.flaw}</strong> -{" "}
+                  <span style={{ opacity: 0.8 }}>{advice.advice}</span>
+                </li>
+              ),
+            )}
           </ul>
         </div>
         <div className="list-section">

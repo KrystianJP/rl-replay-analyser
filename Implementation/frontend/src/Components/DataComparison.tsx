@@ -704,9 +704,6 @@ function DataComparison({ rank, replayData, player }: any) {
           <div className="rank-selection">
             <select id="rank" name="rank" onChange={handleRankChange}>
               <option value="">-- Choose A Rank --</option>
-              <option value="silver-1">Silver I</option>
-              <option value="silver-2">Silver II</option>
-              <option value="silver-3">Silver III</option>
 
               <option value="gold-1">Gold I</option>
               <option value="gold-2">Gold II</option>
