@@ -83,12 +83,22 @@ function populateBoost(
   const numOpponents = opponents.length;
 
   for (const column of COLUMN_NAMES.boost) {
+    if (column[0] === "bpm" && !("ballchasing" in playerData)) {
+      ((data.boost as any)[column[0]] as any)[0][column[1]] +=
+        playerData[column[2]] / numReplays / playerData["duration"];
+      continue;
+    }
     ((data.boost as any)[column[0]] as any)[0][column[1]] +=
       playerData[column[2]] / numReplays;
   }
 
   teammates.forEach((tm8: any) => {
     for (const column of COLUMN_NAMES.boost) {
+      if (column[0] === "bpm" && !("ballchasing" in tm8)) {
+        ((data.boost as any)[column[0]] as any)[1][column[1]] +=
+          tm8[column[2]] / numTeammates / numReplays / tm8["duration"];
+        continue;
+      }
       ((data.boost as any)[column[0]] as any)[1][column[1]] +=
         tm8[column[2]] / numTeammates / numReplays;
     }
@@ -96,6 +106,14 @@ function populateBoost(
 
   opponents.forEach((opponent: any) => {
     for (const column of COLUMN_NAMES.boost) {
+      if (column[0] === "bpm" && !("ballchasing" in opponent)) {
+        ((data.boost as any)[column[0]] as any)[2][column[1]] +=
+          opponent[column[2]] /
+          numOpponents /
+          numReplays /
+          opponent["duration"];
+        continue;
+      }
       ((data.boost as any)[column[0]] as any)[2][column[1]] +=
         opponent[column[2]] / numOpponents / numReplays;
     }
@@ -112,17 +130,26 @@ function populateMovement(
   const numTeammates = teammates.length;
   const numOpponents = opponents.length;
 
-  const MAX_SPEED = 23000;
+  let MAX_SPEED;
+  if ("ballchasing" in playerData) {
+    MAX_SPEED = 2300;
+  } else {
+    MAX_SPEED = 23000;
+  }
 
   for (const [index, column] of COLUMN_NAMES.movement.entries()) {
     if (index === 2) {
       // stacked bar chart (height)
+      const totalHeightTime =
+        Number(playerData[column[4]]) +
+        Number(playerData[column[5]]) +
+        Number(playerData[column[6]]);
       ((data.movement as any)[column[0]] as any)[0][column[1]] +=
-        playerData[column[4]] / numReplays;
+        (playerData[column[4]] / totalHeightTime / numReplays) * 100;
       ((data.movement as any)[column[0]] as any)[0][column[2]] +=
-        playerData[column[5]] / numReplays;
+        (playerData[column[5]] / totalHeightTime / numReplays) * 100;
       ((data.movement as any)[column[0]] as any)[0][column[3]] +=
-        playerData[column[6]] / numReplays;
+        (playerData[column[6]] / totalHeightTime / numReplays) * 100;
       continue;
     }
     if (index === 0) {
@@ -139,12 +166,16 @@ function populateMovement(
     for (const [index, column] of COLUMN_NAMES.movement.entries()) {
       if (index === 2) {
         // stacked bar chart (height)
+        const totalHeightTime =
+          Number(tm8[column[4]]) +
+          Number(tm8[column[5]]) +
+          Number(tm8[column[6]]);
         ((data.movement as any)[column[0]] as any)[1][column[1]] +=
-          tm8[column[4]] / numTeammates / numReplays;
+          (tm8[column[4]] / numTeammates / numReplays / totalHeightTime) * 100;
         ((data.movement as any)[column[0]] as any)[1][column[2]] +=
-          tm8[column[5]] / numTeammates / numReplays;
+          (tm8[column[5]] / numTeammates / numReplays / totalHeightTime) * 100;
         ((data.movement as any)[column[0]] as any)[1][column[3]] +=
-          tm8[column[6]] / numTeammates / numReplays;
+          (tm8[column[6]] / numTeammates / numReplays / totalHeightTime) * 100;
         continue;
       }
 
@@ -163,12 +194,19 @@ function populateMovement(
     for (const [index, column] of COLUMN_NAMES.movement.entries()) {
       if (index == 2) {
         // stacked bar chart (height)
+        const totalHeightTime =
+          Number(opponent[column[4]]) +
+          Number(opponent[column[5]]) +
+          Number(opponent[column[6]]);
         ((data.movement as any)[column[0]] as any)[2][column[1]] +=
-          opponent[column[4]] / numOpponents / numReplays;
+          (opponent[column[4]] / numOpponents / numReplays / totalHeightTime) *
+          100;
         ((data.movement as any)[column[0]] as any)[2][column[2]] +=
-          opponent[column[5]] / numOpponents / numReplays;
+          (opponent[column[5]] / numOpponents / numReplays / totalHeightTime) *
+          100;
         ((data.movement as any)[column[0]] as any)[2][column[3]] +=
-          opponent[column[6]] / numOpponents / numReplays;
+          (opponent[column[6]] / numOpponents / numReplays / totalHeightTime) *
+          100;
         continue;
       }
 
@@ -194,11 +232,18 @@ function populatePositioning(
 ) {
   const numTeammates = teammates.length;
   const numOpponents = opponents.length;
+
+  const totalPlayerTime =
+    Number(playerData["positional_tendencies_time_in_front_ball"]) +
+    Number(playerData["positional_tendencies_time_behind_ball"]);
+  const totalPlayerThirdTime =
+    Number(playerData["positional_tendencies_time_in_defending_third"]) +
+    Number(playerData["positional_tendencies_time_in_neutral_third"]) +
+    Number(playerData["positional_tendencies_time_in_attacking_third"]);
+
   data.positioning.positionRelativeToTeam[0].value +=
     playerData["relative_positioning_time_most_back_player"] / numReplays;
   data.positioning.positionRelativeToTeam[1].value +=
-    playerData["relative_positioning_time_between_players"] / numReplays;
-  data.positioning.positionRelativeToTeam[2].value +=
     playerData["relative_positioning_time_most_forward_player"] / numReplays;
 
   data.positioning.distanceFromBall[0].value +=
@@ -207,61 +252,112 @@ function populatePositioning(
     playerData["distance_time_furthest_from_ball"] / numReplays;
 
   data.positioning.aheadOfBall[0]["Time Ahead"] +=
-    playerData["positional_tendencies_time_in_front_ball"] / numReplays;
+    (playerData["positional_tendencies_time_in_front_ball"] /
+      numReplays /
+      totalPlayerTime) *
+    100;
   data.positioning.aheadOfBall[0]["Time Behind"] +=
-    playerData["positional_tendencies_time_behind_ball"] / numReplays;
+    (playerData["positional_tendencies_time_behind_ball"] /
+      numReplays /
+      totalPlayerTime) *
+    100;
 
   data.positioning.timeEachThird[0]["Defending Third"] +=
-    playerData["positional_tendencies_time_in_defending_third"] / numReplays;
+    (playerData["positional_tendencies_time_in_defending_third"] /
+      numReplays /
+      totalPlayerThirdTime) *
+    100;
   data.positioning.timeEachThird[0]["Neutral Third"] +=
-    playerData["positional_tendencies_time_in_neutral_third"] / numReplays;
+    (playerData["positional_tendencies_time_in_neutral_third"] /
+      numReplays /
+      totalPlayerThirdTime) *
+    100;
   data.positioning.timeEachThird[0]["Attacking Third"] +=
-    playerData["positional_tendencies_time_in_attacking_third"] / numReplays;
+    (playerData["positional_tendencies_time_in_attacking_third"] /
+      numReplays /
+      totalPlayerThirdTime) *
+    100;
 
   teammates.forEach((tm8: any) => {
+    const totalTime =
+      Number(tm8["positional_tendencies_time_in_front_ball"]) +
+      Number(tm8["positional_tendencies_time_behind_ball"]);
+    const totalThirdTime =
+      Number(tm8["positional_tendencies_time_in_defending_third"]) +
+      Number(tm8["positional_tendencies_time_in_neutral_third"]) +
+      Number(tm8["positional_tendencies_time_in_attacking_third"]);
     data.positioning.aheadOfBall[1]["Time Ahead"] +=
-      tm8["positional_tendencies_time_in_front_ball"] /
-      numTeammates /
-      numReplays;
+      (tm8["positional_tendencies_time_in_front_ball"] /
+        numTeammates /
+        numReplays /
+        totalTime) *
+      100;
     data.positioning.aheadOfBall[1]["Time Behind"] +=
-      tm8["positional_tendencies_time_behind_ball"] / numTeammates / numReplays;
+      (tm8["positional_tendencies_time_behind_ball"] /
+        numTeammates /
+        numReplays /
+        totalTime) *
+      100;
 
     data.positioning.timeEachThird[1]["Defending Third"] +=
-      tm8["positional_tendencies_time_in_defending_third"] /
-      numTeammates /
-      numReplays;
+      (tm8["positional_tendencies_time_in_defending_third"] /
+        numTeammates /
+        numReplays /
+        totalThirdTime) *
+      100;
     data.positioning.timeEachThird[1]["Neutral Third"] +=
-      tm8["positional_tendencies_time_in_neutral_third"] /
-      numTeammates /
-      numReplays;
+      (tm8["positional_tendencies_time_in_neutral_third"] /
+        numTeammates /
+        numReplays /
+        totalThirdTime) *
+      100;
     data.positioning.timeEachThird[1]["Attacking Third"] +=
-      tm8["positional_tendencies_time_in_attacking_third"] /
-      numTeammates /
-      numReplays;
+      (tm8["positional_tendencies_time_in_attacking_third"] /
+        numTeammates /
+        numReplays /
+        totalThirdTime) *
+      100;
   });
 
   opponents.forEach((opponent: any) => {
+    const totalTime =
+      Number(opponent["positional_tendencies_time_in_front_ball"]) +
+      Number(opponent["positional_tendencies_time_behind_ball"]);
+    const totalThirdTime =
+      Number(opponent["positional_tendencies_time_in_defending_third"]) +
+      Number(opponent["positional_tendencies_time_in_neutral_third"]) +
+      Number(opponent["positional_tendencies_time_in_attacking_third"]);
     data.positioning.aheadOfBall[2]["Time Ahead"] +=
-      opponent["positional_tendencies_time_in_front_ball"] /
-      numOpponents /
-      numReplays;
+      (opponent["positional_tendencies_time_in_front_ball"] /
+        numOpponents /
+        numReplays /
+        totalTime) *
+      100;
     data.positioning.aheadOfBall[2]["Time Behind"] +=
-      opponent["positional_tendencies_time_behind_ball"] /
-      numOpponents /
-      numReplays;
+      (opponent["positional_tendencies_time_behind_ball"] /
+        numOpponents /
+        numReplays /
+        totalTime) *
+      100;
 
     data.positioning.timeEachThird[2]["Defending Third"] +=
-      opponent["positional_tendencies_time_in_defending_third"] /
-      numOpponents /
-      numReplays;
+      (opponent["positional_tendencies_time_in_defending_third"] /
+        numOpponents /
+        numReplays /
+        totalThirdTime) *
+      100;
     data.positioning.timeEachThird[2]["Neutral Third"] +=
-      opponent["positional_tendencies_time_in_neutral_third"] /
-      numOpponents /
-      numReplays;
+      (opponent["positional_tendencies_time_in_neutral_third"] /
+        numOpponents /
+        numReplays /
+        totalThirdTime) *
+      100;
     data.positioning.timeEachThird[2]["Attacking Third"] +=
-      opponent["positional_tendencies_time_in_attacking_third"] /
-      numOpponents /
-      numReplays;
+      (opponent["positional_tendencies_time_in_attacking_third"] /
+        numOpponents /
+        numReplays /
+        totalThirdTime) *
+      100;
   });
 }
 

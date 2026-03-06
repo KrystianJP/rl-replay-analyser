@@ -267,6 +267,67 @@ function DataComparison({ rank, replayData, player }: any) {
       return player.name === p.player_name;
     };
 
+    const populateYou_OriginalBallchasing = (
+      numReplays: number,
+      playerData: any,
+      duration: number,
+      data: any,
+    ) => {
+      data.core[0].You_Original += playerData["shots"] / duration / numReplays;
+      data.core[1].You_Original += Number(playerData["goals"]);
+      data.core[2].You_Original += playerData["saves"] / duration / numReplays;
+      data.core[3].You_Original += Number(playerData["assists"]);
+      data.core[4].You_Original +=
+        Number(playerData["core_shooting_percentage"]) / numReplays;
+
+      data.boost[0].You_Original +=
+        playerData["boost_boost_usage"] / numReplays;
+      data.boost[1].You_Original +=
+        playerData["boost_num_small_boosts"] / duration / numReplays;
+      data.boost[2].You_Original +=
+        playerData["boost_num_large_boosts"] / duration / numReplays;
+      data.boost[3].You_Original +=
+        playerData["boost_num_stolen_boosts"] / duration / numReplays;
+      data.boost[4].You_Original +=
+        playerData["boost_percent_zero_boost"] / numReplays;
+      data.boost[5].You_Original +=
+        playerData["boost_percent_boost_0_25"] / numReplays;
+      data.boost[6].You_Original +=
+        playerData["boost_percent_full_boost"] / numReplays;
+
+      data.movement[0].You_Original +=
+        playerData["movement_avg_speed_percentage"] / numReplays;
+      data.movement[1].You_Original +=
+        playerData["movement_percent_supersonic_speed"] / numReplays;
+      data.movement[2].You_Original +=
+        playerData["movement_percent_ground"] / numReplays;
+      data.movement[3].You_Original +=
+        playerData["movement_percent_low_air"] / numReplays;
+      data.movement[4].You_Original +=
+        playerData["movement_percent_high_air"] / numReplays;
+      data.movement[5].You_Original +=
+        playerData["demo_stats_num_demos_inflicted"] / numReplays / duration;
+      data.movement[6].You_Original +=
+        playerData["demo_stats_num_demos_taken"] / numReplays / duration;
+
+      data.positioning[0].You_Original +=
+        playerData["positioning_percent_most_back"] / numReplays;
+      data.positioning[1].You_Original +=
+        playerData["positioning_percent_most_forward"] / numReplays;
+      data.positioning[2].You_Original +=
+        playerData["positioning_percent_closest_to_ball"] / numReplays;
+      data.positioning[3].You_Original +=
+        playerData["positioning_percent_farthest_from_ball"] / numReplays;
+      data.positioning[4].You_Original +=
+        playerData["positioning_percent_behind_ball"] / numReplays;
+      data.positioning[5].You_Original +=
+        playerData["positioning_percent_infront_ball"] / numReplays;
+      data.positioning[6].You_Original +=
+        playerData["positioning_percent_defensive_third"] / numReplays;
+      data.positioning[7].You_Original +=
+        playerData["positioning_percent_offensive_third"] / numReplays;
+    };
+
     const populateYou_Original = (
       numReplays: number,
       playerData: any,
@@ -516,20 +577,23 @@ function DataComparison({ rank, replayData, player }: any) {
 
         const playerData = replay.find((p: any) => isPlayer(p, player));
 
-        // in mins
-        const duration =
-          (Number(playerData["positional_tendencies_time_in_attacking_half"]) +
-            Number(
-              playerData["positional_tendencies_time_in_defending_half"],
-            )) /
-          60;
+        const duration = playerData.duration;
 
         // add user's team goals per replay to divide at end
         totalGoals += replay
           .filter((p: any) => p.team === playerData.team)
           .reduce((a: number, b: any) => a + Number(b.goals), 0);
 
-        populateYou_Original(numReplays, playerData, duration, radarData);
+        if ("ballchasing" in playerData) {
+          populateYou_OriginalBallchasing(
+            numReplays,
+            playerData,
+            duration,
+            radarData,
+          );
+        } else {
+          populateYou_Original(numReplays, playerData, duration, radarData);
+        }
       });
 
       if (totalGoals === 0) totalGoals = 1;

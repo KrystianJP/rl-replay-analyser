@@ -202,6 +202,41 @@ function PlaystyleClassification({ replayData, player, rank }: any) {
       return player.name === p.player_name;
     };
 
+    const populatePlayerDataBallchasing = (
+      numReplays: number,
+      playerData: any,
+      duration: number,
+      dataToPopulate: any,
+    ) => {
+      const matchingKeys = [
+        "core_shooting_percentage",
+        "movement_avg_speed_percentage",
+        "movement_percent_high_air",
+        "positioning_percent_most_back",
+        "positioning_percent_most_forward",
+        "positioning_percent_closest_to_ball",
+        "positioning_percent_farthest_from_ball",
+        "positioning_percent_infront_ball",
+        "positioning_percent_defensive_third",
+        "positioning_percent_offensive_third",
+      ];
+      dataToPopulate.core_shots += playerData["shots"] / duration / numReplays;
+      dataToPopulate.core_goals += Number(playerData["goals"]);
+      dataToPopulate.core_assists += Number(playerData["assists"]);
+      dataToPopulate.core_saves += playerData["saves"] / duration / numReplays;
+
+      dataToPopulate.boost_bpm += playerData["boost_boost_usage"] / numReplays;
+      dataToPopulate.boost_count_stolen_big +=
+        playerData["boost_num_stolen_boosts"] / duration / numReplays;
+
+      dataToPopulate.demo_inflicted +=
+        playerData["demo_stats_num_demos_inflicted"] / numReplays / duration;
+
+      matchingKeys.forEach((key) => {
+        dataToPopulate[key] += playerData[key] / numReplays;
+      });
+    };
+
     const populatePlayerData = (
       numReplays: number,
       playerData: any,
@@ -304,20 +339,22 @@ function PlaystyleClassification({ replayData, player, rank }: any) {
         const replayPlayer = replay.find((p: any) => isPlayer(p, player));
 
         // in mins
-        const duration =
-          (Number(
-            replayPlayer["positional_tendencies_time_in_attacking_half"],
-          ) +
-            Number(
-              replayPlayer["positional_tendencies_time_in_defending_half"],
-            )) /
-          60;
+        const duration = replayPlayer["duration"];
 
         totalGoals += replay
           .filter((p: any) => p.team === replayPlayer.team)
           .reduce((a: number, b: any) => a + Number(b.goals), 0);
 
-        populatePlayerData(numReplays, replayPlayer, duration, playerData);
+        if ("ballchasing" in replayPlayer) {
+          populatePlayerDataBallchasing(
+            numReplays,
+            replayPlayer,
+            duration,
+            playerData,
+          );
+        } else {
+          populatePlayerData(numReplays, replayPlayer, duration, playerData);
+        }
       });
 
       if (totalGoals === 0) totalGoals = 1;

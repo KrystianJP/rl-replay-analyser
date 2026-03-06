@@ -35,6 +35,8 @@ function CustomStackChart({ title, data, dataKeys }: any) {
             tick={{ fill: "#c2d9f8ff", fontFamily: "Arial, sans-serif" }}
             // tickFormatter={(value) => value + " %"}
             axisLine={{ stroke: "white", strokeWidth: 2 }}
+            domain={[0, 100]}
+            tickCount={0}
           />
           <Tooltip
             contentStyle={{

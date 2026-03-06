@@ -191,6 +191,7 @@ def process_replay(temp_file_path):
                         player_dict[f"{category_name}_{stat_field.name}"] = stat_value
             else:
                 player_dict[category_name] = category_value
+        player_dict["duration"] = (player_dict["positional_tendencies_time_behind_ball"] + player_dict["positional_tendencies_time_in_front_ball"]) / 60
         all_players_data.append(player_dict)
 
     df = pd.DataFrame(all_players_data).fillna(0)
@@ -492,7 +493,7 @@ def get_playstyle_3v3(player: PlayerStats, mode: int):
 
     return {"ordered_classes": ordered_classes.tolist(), "ordered_probs": ordered_probs.tolist(), "top_stats": top_stats}
 
-
+from format_ballchasing import ballchasing_mapping
 @app.get("/api/ballchasing/{id}")
 def get_ballchasing(id: str):
     replay_data = get_replay(id, TOKEN)
@@ -502,11 +503,35 @@ def get_ballchasing(id: str):
     
     players = replay_data['blue']['players'] + replay_data['orange']['players']
 
+    for player in replay_data['blue']['players']:
+        player["team"] = "Blue"
+    for player in replay_data['orange']['players']:
+        player["team"] = "Orange"
+
+    overtime = 0
+    if replay_data['overtime']:
+        overtime = replay_data['overtime_seconds'] / 60
+    replay_duration = 5 + overtime
+    if replay_duration < 300:
+        replay_duration = replay_data['duration'] / 60
+
     players_formatted = []
 
     for player in players:
-        pass
+        player_data = {}
+        player_data['id'] = player['id']['id']
+        player_data['team'] = player['team']
+        player_data['ballchasing'] = "Yes"
+        player_data['duration'] = replay_duration
+        for category in ballchasing_mapping.keys():
+            for stat in ballchasing_mapping[category].keys():
+                player_data[ballchasing_mapping[category][stat]] = player['stats'][category][stat]
+        players_formatted.append(player_data)
 
+    players_list = [{"name": player['name'], "id":player["id"]["id"]} for player in players]
 
+    result = {"id": replay_data["rocket_league_id"], "players": players_list, "data": players_formatted}
 
-    return {"replay_data": replay_data}
+    header = {"status": "success", "name": replay_data["title"], "players": players_list, "game_id": replay_data["rocket_league_id"]}
+
+    return {"data": result, "header": header}

@@ -64,7 +64,6 @@ const DATA_SKELETON = {
   positioning: {
     positionRelativeToTeam: [
       { name: "Most Back", value: 0 },
-      { name: "Between Players", value: 0 },
       { name: "Most Forward", value: 0 },
     ],
     distanceFromBall: [
@@ -139,6 +138,7 @@ function DataOverview({ replayData, player }: any) {
 
   const [chartData, setChartData] = useState<any>(null);
   const [demoCategory, setDemoCategory] = useState<boolean>(false);
+  const [ballchasing, setBallchasing] = useState<boolean>(false);
   const [minimized, setMinimized] = useState<boolean>(true);
   const [clicked, setClicked] = useState<boolean>(false);
 
@@ -157,8 +157,9 @@ function DataOverview({ replayData, player }: any) {
 
     replayData.forEach((replayObject: any) => {
       const replay = replayObject.data.filter((p: any) => p.team);
-
       const playerData = replay.find((p: any) => isPlayer(p, player));
+
+      if ("ballchasing" in playerData) setBallchasing(true);
 
       const teammates = replay.filter(
         (p: any) => !isPlayer(p, player) && p.team === playerData.team,
@@ -233,7 +234,7 @@ function DataOverview({ replayData, player }: any) {
           data: chartData.movement.timeSupersonic,
         },
         {
-          title: "Time at different Heights",
+          title: "Time at different Heights %",
           chart: "stack-chart",
           data: chartData.movement.timeHeights,
         },
@@ -250,12 +251,12 @@ function DataOverview({ replayData, player }: any) {
           data: chartData.positioning.distanceFromBall,
         },
         {
-          title: "Behind/Ahead of Ball",
+          title: "Behind/Ahead of Ball %",
           chart: "stack-chart",
           data: chartData.positioning.aheadOfBall,
         },
         {
-          title: "General Position on Field",
+          title: "General Position on Field %",
           chart: "stack-chart",
           data: chartData.positioning.timeEachThird,
         },
@@ -385,6 +386,7 @@ function DataOverview({ replayData, player }: any) {
           </button>
           <button
             className={category === "possession" ? "active" : ""}
+            hidden={ballchasing}
             onClick={() => setCategory("possession")}
           >
             Possession

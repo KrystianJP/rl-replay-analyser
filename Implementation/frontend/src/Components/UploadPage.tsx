@@ -104,7 +104,6 @@ function UploadPage({
       console.log(`Replay ${match_guid} found in cache, skipping upload.`);
 
       const parsed = Papa.parse(idbReplay, { header: true });
-      console.log({ id: match_guid, players: players, data: parsed.data });
       setReplayData((prev: any) => [
         ...prev,
         { id: match_guid, players: players, data: parsed.data },
@@ -294,11 +293,6 @@ function UploadPage({
     }
   };
 
-  // convert ballchasing format to parser format
-  const convertFormat = (data: any) => {
-    return data;
-  };
-
   const handleBallchasingUpload = async () => {
     // clear ballchasing errors on new upload attempt
     setErrorList((prev) =>
@@ -306,7 +300,7 @@ function UploadPage({
     );
 
     // extract from potential url
-    const id = ballchasingInput.split("/").pop();
+    const id = ballchasingInput.split("/").pop()?.trim();
     try {
       const response = await fetch(
         "http://127.0.0.1:8000/api/ballchasing/" + id,
@@ -318,9 +312,20 @@ function UploadPage({
 
       const data = await response.json();
 
-      const convertedData = convertFormat(data);
+      const replayData = data.data;
 
-      console.log(convertedData);
+      setReplayList((prevList) => [
+        ...prevList,
+        { ...data.header, fileName: id },
+      ]);
+
+      setReplayData((prev: any) => [...prev, replayData]);
+
+      await updatePlayerDropdown(data.header.players);
+
+      setReplayCounter((prev) => prev + 1);
+      setUploadCounter((prev) => prev + 1);
+      setBallchasingInput("");
     } catch (error) {
       console.error("Error fetch ballchasing replay:", error);
       setErrorList((prevErrors) => [
