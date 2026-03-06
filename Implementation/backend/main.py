@@ -21,6 +21,11 @@ import joblib
 from pydantic import BaseModel
 from typing import List
 import shap
+import requests
+import time
+from dotenv import load_dotenv
+
+load_dotenv()
 
 app = FastAPI()
 
@@ -30,6 +35,9 @@ origins = [
 ]
 
 RRROCKET_PATH = "./rrrocket.exe"
+TOKEN = os.getenv("BALLCHASING_TOKEN")
+
+WAIT_TIME = 0.1666
 
 model_3v3 = joblib.load("rf_model_3v3.joblib")
 with open("rank_stats_3v3.json") as f:
@@ -102,6 +110,28 @@ class PlayerStats(BaseModel):
     demo_inflicted: float
 
 upload_lock = asyncio.Lock()
+
+def safe_get(url, headers, params={}, sleep_time=0.25):
+    while True:
+        r = requests.get(url, headers=headers, params=params)
+        
+        if r.status_code == 429:
+            print(f"Rate limited. Sleeping {WAIT_TIME} minutes")
+            time.sleep(WAIT_TIME * 60)
+            continue
+        
+        r.raise_for_status()
+        time.sleep(sleep_time)
+        return r
+
+def get_replay(id, token=TOKEN):
+    r = safe_get("https://ballchasing.com/api/replays/" + id, headers={
+                      'Authorization': token})
+
+    if r.status_code == 200:
+        return r.json()
+    else:
+        r.raise_for_status()
 
 def compute_percentile(value, rank):
     pool = rank_high_air_stats.get(str(rank))
@@ -198,9 +228,14 @@ def get_replay_header(replay_path: str):
         "players": []
     }
 
-    # name, online_id, epic_id of each player
     for player in properties.get("PlayerStats", []):
-        player_info = {"name": player.get("Name", "Unknown"), "online_id": player.get("OnlineID", "0"), "epic_id": player.get("PlayerID", {}).get("fields", {}).get("EpicAccountId", "0")}
+        player_id = str(player.get("PlayerID", {}).get("fields", {}).get("EpicAccountId", ""))
+        if player_id == "" or player_id == "0":
+            player_id = str(player.get("OnlineID", ""))
+        if player_id == "" or player_id == "0":
+            player_id = str(player.get("Name", ""))
+
+        player_info = {"name": player.get("Name", "Unknown"), "id": player_id}
         header["players"].append(player_info)
 
     return header
@@ -456,3 +491,22 @@ def get_playstyle_3v3(player: PlayerStats, mode: int):
     top_stats = [ {"feature": feature_names[i], "shap_value": shap_top[i], "feature_value": df.iloc[0][feature_names[i]], "direction": get_tree_threshold_direction(model_3v3, df, feature_names, feature_names[i])} for i in top_shap_idxs ]
 
     return {"ordered_classes": ordered_classes.tolist(), "ordered_probs": ordered_probs.tolist(), "top_stats": top_stats}
+
+
+@app.get("/api/ballchasing/{id}")
+def get_ballchasing(id: str):
+    replay_data = get_replay(id, TOKEN)
+
+    if replay_data is None:
+        return {"error": "Replay not found"}
+    
+    players = replay_data['blue']['players'] + replay_data['orange']['players']
+
+    players_formatted = []
+
+    for player in players:
+        pass
+
+
+
+    return {"replay_data": replay_data}

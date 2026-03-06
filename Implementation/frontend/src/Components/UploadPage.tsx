@@ -20,6 +20,14 @@ function UploadPage({
   const [replayCounter, setReplayCounter] = useState<number>(0);
   const [uploadCounter, setUploadCounter] = useState<number>(0);
   const [analysing, setAnalysing] = useState<boolean>(false);
+  const [ballchasingInput, setBallchasingInput] = useState<string>("");
+
+  const isPlayer = (p: any, player: any) => {
+    if (player.id !== "0" && player.id !== "" && "id" in p) {
+      return player.id === p.id;
+    }
+    return player.name === p.player_name;
+  };
 
   useEffect(() => {
     if (replayCounter > 0 && uploadCounter === replayCounter && analysing) {
@@ -29,27 +37,9 @@ function UploadPage({
       setRank(selectedRank);
       setReplayData((replayData: any) => {
         return replayData.filter((replay: any) =>
-          replay.players.some((replayPlayer: any) => {
-            if (
-              player.online_id !== "0" &&
-              replayPlayer.online_id !== "0" &&
-              player.online_id !== "" &&
-              replayPlayer.online_id !== ""
-            ) {
-              if (player.online_id === replayPlayer.online_id) return true;
-              return false;
-            }
-            if (
-              player.epic_id !== "0" &&
-              replayPlayer.epic_id !== "0" &&
-              player.epic_id !== "" &&
-              replayPlayer.epic_id !== ""
-            ) {
-              if (player.epic_id === replayPlayer.epic_id) return true;
-              return false;
-            }
-            return player.name === replayPlayer.name;
-          }),
+          replay.players.some((replayPlayer: any) =>
+            isPlayer(replayPlayer, player),
+          ),
         );
       });
       // filter out replays not in replay list
@@ -87,30 +77,9 @@ function UploadPage({
         const newDropdown = [...currentDropdown];
 
         playersList.forEach((newPlayer) => {
-          const exists = newDropdown.some((existing) => {
-            // match by OnlineID (Steam/PSN/Xbox)
-            if (
-              newPlayer.online_id !== "0" &&
-              existing.online_id !== "0" &&
-              newPlayer.online_id !== "" &&
-              existing.online_id !== ""
-            ) {
-              if (newPlayer.online_id === existing.online_id) return true;
-              return false;
-            }
-            // match by EpicID
-            if (
-              newPlayer.epic_id !== "0" &&
-              existing.epic_id !== "0" &&
-              newPlayer.epic_id !== "" &&
-              existing.epic_id !== ""
-            ) {
-              if (newPlayer.epic_id === existing.epic_id) return true;
-              return false;
-            }
-            // fallback to name if IDs are missing (older replays or specific platforms)
-            return newPlayer.name === existing.name;
-          });
+          const exists = newDropdown.some((existing) =>
+            isPlayer(newPlayer, existing),
+          );
 
           if (!exists) {
             newDropdown.push(newPlayer);
@@ -135,6 +104,7 @@ function UploadPage({
       console.log(`Replay ${match_guid} found in cache, skipping upload.`);
 
       const parsed = Papa.parse(idbReplay, { header: true });
+      console.log({ id: match_guid, players: players, data: parsed.data });
       setReplayData((prev: any) => [
         ...prev,
         { id: match_guid, players: players, data: parsed.data },
@@ -324,6 +294,42 @@ function UploadPage({
     }
   };
 
+  // convert ballchasing format to parser format
+  const convertFormat = (data: any) => {
+    return data;
+  };
+
+  const handleBallchasingUpload = async () => {
+    // clear ballchasing errors on new upload attempt
+    setErrorList((prev) =>
+      prev.filter((error) => !error.includes("ballchasing")),
+    );
+
+    // extract from potential url
+    const id = ballchasingInput.split("/").pop();
+    try {
+      const response = await fetch(
+        "http://127.0.0.1:8000/api/ballchasing/" + id,
+      );
+
+      if (!response.ok) {
+        throw new Error("Network response not ok");
+      }
+
+      const data = await response.json();
+
+      const convertedData = convertFormat(data);
+
+      console.log(convertedData);
+    } catch (error) {
+      console.error("Error fetch ballchasing replay:", error);
+      setErrorList((prevErrors) => [
+        ...prevErrors,
+        "Error fetching ballchasing replay",
+      ]);
+    }
+  };
+
   return (
     <section className="section alt" id="upload">
       <div className="container">
@@ -365,10 +371,19 @@ function UploadPage({
           <div className="ballchasing-input-container">
             <input
               type="text"
+              id="ballchasing-upload"
+              disabled={analysing}
+              value={ballchasingInput}
+              onChange={(e) => setBallchasingInput(e.target.value)}
               placeholder="Enter Ballchasing ID/URL"
               className="ballchasing-input"
             ></input>
-            <span className="material-icons ballchasing-add">add</span>
+            <span
+              className="material-icons ballchasing-add"
+              onClick={handleBallchasingUpload}
+            >
+              add
+            </span>
           </div>
           <div style={{ textAlign: "center", opacity: 0.7, marginTop: "5px" }}>
             (Click on a replay to remove it)

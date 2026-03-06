@@ -143,11 +143,8 @@ function DataOverview({ replayData, player }: any) {
   const [clicked, setClicked] = useState<boolean>(false);
 
   const isPlayer = (p: any, player: any) => {
-    if (player.online_id !== "0" && player.online_id !== "" && "id" in p) {
-      return player.online_id === p.id;
-    }
-    if (player.epic_id !== "0" && player.epic_id !== "" && "id" in p) {
-      return player.epic_id === p.id;
+    if (player.id !== "0" && player.id !== "" && "id" in p) {
+      return player.id === p.id;
     }
     return player.name === p.player_name;
   };
