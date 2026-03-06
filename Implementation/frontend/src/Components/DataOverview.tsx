@@ -140,6 +140,7 @@ function DataOverview({ replayData, player }: any) {
   const [chartData, setChartData] = useState<any>(null);
   const [demoCategory, setDemoCategory] = useState<boolean>(false);
   const [minimized, setMinimized] = useState<boolean>(true);
+  const [clicked, setClicked] = useState<boolean>(false);
 
   const isPlayer = (p: any, player: any) => {
     if (player.online_id !== "0" && player.online_id !== "" && "id" in p) {
@@ -337,9 +338,16 @@ function DataOverview({ replayData, player }: any) {
   if (minimized) {
     return (
       <section className="section alt" id="comparison">
-        <h2 style={{ cursor: "pointer" }} onClick={() => setMinimized(false)}>
+        <h2
+          style={{ cursor: "pointer" }}
+          onClick={() => {
+            setMinimized(false);
+            if (!clicked) setClicked(true);
+          }}
+        >
           Data Overview
           <span className="material-icons">arrow_drop_down</span>
+          {!clicked && <span className="expand-section">(expand)</span>}
         </h2>
       </section>
     );

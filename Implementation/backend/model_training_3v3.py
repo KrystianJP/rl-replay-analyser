@@ -24,7 +24,7 @@ for i, row in df.iterrows():
 
 X = df.drop(columns=[
     "playstyle", "rank", "player_id", "index",
-    "movement_percent_ground", "positioning_percent_farthest_from_ball",
+    "movement_percent_ground", 
     "positioning_percent_behind_ball", "movement_percent_supersonic_speed"
 ])
 y = df["playstyle"]
@@ -97,14 +97,14 @@ evaluate_model(rf_model, "Random Forest Classifier", X, y)
 lr_model.fit(X,y)
 rf_model.fit(X,y)
 
-# joblib.dump(lr_model, "lr_model_3v3.joblib")
-# joblib.dump(rf_model, "rf_model_3v3.joblib")
+joblib.dump(lr_model, "lr_model_3v3.joblib")
+joblib.dump(rf_model, "rf_model_3v3.joblib")
 
-import json
+# import json
 
-rank_stats = {}
-for rank in df["rank-no"].unique():
-    rank_stats[int(rank)] = df[df["rank-no"] == rank]["movement_percent_high_air"].tolist()
+# rank_stats = {}
+# for rank in df["rank-no"].unique():
+#     rank_stats[int(rank)] = df[df["rank-no"] == rank]["movement_percent_high_air"].tolist()
 
-with open("rank_stats_3v3.json", "w") as f:
-    json.dump(rank_stats, f)
+# with open("rank_stats_3v3.json", "w") as f:
+#     json.dump(rank_stats, f)

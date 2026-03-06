@@ -59,6 +59,7 @@ const playerData_structure = {
   positioning_percent_most_back: 0,
   positioning_percent_most_forward: 0,
   positioning_percent_closest_to_ball: 0,
+  positioning_percent_farthest_from_ball: 0,
   positioning_percent_infront_ball: 0,
   positioning_percent_defensive_third: 0,
   positioning_percent_offensive_third: 0,
@@ -170,7 +171,7 @@ const CLASS_ADVICE = {
     {
       flaw: "Insignificant demos/bumps",
       advice:
-        "Be aware that going for a demo/bump will often take you out of position, doing so without creating an opportunity to take space, shut down the opponents' attack, or to score can be counterproductive.",
+        "Be aware that going for a demo/bump will often take you out of position, doing so without creating an opportunity to take space, score, or shut down the opponents' attack, can be counterproductive.",
     },
   ],
   playmaker: [
@@ -244,6 +245,11 @@ function PlaystyleClassification({ replayData, player, rank }: any) {
         100;
       dataToPopulate.positioning_percent_closest_to_ball +=
         (playerData["distance_time_closest_to_ball"] /
+          (duration * 60) /
+          numReplays) *
+        100;
+      dataToPopulate.positioning_percent_farthest_from_ball +=
+        (playerData["distance_time_furthest_from_ball"] /
           (duration * 60) /
           numReplays) *
         100;

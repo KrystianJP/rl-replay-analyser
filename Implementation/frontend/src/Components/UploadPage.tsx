@@ -359,6 +359,17 @@ function UploadPage({
             onChange={handleFileChange}
             disabled={analysing}
           />
+          <div style={{ textAlign: "center", opacity: 0.7, padding: "5px 0" }}>
+            OR
+          </div>
+          <div className="ballchasing-input-container">
+            <input
+              type="text"
+              placeholder="Enter Ballchasing ID/URL"
+              className="ballchasing-input"
+            ></input>
+            <span className="material-icons ballchasing-add">add</span>
+          </div>
           <div style={{ textAlign: "center", opacity: 0.7, marginTop: "5px" }}>
             (Click on a replay to remove it)
           </div>

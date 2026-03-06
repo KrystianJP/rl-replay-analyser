@@ -31,25 +31,11 @@ origins = [
 
 RRROCKET_PATH = "./rrrocket.exe"
 
-ML_COLS = [
-    "rank-no",
-    "core_shots",
-    "core_goals",
-    "core_saves",
-    "core_assists",
-    "core_shooting_percentage",
-    "boost_bpm",
-    "boost_count_stolen_big",
-    "movement_avg_speed_percentage",
-    "movement_percent_high_air",
-    "positioning_percent_most_back",
-    "positioning_percent_most_forward",
-    "positioning_percent_closest_to_ball",
-    "positioning_percent_infront_ball",
-    "positioning_percent_offensive_third",
-    # "positioning_percent_defensive_third",
-    "demo_inflicted"
-    ]
+model_3v3 = joblib.load("rf_model_3v3.joblib")
+with open("rank_stats_3v3.json") as f:
+    rank_high_air_stats = json.load(f)
+
+ML_COLS = model_3v3.feature_names_in_.tolist()
 
 COMP_COLS = ["core_shots",
         "core_goals",
@@ -107,6 +93,7 @@ class PlayerStats(BaseModel):
 
     positioning_percent_most_back: float
     positioning_percent_most_forward: float
+    positioning_percent_farthest_from_ball: float
     positioning_percent_closest_to_ball: float
     positioning_percent_infront_ball: float
     positioning_percent_offensive_third: float
@@ -115,10 +102,6 @@ class PlayerStats(BaseModel):
     demo_inflicted: float
 
 upload_lock = asyncio.Lock()
-
-model_3v3 = joblib.load("rf_model_3v3.joblib")
-with open("rank_stats_3v3.json") as f:
-    rank_high_air_stats = json.load(f)
 
 def compute_percentile(value, rank):
     pool = rank_high_air_stats.get(str(rank))
@@ -448,11 +431,11 @@ def get_playstyle_3v3(player: PlayerStats, mode: int):
 
     df = pd.DataFrame(player.dict(), index=[0])
     df = df.rename(columns={"rank_no": "rank-no"})
-
     df["movement_percent_high_air_percentile"] = compute_percentile(
         df["movement_percent_high_air"].iloc[0],
         df["rank-no"].iloc[0]
     )
+    df = df[ML_COLS]
 
     if mode == 3:
         probs = model_3v3.predict_proba(df)

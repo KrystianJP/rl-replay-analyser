@@ -315,9 +315,15 @@ section h2 {
   padding-bottom: 10px;
 }
 
+section .expand-section {
+  opacity: 0.6;
+  font-size: 0.8rem;
+  margin-left: -15px;
+}
+
 #comparison h3 {
   text-align: center;
-  margin-top: 3rem;
+  margin-top: 1.5rem;
 }
 #comparison .rank-selection {
   display: inline;
@@ -493,4 +499,34 @@ section h2 {
 }
 .legend-rank .legend-box {
   background-color: #ff5e42ff;
+}
+
+.ballchasing-input-container {
+  display: flex;
+  justify-content: center;
+  padding: 5px;
+}
+.ballchasing-input {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 5px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  padding: 0.5rem 1rem;
+  margin: 0 0.5rem;
+  color: #fff;
+  width: 400px;
+}
+.ballchasing-input-container .ballchasing-add {
+  background: #2b3a75;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 5px;
+  color: white;
+  cursor: pointer;
+  transition: 0.1s;
+}
+.ballchasing-input-container .ballchasing-add:hover {
+  filter: brightness(0.8);
 }
