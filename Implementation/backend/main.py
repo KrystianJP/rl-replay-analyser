@@ -40,8 +40,8 @@ TOKEN = os.getenv("BALLCHASING_TOKEN")
 WAIT_TIME = 0.1666
 
 model_3v3 = joblib.load("rf_model_3v3.joblib")
-with open("rank_stats_3v3.json") as f:
-    rank_high_air_stats = json.load(f)
+with open("rank_stats_3v3_all.json") as f:
+    rank_stats = json.load(f)
 
 ML_COLS = model_3v3.feature_names_in_.tolist()
 
@@ -133,9 +133,9 @@ def get_replay(id, token=TOKEN):
     else:
         r.raise_for_status()
 
-def compute_percentile(value, rank):
-    pool = rank_high_air_stats.get(str(rank))
-    return (sum(v < value for v in pool) / len(pool)) * 100
+def compute_percentile(value, rank_no, col, rank_stats):
+    group = rank_stats.get(str(rank_no), {}).get(col, [])
+    return float(np.mean(np.array(group) <= value) * 100)
 
 def get_replay_proto(replay_path: str):
     if not os.path.exists(RRROCKET_PATH):
@@ -474,10 +474,12 @@ def get_playstyle_3v3(player: PlayerStats, mode: int):
 
     df = pd.DataFrame(player.dict(), index=[0])
     df = df.rename(columns={"rank_no": "rank-no"})
-    df["movement_percent_high_air_percentile"] = compute_percentile(
-        df["movement_percent_high_air"].iloc[0],
-        df["rank-no"].iloc[0]
-    )
+    stat_cols = [col.replace("_pct", "") for col in ML_COLS]
+    for col in stat_cols:
+        df[f"{col}_pct"] = compute_percentile(
+            df[col].iloc[0], df["rank-no"].iloc[0], col, rank_stats
+        )
+    
     df = df[ML_COLS]
 
     if mode == 3:
