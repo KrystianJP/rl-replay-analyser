@@ -3,6 +3,7 @@ import CustomStackChart from "./CustomStackChart";
 import CustomPieChart from "./CustomPieChart";
 import { useState, useEffect, useMemo } from "react";
 import {
+  populateCore,
   populateBoost,
   populateMovement,
   populatePositioning,
@@ -12,53 +13,75 @@ import {
 /* eslint-disable  @typescript-eslint/no-explicit-any */
 
 const DATA_SKELETON = {
+  core: {
+    shots: [
+      { name: "You", Shots: 0 },
+      { name: "Teammate Avg", Shots: 0 },
+      { name: "Opponent Avg", Shots: 0 },
+    ],
+    goals: [
+      { name: "You", Goals: 0 },
+      { name: "Teammate Avg", Goals: 0 },
+      { name: "Opponent Avg", Goals: 0 },
+    ],
+    assists: [
+      { name: "You", Assists: 0 },
+      { name: "Teammate Avg", Assists: 0 },
+      { name: "Opponent Avg", Assists: 0 },
+    ],
+    saves: [
+      { name: "You", Saves: 0 },
+      { name: "Teammate Avg", Saves: 0 },
+      { name: "Opponent Avg", Saves: 0 },
+    ],
+  },
   boost: {
     bpm: [
       { name: "You", BPM: 0 },
-      { name: "Teammates", BPM: 0 },
-      { name: "Opponents", BPM: 0 },
+      { name: "Teammate Avg", BPM: 0 },
+      { name: "Opponent Avg", BPM: 0 },
     ],
     smallPads: [
       { name: "You", "Small pads": 0 },
-      { name: "Teammates", "Small pads": 0 },
-      { name: "Opponents", "Small pads": 0 },
+      { name: "Teammate Avg", "Small pads": 0 },
+      { name: "Opponent Avg", "Small pads": 0 },
     ],
     largePads: [
       { name: "You", "Large pads": 0 },
-      { name: "Teammates", "Large pads": 0 },
-      { name: "Opponents", "Large pads": 0 },
+      { name: "Teammate Avg", "Large pads": 0 },
+      { name: "Opponent Avg", "Large pads": 0 },
     ],
     timeAt0: [
       { name: "You", "Time at 0": 0 },
-      { name: "Teammates", "Time at 0": 0 },
-      { name: "Opponents", "Time at 0": 0 },
+      { name: "Teammate Avg", "Time at 0": 0 },
+      { name: "Opponent Avg", "Time at 0": 0 },
     ],
     timeAtLow: [
       { name: "You", "Time at Low": 0 },
-      { name: "Teammates", "Time at Low": 0 },
-      { name: "Opponents", "Time at Low": 0 },
+      { name: "Teammate Avg", "Time at Low": 0 },
+      { name: "Opponent Avg", "Time at Low": 0 },
     ],
     timeAtFull: [
       { name: "You", "Time at Full": 0 },
-      { name: "Teammates", "Time at Full": 0 },
-      { name: "Opponents", "Time at Full": 0 },
+      { name: "Teammate Avg", "Time at Full": 0 },
+      { name: "Opponent Avg", "Time at Full": 0 },
     ],
   },
   movement: {
     averageSpeed: [
       { name: "You", "Average Speed": 0 },
-      { name: "Teammates", "Average Speed": 0 },
-      { name: "Opponents", "Average Speed": 0 },
+      { name: "Teammate Avg", "Average Speed": 0 },
+      { name: "Opponent Avg", "Average Speed": 0 },
     ],
     timeSupersonic: [
       { name: "You", "Time Supersonic": 0 },
-      { name: "Teammates", "Time Supersonic": 0 },
-      { name: "Opponents", "Time Supersonic": 0 },
+      { name: "Teammate Avg", "Time Supersonic": 0 },
+      { name: "Opponent Avg", "Time Supersonic": 0 },
     ],
     timeHeights: [
       { name: "You", Ground: 0, Low: 0, High: 0 },
-      { name: "Teammates", Ground: 0, Low: 0, High: 0 },
-      { name: "Opponents", Ground: 0, Low: 0, High: 0 },
+      { name: "Teammate Avg", Ground: 0, Low: 0, High: 0 },
+      { name: "Opponent Avg", Ground: 0, Low: 0, High: 0 },
     ],
   },
   positioning: {
@@ -72,8 +95,8 @@ const DATA_SKELETON = {
     ],
     aheadOfBall: [
       { name: "You", "Time Ahead": 0, "Time Behind": 0 },
-      { name: "Teammates", "Time Ahead": 0, "Time Behind": 0 },
-      { name: "Opponents", "Time Ahead": 0, "Time Behind": 0 },
+      { name: "Teammate Avg", "Time Ahead": 0, "Time Behind": 0 },
+      { name: "Opponent Avg", "Time Ahead": 0, "Time Behind": 0 },
     ],
     timeEachThird: [
       {
@@ -83,13 +106,13 @@ const DATA_SKELETON = {
         "Attacking Third": 0,
       },
       {
-        name: "Teammates",
+        name: "Teammate Avg",
         "Defending Third": 0,
         "Neutral Third": 0,
         "Attacking Third": 0,
       },
       {
-        name: "Opponents",
+        name: "Opponent Avg",
         "Defending Third": 0,
         "Neutral Third": 0,
         "Attacking Third": 0,
@@ -120,21 +143,21 @@ const DATA_SKELETON = {
     ],
     possessionTime: [
       { name: "You", "Possession Time": 0 },
-      { name: "Teammates", "Possession Time": 0 },
-      { name: "Opponents", "Possession Time": 0 },
+      { name: "Teammate Avg", "Possession Time": 0 },
+      { name: "Opponent Avg", "Possession Time": 0 },
     ],
     averagePossessionTime: [
       { name: "You", "Avg. Poss. Time": 0 },
-      { name: "Teammates", "Avg. Poss. Time": 0 },
-      { name: "Opponents", "Avg. Poss. Time": 0 },
+      { name: "Teammate Avg", "Avg. Poss. Time": 0 },
+      { name: "Opponent Avg", "Avg. Poss. Time": 0 },
     ],
   },
 };
 
 function DataOverview({ replayData, player }: any) {
   const [category, setCategory] = useState<
-    "boost" | "movement" | "positioning" | "demos" | "possession"
-  >("boost");
+    "core" | "boost" | "movement" | "positioning" | "demos" | "possession"
+  >("core");
 
   const [chartData, setChartData] = useState<any>(null);
   const [demoCategory, setDemoCategory] = useState<boolean>(false);
@@ -167,6 +190,7 @@ function DataOverview({ replayData, player }: any) {
 
       const opponents = replay.filter((p: any) => p.team !== playerData.team);
 
+      populateCore(data, numReplays, playerData, teammates, opponents);
       populateBoost(data, numReplays, playerData, teammates, opponents);
       populateMovement(data, numReplays, playerData, teammates, opponents);
       populatePositioning(data, numReplays, playerData, teammates, opponents);
@@ -189,6 +213,28 @@ function DataOverview({ replayData, player }: any) {
     if (!chartData) return null;
 
     const categoryCharts = {
+      core: [
+        {
+          title: "Shots",
+          chart: "bar-chart",
+          data: chartData.core.shots,
+        },
+        {
+          title: "Goals",
+          chart: "bar-chart",
+          data: chartData.core.goals,
+        },
+        {
+          title: "Assists",
+          chart: "bar-chart",
+          data: chartData.core.assists,
+        },
+        {
+          title: "Saves",
+          chart: "bar-chart",
+          data: chartData.core.saves,
+        },
+      ],
       boost: [
         {
           title: "Boost Used per minute",
@@ -359,6 +405,12 @@ function DataOverview({ replayData, player }: any) {
         </h2>
 
         <div className="category-buttons">
+          <button
+            className={category === "core" ? "active" : ""}
+            onClick={() => setCategory("core")}
+          >
+            Core
+          </button>
           <button
             className={category === "boost" ? "active" : ""}
             onClick={() => setCategory("boost")}

@@ -1,6 +1,12 @@
 /* eslint-disable  @typescript-eslint/no-explicit-any */
 
 const COLUMN_NAMES = {
+  core: [
+    ["shots", "Shots", "shots"],
+    ["goals", "Goals", "goals"],
+    ["saves", "Saves", "saves"],
+    ["assists", "Assists", "assists"],
+  ],
   boost: [
     ["bpm", "BPM", "boost_boost_usage"],
     ["smallPads", "Small pads", "boost_num_small_boosts"],
@@ -71,6 +77,36 @@ const COLUMN_NAMES = {
     ],
   ],
 };
+
+function populateCore(
+  data: any,
+  numReplays: number,
+  playerData: any,
+  teammates: any,
+  opponents: any,
+) {
+  const numTeammates = teammates.length;
+  const numOpponents = opponents.length;
+
+  for (const column of COLUMN_NAMES.core) {
+    ((data.core as any)[column[0]] as any)[0][column[1]] +=
+      playerData[column[2]] / numReplays;
+  }
+
+  teammates.forEach((tm8: any) => {
+    for (const column of COLUMN_NAMES.core) {
+      ((data.core as any)[column[0]] as any)[1][column[1]] +=
+        tm8[column[2]] / numTeammates / numReplays;
+    }
+  });
+
+  opponents.forEach((opponent: any) => {
+    for (const column of COLUMN_NAMES.core) {
+      ((data.core as any)[column[0]] as any)[2][column[1]] +=
+        opponent[column[2]] / numOpponents / numReplays;
+    }
+  });
+}
 
 function populateBoost(
   data: any,
@@ -438,6 +474,7 @@ function populatePossession(
 }
 
 export {
+  populateCore,
   populateBoost,
   populateMovement,
   populatePositioning,
