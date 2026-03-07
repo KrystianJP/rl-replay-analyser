@@ -36,6 +36,7 @@ const ML_COLS = [
   "movement_percent_high_air",
   "positioning_percent_most_back",
   "positioning_percent_most_forward",
+  // "positioning_percent_farthest_from_ball",
   "positioning_percent_closest_to_ball",
   "positioning_percent_infront_ball",
   "positioning_percent_offensive_third",
@@ -218,6 +219,16 @@ function Labeller() {
           onClick={() => labelPlayer(players[currentPlayer].index, "playmaker")}
         >
           Playmaker
+        </div>
+        <div
+          className="playstyle"
+          style={{
+            background: "red",
+            borderColor: "red",
+          }}
+          onClick={() => labelPlayer(players[currentPlayer].index, "delete")}
+        >
+          DELETE
         </div>
       </div>
     </div>

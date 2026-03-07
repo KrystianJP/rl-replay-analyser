@@ -317,7 +317,9 @@ def get_stats_csv():
     df = pd.read_csv("player_stats_2v2.csv")
     df_copy = df.copy()
 
-    cols_to_calc = df[ML_COLS].drop(columns=["rank-no"])
+    COLS_TO_CALC = [x for x in ML_COLS if x != "movement_percent_high_air_percentile"]
+
+    cols_to_calc = df[COLS_TO_CALC].drop(columns=["rank-no"])
     for i, row in df.iterrows():
         rank = row["rank-no"]
 
@@ -347,8 +349,13 @@ def label_player(row_index: int, label: str):
     file = "player_stats_2v2.csv"
     df = pd.read_csv(file)
 
-    if row_index not in df.index:
+    if row_index not in df["index"].values:
         return {"error": "Invalid row index"}
+
+    if label == "delete":
+        df = df[df["index"] != row_index]
+        df.to_csv(file, index=False)
+        return {"status": "success"}
 
     df.loc[df["index"] == row_index, "playstyle"] = label
 
