@@ -5,9 +5,9 @@ import Labeller from "./Components/Labeller";
 function App() {
   return (
     <div className="App">
-      <Header />
-      <MainContent />
-      {/* <Labeller /> */}
+      {/* <Header />
+      <MainContent /> */}
+      <Labeller />
       <footer></footer>
     </div>
   );

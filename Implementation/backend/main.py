@@ -317,9 +317,9 @@ def get_stats_csv():
     df = pd.read_csv("player_stats_2v2.csv")
     df_copy = df.copy()
 
-    COLS_TO_CALC = [x for x in ML_COLS if x != "movement_percent_high_air_percentile"]
+    COLS_TO_CALC = [x[:-4] for x in ML_COLS]
 
-    cols_to_calc = df[COLS_TO_CALC].drop(columns=["rank-no"])
+    cols_to_calc = df[COLS_TO_CALC]
     for i, row in df.iterrows():
         rank = row["rank-no"]
 
@@ -469,8 +469,14 @@ async def get_user_percentiles(radar: RadarData, rank: str):
 
     return {"percentiles_all": percentiles_all, "percentiles_rank":percentiles_rank}
 
+def temperature_scaled_proba(model, df, T=2.0):
+    logits = model.decision_function(df)
+    scaled = logits / T
+    e = np.exp(scaled - scaled.max(axis=1, keepdims=True))
+    return e / e.sum(axis=1, keepdims=True)
+
 @app.post("/api/playstyle/{mode}")
-def get_playstyle_3v3(player: PlayerStats, mode: int):
+def get_playstyle(player: PlayerStats, mode: int):
 
     df = pd.DataFrame(player.dict(), index=[0])
     df = df.rename(columns={"rank_no": "rank-no"})
@@ -484,6 +490,7 @@ def get_playstyle_3v3(player: PlayerStats, mode: int):
 
     if mode == 3:
         probs = model_3v3.predict_proba(df)
+        # probs = temperature_scaled_proba(model_3v3, df, T=2.0)
         classes = model_3v3.classes_
         feature_names = df.columns.tolist()
 
