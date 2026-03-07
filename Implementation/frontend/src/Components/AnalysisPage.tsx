@@ -3,7 +3,7 @@ import PlaystyleClassification from "./PlaystyleClassification";
 import DataComparison from "./DataComparison";
 /* eslint-disable  @typescript-eslint/no-explicit-any */
 
-function AnalysisPage({ replayData, player, rank }: any) {
+function AnalysisPage({ replayData, player, rank, mode }: any) {
   return (
     <div>
       <DataOverview replayData={replayData} player={player} />
@@ -11,8 +11,14 @@ function AnalysisPage({ replayData, player, rank }: any) {
         replayData={replayData}
         player={player}
         rank={rank}
+        mode={mode}
       />
-      <DataComparison replayData={replayData} player={player} rank={rank} />
+      <DataComparison
+        replayData={replayData}
+        player={player}
+        rank={rank}
+        mode={mode}
+      />
     </div>
   );
 }

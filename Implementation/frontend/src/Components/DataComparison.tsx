@@ -252,7 +252,7 @@ const dataPositioning = [
   },
 ];
 
-function DataComparison({ rank, replayData, player }: any) {
+function DataComparison({ rank, replayData, player, mode }: any) {
   const [chartData, setChartData] = useState<any>(null);
   const [userRankPercentiles, setUserRankPercentiles] = useState<any>(null);
   const [rankChartData, setRankChartData] = useState<any>(null);
@@ -503,7 +503,7 @@ function DataComparison({ rank, replayData, player }: any) {
     const fetchRankAverageData = async (rank: string, radarData: any) => {
       try {
         const response = await fetch(
-          "http://127.0.0.1:8000/api/rank_average/" + rank,
+          "http://127.0.0.1:8000/api/rank_average/" + rank + "?mode=" + mode,
         );
         if (!response.ok) {
           throw new Error("Network response not ok");
@@ -522,7 +522,10 @@ function DataComparison({ rank, replayData, player }: any) {
     ) => {
       try {
         const response = await fetch(
-          "http://127.0.0.1:8000/api/user_percentiles/" + rank,
+          "http://127.0.0.1:8000/api/user_percentiles/" +
+            rank +
+            "?mode=" +
+            mode,
           {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -685,7 +688,7 @@ function DataComparison({ rank, replayData, player }: any) {
     const fetchRankAverageData = async (rank: string, radarData: any) => {
       try {
         const response = await fetch(
-          "http://127.0.0.1:8000/api/rank_average/" + rank,
+          "http://127.0.0.1:8000/api/rank_average/" + rank + "?mode=" + mode,
         );
         if (!response.ok) {
           throw new Error("Network response not ok");

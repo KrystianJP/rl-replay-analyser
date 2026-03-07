@@ -40,8 +40,11 @@ TOKEN = os.getenv("BALLCHASING_TOKEN")
 WAIT_TIME = 0.1666
 
 model_3v3 = joblib.load("rf_model_3v3.joblib")
+model_2v2 = joblib.load("rf_model_2v2.joblib")
 with open("rank_stats_3v3_all.json") as f:
-    rank_stats = json.load(f)
+    rank_stats_3v3 = json.load(f)
+with open("rank_stats_2v2_all.json") as f:
+    rank_stats_2v2 = json.load(f)
 
 ML_COLS = model_3v3.feature_names_in_.tolist()
 
@@ -364,8 +367,11 @@ def label_player(row_index: int, label: str):
     return {"status": "success"}
 
 @app.get("/api/rank_average/{rank}")
-def get_rank_average(rank: str):
-    df = pd.read_csv("player_stats_3v3_original.csv")
+def get_rank_average(rank: str, mode: int):
+    if mode == 3:
+        df = pd.read_csv("player_stats_3v3_original.csv")
+    elif mode ==2:
+        df = pd.read_csv("player_stats_2v2_original.csv")
     rank_subset  = df[df["rank"] == rank]
     cols_to_calc = df.drop(columns=["rank", "rank-no", "player_id"])
     cols_to_calc = df[COMP_COLS]
@@ -382,9 +388,12 @@ def get_rank_average(rank: str):
     return result
 
 @app.post("/api/user_percentiles/{rank}")
-async def get_user_percentiles(radar: RadarData, rank: str):
+async def get_user_percentiles(radar: RadarData, rank: str, mode: int):
 
-    df = pd.read_csv("player_stats_3v3_original.csv")
+    if mode == 3:
+        df = pd.read_csv("player_stats_3v3_original.csv")
+    elif mode ==2:
+        df = pd.read_csv("player_stats_2v2_original.csv")
 
     percentiles_all = {
         "core": [],
@@ -481,6 +490,14 @@ def get_playstyle(player: PlayerStats, mode: int):
     df = pd.DataFrame(player.dict(), index=[0])
     df = df.rename(columns={"rank_no": "rank-no"})
     stat_cols = [col.replace("_pct", "") for col in ML_COLS]
+
+    if mode == 3:
+        model = model_3v3
+        rank_stats = rank_stats_3v3
+    elif mode == 2:
+        model = model_2v2
+        rank_stats = rank_stats_2v2
+
     for col in stat_cols:
         df[f"{col}_pct"] = compute_percentile(
             df[col].iloc[0], df["rank-no"].iloc[0], col, rank_stats
@@ -488,11 +505,11 @@ def get_playstyle(player: PlayerStats, mode: int):
     
     df = df[ML_COLS]
 
-    if mode == 3:
-        probs = model_3v3.predict_proba(df)
-        # probs = temperature_scaled_proba(model_3v3, df, T=2.0)
-        classes = model_3v3.classes_
-        feature_names = df.columns.tolist()
+    probs = model.predict_proba(df)
+    # probs = temperature_scaled_proba(model, df, T=2.0)
+    classes = model.classes_
+    feature_names = df.columns.tolist()
+    explainer = shap.TreeExplainer(model)
 
 
     ordered_idx = np.argsort(probs[0])[::-1] # high to low
@@ -500,12 +517,11 @@ def get_playstyle(player: PlayerStats, mode: int):
     ordered_probs = probs[0][ordered_idx]
 
     # using shap to get feature importance
-    explainer = shap.TreeExplainer(model_3v3)
     shap_values = explainer.shap_values(df)
 
     shap_top = shap_values[ordered_idx[0]][0]
     top_shap_idxs = np.argsort(shap_top)[::-1][:3] # top 5
-    top_stats = [ {"feature": feature_names[i], "shap_value": shap_top[i], "feature_value": df.iloc[0][feature_names[i]], "direction": get_tree_threshold_direction(model_3v3, df, feature_names, feature_names[i])} for i in top_shap_idxs ]
+    top_stats = [ {"feature": feature_names[i], "shap_value": shap_top[i], "feature_value": df.iloc[0][feature_names[i]], "direction": get_tree_threshold_direction(model, df, feature_names, feature_names[i])} for i in top_shap_idxs ]
 
     return {"ordered_classes": ordered_classes.tolist(), "ordered_probs": ordered_probs.tolist(), "top_stats": top_stats}
 

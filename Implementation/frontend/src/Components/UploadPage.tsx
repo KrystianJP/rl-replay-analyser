@@ -11,6 +11,7 @@ function UploadPage({
   setReplayData,
   setPlayer,
   setRank,
+  setMode,
 }: any) {
   const [replayList, setReplayList] = useState<any[]>([]);
   const [playersDropdown, setPlayersDropdown] = useState<any[]>([]);
@@ -21,6 +22,7 @@ function UploadPage({
   const [uploadCounter, setUploadCounter] = useState<number>(0);
   const [analysing, setAnalysing] = useState<boolean>(false);
   const [ballchasingInput, setBallchasingInput] = useState<string>("");
+  const [is3v3, setIs3v3] = useState<boolean>(false);
 
   const isPlayer = (p: any, player: any) => {
     if (player.id !== "0" && player.id !== "" && "id" in p) {
@@ -279,6 +281,7 @@ function UploadPage({
     }
     // begin analysing
     setAnalysing(true);
+    setMode(is3v3 ? 3 : 2);
   };
 
   const clearCache = async () => {
@@ -459,6 +462,19 @@ function UploadPage({
                   ))
                 : ""}
             </select>
+          </div>
+          <div className="mode-switch-container" hidden={!replayList.length}>
+            <span className="mode-label">2v2</span>
+            <label className="switch">
+              <input
+                type="checkbox"
+                checked={is3v3}
+                onChange={(e) => setIs3v3(e.target.checked)}
+                disabled={analysing}
+              ></input>
+              <span className="slider round"></span>
+            </label>
+            <span className="mode-label">3v3</span>
           </div>
           <div className="error-message">
             {errorList.map((error, index) => (

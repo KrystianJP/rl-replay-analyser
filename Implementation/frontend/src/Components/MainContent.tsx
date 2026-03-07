@@ -11,7 +11,7 @@ function MainContent() {
   const [replayData, setReplayData] = useState<any>([]);
   const [player, setPlayer] = useState<any>({});
   const [rank, setRank] = useState<string>("");
-
+  const [mode, setMode] = useState<number>(3);
   return (
     <main className="main-content">
       {currentPage === "upload" ? (
@@ -20,9 +20,15 @@ function MainContent() {
           setReplayData={setReplayData}
           setPlayer={setPlayer}
           setRank={setRank}
+          setMode={setMode}
         />
       ) : (
-        <AnalysisPage replayData={replayData} player={player} rank={rank} />
+        <AnalysisPage
+          replayData={replayData}
+          player={player}
+          rank={rank}
+          mode={mode}
+        />
       )}
     </main>
   );

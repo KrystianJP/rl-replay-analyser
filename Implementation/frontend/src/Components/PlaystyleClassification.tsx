@@ -188,7 +188,7 @@ const CLASS_ADVICE = {
   ],
 };
 
-function PlaystyleClassification({ replayData, player, rank }: any) {
+function PlaystyleClassification({ replayData, player, rank, mode }: any) {
   const [classes, setClasses] = useState([]);
   const [probabilities, setProbabilities] = useState([]);
   const [featureImportance, setFeatureImportance] = useState([]);
@@ -306,13 +306,16 @@ function PlaystyleClassification({ replayData, player, rank }: any) {
 
     const fetchPlaystyleData = async (playerData: any) => {
       try {
-        const response = await fetch("http://127.0.0.1:8000/api/playstyle/3", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
+        const response = await fetch(
+          "http://127.0.0.1:8000/api/playstyle/" + mode,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(playerData),
           },
-          body: JSON.stringify(playerData),
-        });
+        );
 
         if (!response.ok) {
           throw new Error("Network response not ok");

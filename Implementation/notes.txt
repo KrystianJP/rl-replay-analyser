@@ -196,3 +196,5 @@ Removed the need for percentiles in the playstyle classification section, the us
 Additionally, ballchasing does not a lot of data that I was considering to for the advice evidence, which since i plan to include a ballchasing upload method, will make this addition useless for many users.
 
 Outliers - after trying to provide advice for outliers, I realised that many are quite self explanatory, and many would reinstate the advice already mentioned in the playstyle section. The different colours to highlight the outliers to get the user's attention and motivate them to think about reasoning behind the outlier I deem sufficient.
+
+added mode switch instead of auto because of private games
