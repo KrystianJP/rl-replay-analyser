@@ -24,6 +24,7 @@ import shap
 import requests
 import time
 from dotenv import load_dotenv
+import platform
 
 load_dotenv()
 
@@ -35,7 +36,10 @@ origins = [
     "https://rl-replay-analyser.vercel.app"
 ]
 
-RRROCKET_PATH = "./rrrocket.exe"
+if platform.system() == "Windows":
+    RRROCKET_PATH = "./rrrocket.exe"
+else:
+    RRROCKET_PATH = "./rrrocket"
 TOKEN = os.getenv("BALLCHASING_TOKEN")
 
 WAIT_TIME = 0.1666

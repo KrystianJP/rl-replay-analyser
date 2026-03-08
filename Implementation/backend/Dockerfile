@@ -14,6 +14,9 @@ COPY requirements.txt .
 RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
 
+COPY rrrocket /app/rrrocket
+RUN chmod +x /app/rrrocket
+
 # Overwrite installed carball with our fixed version
 COPY carball/ /usr/local/lib/python3.9/site-packages/carball/
 
