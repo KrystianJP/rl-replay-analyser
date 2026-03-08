@@ -307,7 +307,7 @@ function PlaystyleClassification({ replayData, player, rank, mode }: any) {
     const fetchPlaystyleData = async (playerData: any) => {
       try {
         const response = await fetch(
-          "http://127.0.0.1:8000/api/playstyle/" + mode,
+          `${import.meta.env.VITE_API_URL}/api/playstyle/` + mode,
           {
             method: "POST",
             headers: {

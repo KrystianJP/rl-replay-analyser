@@ -503,7 +503,10 @@ function DataComparison({ rank, replayData, player, mode }: any) {
     const fetchRankAverageData = async (rank: string, radarData: any) => {
       try {
         const response = await fetch(
-          "http://127.0.0.1:8000/api/rank_average/" + rank + "?mode=" + mode,
+          `${import.meta.env.VITE_API_URL}/api/rank_average/` +
+            rank +
+            "?mode=" +
+            mode,
         );
         if (!response.ok) {
           throw new Error("Network response not ok");
@@ -522,7 +525,7 @@ function DataComparison({ rank, replayData, player, mode }: any) {
     ) => {
       try {
         const response = await fetch(
-          "http://127.0.0.1:8000/api/user_percentiles/" +
+          `${import.meta.env.VITE_API_URL}/api/user_percentiles/` +
             rank +
             "?mode=" +
             mode,
@@ -688,7 +691,10 @@ function DataComparison({ rank, replayData, player, mode }: any) {
     const fetchRankAverageData = async (rank: string, radarData: any) => {
       try {
         const response = await fetch(
-          "http://127.0.0.1:8000/api/rank_average/" + rank + "?mode=" + mode,
+          `${import.meta.env.VITE_API_URL}/api/rank_average/` +
+            rank +
+            "?mode=" +
+            mode,
         );
         if (!response.ok) {
           throw new Error("Network response not ok");

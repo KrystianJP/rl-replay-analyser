@@ -120,10 +120,13 @@ function UploadPage({
     formData.append("file", file);
 
     try {
-      const response = await fetch("http://127.0.0.1:8000/api/upload", {
-        method: "POST",
-        body: formData,
-      });
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/api/upload`,
+        {
+          method: "POST",
+          body: formData,
+        },
+      );
       if (!response.ok) {
         throw new Error("Network response not ok");
       }
@@ -165,10 +168,13 @@ function UploadPage({
     formData.append("file", file);
 
     try {
-      const response = await fetch("http://127.0.0.1:8000/api/header", {
-        method: "POST",
-        body: formData,
-      });
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/api/header`,
+        {
+          method: "POST",
+          body: formData,
+        },
+      );
       if (!response.ok) {
         throw new Error("Network response not ok");
       }
@@ -306,7 +312,7 @@ function UploadPage({
     const id = ballchasingInput.split("/").pop()?.trim();
     try {
       const response = await fetch(
-        "http://127.0.0.1:8000/api/ballchasing/" + id,
+        `${import.meta.env.VITE_API_URL}/api/ballchasing/` + id,
       );
 
       if (!response.ok) {
