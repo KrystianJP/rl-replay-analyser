@@ -1,0 +1,70 @@
+from .base import *
+
+BOOST_PER_SECOND = 80 * 1 / .93  # boost used per second out of 255
+REPLICATED_PICKUP_KEY = 'TAGame.VehiclePickup_TA:ReplicatedPickupData'
+REPLICATED_PICKUP_KEY_168 = 'TAGame.VehiclePickup_TA:NewReplicatedPickupData'
+
+def get_boost_actor_data(actor: dict):
+    if REPLICATED_PICKUP_KEY in actor:
+        actor = actor[REPLICATED_PICKUP_KEY]
+        if actor is not None and actor != -1:
+            actor = actor['pickup']
+            if actor is not None and 'instigator_id' in actor and actor["instigator_id"] != -1:
+                return actor
+    elif REPLICATED_PICKUP_KEY_168 in actor:
+        actor = actor[REPLICATED_PICKUP_KEY_168]
+        if actor is not None and actor != -1:
+            actor = actor['pickup_new']
+            if actor is not None and 'instigator_id' in actor and actor["instigator_id"] != -1:
+                return actor
+    return None
+
+class BoostHandler(BaseActorHandler):
+    type_name = 'Archetypes.CarComponents.CarComponent_Boost'
+
+    def update(self, actor: dict, frame_number: int, time: float, delta: float) -> None:
+        # 1. Link to Car
+        car_actor_id = actor.get('TAGame.CarComponent_TA:Vehicle', {}).get('actor', None)
+        if car_actor_id is None or car_actor_id not in self.parser.car_player_ids:
+            return
+
+        player_actor_id = self.parser.car_player_ids[car_actor_id]
+
+        # 2. Extract Amount
+        boost_amount = 0.0
+        if 'TAGame.CarComponent_Boost_TA:ReplicatedBoost' in actor:
+            val = actor['TAGame.CarComponent_Boost_TA:ReplicatedBoost']
+            if isinstance(val, dict):
+                boost_amount = float(val.get('boost_amount', val.get('amount', 0)))
+            else:
+                boost_amount = float(val)
+        elif 'TAGame.CarComponent_Boost_TA:ReplicatedBoostAmount' in actor:
+            boost_amount = float(actor['TAGame.CarComponent_Boost_TA:ReplicatedBoostAmount'])
+
+        # 3. Detect if Boosting (The Fix for boost_usage)
+        # Check the standard component 'Active' keys
+        # We look for 'TAGame.CarComponent_TA:ReplicatedActive' or 'TAGame.CarComponent_TA:Active'
+        active_state = actor.get('TAGame.CarComponent_TA:ReplicatedActive', 
+                       actor.get('TAGame.CarComponent_TA:Active', 0))
+        
+        # In Rocket League, an odd value (1, 3, 5...) means the component is ON
+        boost_is_active = (active_state % 2 == 1)
+
+        # 4. Save to Parser
+        if player_actor_id not in self.parser.player_data:
+            self.parser.player_data[player_actor_id] = {}
+        if frame_number not in self.parser.player_data[player_actor_id]:
+            self.parser.player_data[player_actor_id][frame_number] = {}
+
+        self.parser.player_data[player_actor_id][frame_number]['boost'] = boost_amount
+        self.parser.player_data[player_actor_id][frame_number]['boost_active'] = boost_is_active
+
+class BoostPickupHandler(BaseActorHandler):
+    @classmethod
+    def can_handle(cls, actor: dict) -> bool:
+        return actor['ClassName'] == 'TAGame.VehiclePickup_Boost_TA'
+
+    def update(self, actor: dict, frame_number: int, time: float, delta: float) -> None:
+        # Pickup logic is usually handled by the GameEvent, 
+        # but we keep this class here to satisfy the handler list.
+        pass

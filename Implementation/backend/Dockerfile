@@ -1,6 +1,5 @@
 FROM python:3.9-slim
 
-# Install Rust and build dependencies
 RUN apt-get update && apt-get install -y \
     curl \
     build-essential \
@@ -12,9 +11,11 @@ ENV PATH="/root/.cargo/bin:${PATH}"
 WORKDIR /app
 
 COPY requirements.txt .
-
 RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
+
+# Overwrite installed carball with our fixed version
+COPY carball/ /usr/local/lib/python3.9/site-packages/carball/
 
 COPY . .
 
