@@ -383,14 +383,16 @@ function DataOverview({ replayData, player }: any) {
     return (
       <section className="section alt" id="comparison">
         <h2
-          style={{ cursor: "pointer" }}
+          style={{
+            cursor: "pointer",
+          }}
           onClick={() => {
             setMinimized(false);
             if (!clicked) setClicked(true);
           }}
         >
           Data Overview
-          <span className="material-icons">arrow_drop_down</span>
+          <span className="material-icons">arrow_right</span>
           {!clicked && <span className="expand-section">(expand)</span>}
         </h2>
       </section>

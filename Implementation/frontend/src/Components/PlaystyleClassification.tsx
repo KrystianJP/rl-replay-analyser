@@ -305,7 +305,6 @@ function PlaystyleClassification({ replayData, player, rank, mode }: any) {
     };
 
     const fetchPlaystyleData = async (playerData: any) => {
-      console.log(playerData);
       try {
         const response = await fetch(
           `${import.meta.env.VITE_API_URL}/api/playstyle/` + mode,
@@ -385,7 +384,7 @@ function PlaystyleClassification({ replayData, player, rank, mode }: any) {
       <section className="section" id="comparison">
         <h2 style={{ cursor: "pointer" }} onClick={() => setMinimized(false)}>
           Playstyle Classification
-          <span className="material-icons">arrow_drop_down</span>
+          <span className="material-icons">arrow_right</span>
         </h2>
       </section>
     );

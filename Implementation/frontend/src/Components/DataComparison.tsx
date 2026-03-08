@@ -751,7 +751,7 @@ function DataComparison({ rank, replayData, player, mode }: any) {
       <section className="section alt" id="comparison">
         <h2 style={{ cursor: "pointer" }} onClick={() => setMinimized(false)}>
           Rank Comparison
-          <span className="material-icons">arrow_drop_down</span>
+          <span className="material-icons">arrow_right</span>
         </h2>
       </section>
     );
