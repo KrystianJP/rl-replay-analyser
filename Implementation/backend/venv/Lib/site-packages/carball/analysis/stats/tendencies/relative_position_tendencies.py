@@ -19,7 +19,7 @@ class RelativeTendencies(TeamTendencies):
                             player_map: Dict[str, Player], data_frame: pd.DataFrame):
         for team in proto_game.teams:
             team_size = get_team_size_from_game(proto_game)
-            if len(team.player_ids) <= 2 or team_size <= 2:
+            if len(team.player_ids) <= 1 or team_size <= 1:
                 # center of mass does not matter for 1s games
                 continue
 

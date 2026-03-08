@@ -616,7 +616,7 @@ function DataComparison({ rank, replayData, player, mode }: any) {
       setUserRankPercentiles(colourPercentiles);
     };
     run();
-  }, [replayData, player, rank]);
+  }, [replayData, player, rank, mode]);
 
   useEffect(() => {
     const populateRankAverageBoth = (radarData: any, averageData: any) => {
@@ -738,7 +738,7 @@ function DataComparison({ rank, replayData, player, mode }: any) {
       setRankChartData(radarData);
     };
     run();
-  }, [selectedRank, chartData]);
+  }, [selectedRank, chartData, mode]);
 
   const handleRankChange = (event: any) => {
     setSelectedRank(event.target.value);

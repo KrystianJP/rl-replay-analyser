@@ -305,6 +305,7 @@ function PlaystyleClassification({ replayData, player, rank, mode }: any) {
     };
 
     const fetchPlaystyleData = async (playerData: any) => {
+      console.log(playerData);
       try {
         const response = await fetch(
           `${import.meta.env.VITE_API_URL}/api/playstyle/` + mode,
@@ -375,7 +376,7 @@ function PlaystyleClassification({ replayData, player, rank, mode }: any) {
     };
 
     run();
-  }, [replayData, player, rank]);
+  }, [replayData, player, rank, mode]);
 
   if (classes.length === 0) return null;
 
