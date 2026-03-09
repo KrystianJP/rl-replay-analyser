@@ -143,6 +143,11 @@ def get_replay(id, token=TOKEN):
 
 def compute_percentile(value, rank_no, col, rank_stats):
     group = rank_stats.get(str(rank_no), {}).get(col, [])
+    print(f"rank_no={rank_no}, col={col}, group_size={len(group)}, value={value}, result={float(np.mean(np.array(group) <= value) * 100):.1f}")
+    if not group:
+        print(f"WARNING: empty group for rank={rank_no}, col={col}")
+        return 50.0  # fallback to median
+        
     return float(np.mean(np.array(group) <= value) * 100)
 
 def get_replay_proto(replay_path: str):

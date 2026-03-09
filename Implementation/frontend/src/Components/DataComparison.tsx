@@ -306,9 +306,9 @@ function DataComparison({ rank, replayData, player, mode }: any) {
       data.movement[4].You_Original +=
         playerData["movement_percent_high_air"] / numReplays;
       data.movement[5].You_Original +=
-        playerData["demo_stats_num_demos_inflicted"] / numReplays / duration;
-      data.movement[6].You_Original +=
         playerData["demo_stats_num_demos_taken"] / numReplays / duration;
+      data.movement[6].You_Original +=
+        playerData["demo_stats_num_demos_inflicted"] / numReplays / duration;
 
       data.positioning[0].You_Original +=
         playerData["positioning_percent_most_back"] / numReplays;
@@ -385,9 +385,9 @@ function DataComparison({ rank, replayData, player, mode }: any) {
           numReplays) *
         100;
       data.movement[5].You_Original +=
-        playerData["demo_stats_num_demos_inflicted"] / numReplays / duration;
-      data.movement[6].You_Original +=
         playerData["demo_stats_num_demos_taken"] / numReplays / duration;
+      data.movement[6].You_Original +=
+        playerData["demo_stats_num_demos_inflicted"] / numReplays / duration;
 
       data.positioning[0].You_Original +=
         (playerData["relative_positioning_time_most_back_player"] /
