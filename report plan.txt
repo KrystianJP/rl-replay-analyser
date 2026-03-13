@@ -1,0 +1,83 @@
+##Problem definition + Analysis:
+
+Rocket League players can vary significantly in how they play game to game, making analysis of individual matches an unreliable way to draw conclusions about a player's overall ability and playstyle. However, when statistics are aggregated across many games, persistent behavioural patterns emerge, patterns that are far more informative, since they reflect habits that influence the majority of a player's games. The aim of this project is to provide players a way to visualise these aggregated statistics, compare them against others they have played with or against, and benchmark them against rank averages, in order to gain a clearer picture of their playstyle and identify areas for improvement.
+
+While tools such as ballchasing.com are already commonly used to allow players to analyse individual game replays in detail, their is comparatively little focus on persistent behaviour across many games. Currently, the most thorough way to receive this kind of feedback is through hiring a Rocket League coach - an option either inaccessible or excessive for most players. This project offers a far more accessible alternative that, while naturally less in-depth, will prove useful to a broader number of players.
+
+The players most likely to benefit are those in the middle of the rank distribution, where the majority of players lie. These players have a solid foundational understanding of the game, but often carry habitual flaws in their playstyle that go unnoticed as they compensate for them through their strengths in other areas. By surfacing these tendencies through effective visual comparison, this project aims to help players make targeted improvements, something that simply grinding more games takes far longer to achieve on its own. Beyond raw statistical comparison, the website also applies a machine learning model to classify each player into a broader playstyle category, providing an immediately intuitive characterisation of how they play that raw numbers may struggle to convey. 
+
+make more compact and have as abstract, mention not full coaching automation or real-time in-game suggestions, then add:
+project motivation - gap between the highly detailed per-match breakdowns with existing tools and the persistent behaviours player actually need to know to improve efficiently, coach most reliable but not necessary. Project is accessible middle ground
+project aim - basic breakdown of the project sections
+target users - mid-rank players because..., and use design section 6 for other cases
+overarching requirements for each section - have the rest in appendix
+
+##Design notes:
+describe the basic development pipeline (UI -> basic version of each section -> built upon each one)
+mention that basic UI was build before-hand to provide a picture and structure that the features could be implemented into, including charts, so at any stage of the project, the overall appearance of the UI can be checked, despite it being placeholder values.
+describe overall frontend and backend design and library choices.
+describe built-in parser used and why ballchasing url included (and that it was implemented after, goes to show the interpretability of old code even months later), loading bar
+describe the different overview sections, describe the different charts, describe how it's you vs tm8 vs opp avg.
+describe labeller
+describe what playstyles were chosen
+describe model feature decisions, like /min or % and which were included.
+describe which model was chosen and why
+general advice that might be hard to garner from statistics alone that apply to that playstyle in many cases (which can be checked if relevant through rank comp section)
+describe rank comparison showing both your rank average and any rank average you choose
+describe rank comparison showing outliers by highlighting
+describe why spider charts chosen and anything else in design section
+
+##Implementation notes:
+
+#Upload - 
+header data and full data requested separately (and asynchronously) 
+header extracts map code (which is mapped) and gamemode in case of ambiguous replay name 
+data cached 
+player dropdown union 
+ballchasing url upload
+
+#Overview - 
+data aggregated to fit structure of graphs dataPopulating.tsx includes population logic (describe pipeline) 
+how you can change between sections
+
+#Playstyle classification model - data collection script 
+prototype 
+labelling (with labelling challenges) 
+describe model evaluation code briefly (how implementing both helped form a decision) 
+model sureness and feature importance with shap
+labelled 2v2 after with much higher accuracy due to consistent opinion and removing noise so relabelled 3v3
+the switch to percentiles
+S
+#Rank comparison
+decision to have the value in each axis to be percentile across all
+how rank averages + percentiles are calculated
+
+#Testing plan:
+make backend tests
+integration tests
+	each section individually
+	show overall all working together
+model evaluation tests
+get some people to try it out
+
+##Evaluation
+General evaluation
+Comparison to requirements
+
+Strengths
+Requirements missed and why, and workarounds done
+How requirements throughout implementation
+
+#Difficulties:
+restructuring data to fit charts, mapping between ballchasing and built-in parser
+mitigating built-in parser and ballchasing parser difference
+choosing effective features, removing noise, labelling consistency -> helped via labeller and multiple relabels until consistent opinion
+
+
+#Limitations:
+built-in parser and ballchasing parser gap, could be mitigated by making own parser, similar to ballchasing, for consistency in comparison
+supervised learning labelled subjectively as one person
+difference in meta/rank averages as seasons progress (players get better), must update data and therefore relabel
+would be nice to investigate potential unsupervised ML approaches to identify trends with less bias, and potentially spot unexpected relationships between statistics (ambitious but curious)
+
+#Overall conclusion
