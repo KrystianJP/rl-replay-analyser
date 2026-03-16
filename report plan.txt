@@ -10,6 +10,9 @@ make more compact and have as abstract, mention not full coaching automation or 
 project motivation - gap between the highly detailed per-match breakdowns with existing tools and the persistent behaviours player actually need to know to improve efficiently, coach most reliable but not necessary. Project is accessible middle ground
 project aim - basic breakdown of the project sections
 target users - mid-rank players because..., and use design section 6 for other cases
+
+mention interviews and which requirements were derived from theme, with actual evidence in appendix
+previous solution - include full ballchasing, then brief others with appendix
 overarching requirements for each section - have the rest in appendix
 
 ##Design notes:
@@ -58,10 +61,10 @@ integration tests
 	each section individually
 	show overall all working together
 model evaluation tests
-get some people to try it out
 
 ##Evaluation
 General evaluation
+get some people to try it out
 Comparison to requirements
 
 Strengths

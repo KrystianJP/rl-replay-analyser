@@ -123,7 +123,7 @@ const CLASS_ADVICE = {
     {
       flaw: "Shooting too often",
       advice:
-        "You may be wasting higher percentage opportunities by shooting to early, may be worth considering taking control or passing instead.",
+        "You may be wasting higher percentage opportunities by shooting too early, may be worth considering taking control or passing instead.",
     },
   ],
   defender: [
