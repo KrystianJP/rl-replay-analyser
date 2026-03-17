@@ -42,6 +42,7 @@ header {
   padding: 1rem 0;
   color: white;
   background: var(--bg-main);
+  height: auto;
 }
 
 h2 {
@@ -604,4 +605,7 @@ input:checked + .slider:before {
 }
 .mode-label {
   font-size: 1.2rem;
+}
+
+.spider-chart-container {
 }

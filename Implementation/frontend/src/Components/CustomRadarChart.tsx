@@ -116,9 +116,10 @@ const CustomTick = (props: any) => {
   );
 };
 
-function CustomRadarChart({ data, percentiles }: any) {
+function CustomRadarChart({ data, percentiles, title }: any) {
   return (
     <div className="spider-chart-container">
+      <h4 style={{ textAlign: "center" }}>{title}</h4>
       <ResponsiveContainer height={360}>
         <RadarChart
           outerRadius={150}

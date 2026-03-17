@@ -38,6 +38,7 @@ header extracts map code (which is mapped) and gamemode in case of ambiguous rep
 data cached 
 player dropdown union 
 ballchasing url upload
+discuss error handling
 
 #Overview - 
 data aggregated to fit structure of graphs dataPopulating.tsx includes population logic (describe pipeline) 
@@ -84,3 +85,5 @@ difference in meta/rank averages as seasons progress (players get better), must 
 would be nice to investigate potential unsupervised ML approaches to identify trends with less bias, and potentially spot unexpected relationships between statistics (ambitious but curious)
 
 #Overall conclusion
+
+REMEMBER TO REPLACE SCREENSHOTS IN THE REPORT AFTER CHANGING ANY FEATURES IE: IMPACT.

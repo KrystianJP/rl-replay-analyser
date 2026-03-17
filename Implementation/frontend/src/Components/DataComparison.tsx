@@ -779,18 +779,22 @@ function DataComparison({ rank, replayData, player, mode }: any) {
           <CustomRadarChart
             data={chartData.core}
             percentiles={userRankPercentiles.core}
+            title="Core"
           />
           <CustomRadarChart
             data={chartData.boost}
             percentiles={userRankPercentiles.boost}
+            title="Boost"
           />
           <CustomRadarChart
             data={chartData.movement}
             percentiles={userRankPercentiles.movement}
+            title="Movement and Demos"
           />
           <CustomRadarChart
             data={chartData.positioning}
             percentiles={userRankPercentiles.positioning}
+            title="Positioning"
           />
         </div>
         {/* <div className="list-section outliers-container">
@@ -849,17 +853,21 @@ function DataComparison({ rank, replayData, player, mode }: any) {
         <div className="spider-charts">
           <CustomRadarChart
             data={rankChartData ? rankChartData.core : chartData.core}
+            title="Core"
           />
           <CustomRadarChart
             data={rankChartData ? rankChartData.boost : chartData.boost}
+            title="Boost"
           />
           <CustomRadarChart
             data={rankChartData ? rankChartData.movement : chartData.movement}
+            title="Movement and Demos"
           />
           <CustomRadarChart
             data={
               rankChartData ? rankChartData.positioning : chartData.positioning
             }
+            title="Positioning"
           />
         </div>
       </div>
