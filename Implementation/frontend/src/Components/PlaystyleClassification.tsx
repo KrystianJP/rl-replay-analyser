@@ -432,7 +432,7 @@ function PlaystyleClassification({ replayData, player, rank, mode }: any) {
                 {feature.direction === "low" ? " (Low)" : ""} [
                 {feature.feature_value.toFixed(2)}] -{" "}
                 <span style={{ opacity: 0.7 }}>
-                  Impact: {feature.shap_value.toFixed(2)}
+                  Impact: {feature.shap_value.toFixed(2)}%
                 </span>
               </li>
             ))}
