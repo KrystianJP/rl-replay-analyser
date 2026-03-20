@@ -113,8 +113,8 @@ for rank in df["rank-no"].unique():
     rank_stats[int(rank)] = {}
     for col in stat_cols:
         group = df[df["rank-no"].isin([rank - 1, rank, rank + 1])][col].tolist()
-        rank_stats[int(rank)][col] = group
 
+        rank_stats[int(rank)][col] = group
 with open("rank_stats_2v2_all.json", "w") as f:
     json.dump(rank_stats, f)
 

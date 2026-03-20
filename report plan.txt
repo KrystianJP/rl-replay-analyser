@@ -39,22 +39,25 @@ data cached
 player dropdown union 
 ballchasing url upload
 discuss error handling
+loading bar
 
 #Overview - 
-data aggregated to fit structure of graphs dataPopulating.tsx includes population logic (describe pipeline) 
-how you can change between sections
+data aggregated and averaged to fit structure of graphs dataPopulating.tsx includes population logic (describe pipeline)
+ballchasing condition that removes possession category
 
-#Playstyle classification model - data collection script 
+#Playstyle classification model - 
+data collection script 
 prototype 
 labelling (with labelling challenges) 
 describe model evaluation code briefly (how implementing both helped form a decision) 
 model sureness and feature importance with shap
 labelled 2v2 after with much higher accuracy due to consistent opinion and removing noise so relabelled 3v3
 the switch to percentiles
-S
+
 #Rank comparison
 decision to have the value in each axis to be percentile across all
 how rank averages + percentiles are calculated
+outliers
 
 #Testing plan:
 make backend tests
@@ -80,10 +83,12 @@ choosing effective features, removing noise, labelling consistency -> helped via
 
 #Limitations:
 built-in parser and ballchasing parser gap, could be mitigated by making own parser, similar to ballchasing, for consistency in comparison
+server will struggle immensely with multiple people attempting to upload replays at the same time, especially since synchronous to each other, would have to try to figure out if there's a way to make the uploads asynchronous across users, but still synchronous to each user's uploads. additionally, built-in parser is terribly slow, so many requests would make system run very slowly, own, faster parser could help mitigate this, beyond scope, different project entirely.
 supervised learning labelled subjectively as one person
 difference in meta/rank averages as seasons progress (players get better), must update data and therefore relabel
 would be nice to investigate potential unsupervised ML approaches to identify trends with less bias, and potentially spot unexpected relationships between statistics (ambitious but curious)
 
 #Overall conclusion
 
+update requirements in document and therefore appendix, and possible cut out the non-functional requirements, stating to refer to appendix
 REMEMBER TO REPLACE SCREENSHOTS IN THE REPORT AFTER CHANGING ANY FEATURES IE: IMPACT.

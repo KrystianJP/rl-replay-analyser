@@ -8,7 +8,7 @@ load_dotenv()
 
 URL = "https://ballchasing.com/api/replays/"
 TOKEN = os.getenv("BALLCHASING_TOKEN")
-output_file = "player_stats_2v2_original.csv"
+output_file = "player_stats_3v3_original.csv"
 
 RANK_TO_INT = {
     "bronze-1": 1,
@@ -47,7 +47,7 @@ WAIT_TIME = 1
 DATA_STRUCTURE = {"core": ["shots", "goals", "saves", "assists", "shooting_percentage"],"boost":["bpm", "amount_used_while_supersonic", "count_collected_small", "count_collected_big", "percent_zero_boost", "percent_boost_0_25", "percent_full_boost", "count_stolen_big"],
     "movement":["avg_speed_percentage", "percent_supersonic_speed", "percent_ground", "percent_low_air", "percent_high_air"], "positioning": ["percent_most_back", "percent_most_forward", "percent_closest_to_ball", "percent_farthest_from_ball", "percent_behind_ball", "percent_infront_ball", "percent_defensive_third", "percent_neutral_third", "percent_offensive_third"], "demo":["inflicted", "taken"]}
 
-def safe_get(url, headers, params={}, sleep_time=0.25):
+def safe_get(url, headers, params={}, sleep_time=0.5):
     while True:
         r = requests.get(url, headers=headers, params=params)
         
@@ -200,7 +200,7 @@ def test_script(rank, count, each_player_count):
     else:
         r.raise_for_status()
 
-ranks = ["platinum-1", "platinum-2", "platinum-3", "diamond-1", "diamond-2", "diamond-3", "champion-1", "champion-2", "champion-3", "grand-champion-1", "grand-champion-2", "grand-champion-3", "supersonic-legend"]
+ranks = ["gold-1"]
 
 start = time.time()
 
