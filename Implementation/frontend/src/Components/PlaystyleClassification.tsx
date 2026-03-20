@@ -166,7 +166,7 @@ const CLASS_ADVICE = {
     {
       flaw: "Overcommitting",
       advice:
-        "You may be going for a demo/bump when you are needed in defense, or the attack is unsuccessful. Ensure there is a low risk of the attack getting shut down early, demos/bumps are high-risk plays.",
+        "You may be going for a demo/bump when you are needed in defense, or the attack is unsuccessful. Ensure there is a low risk of the attack getting shut down early, demos/bumps can be high-risk plays.",
     },
     {
       flaw: "Insignificant demos/bumps",

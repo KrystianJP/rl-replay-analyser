@@ -19,5 +19,5 @@ A web-based analytics tool that aggregates Rocket League replay statistics acros
 2. Right-click any replay name (blue text) and select **Copy Link**
 3. Paste the URL into the **Ballchasing URL/ID** input box on the site and click **+**
 4. Once the server is active, the replay name will appear in the list below
-5. Repeat for as many replays as you'd like — at least 5 is recommended for meaningful results
+5. Repeat for as many replays as you'd like — at least 5 is recommended for meaningful results (10+ for optimal results)
 6. Select **Grand Champion III** as the rank, **KrysJP** as the player, and click **Analyse Replays**

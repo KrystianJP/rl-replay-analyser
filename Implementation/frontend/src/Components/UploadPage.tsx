@@ -353,9 +353,10 @@ function UploadPage({
             (clear cache)
           </span>
         </h2>
-        <p className="note">
-          Please upload replays from <u>a single playlist</u> (e.g: only 2v2)
-          for accurate analysis
+        <p className="note" style={{ width: "600px", margin: "0 auto" }}>
+          Please upload replays from <u>a single playlist</u> (only 2v2 or 3v3)
+          for accurate analysis. Note that the more replays you upload, the more
+          meaningful your analysis will be.
         </p>
 
         <div className="upload-area">

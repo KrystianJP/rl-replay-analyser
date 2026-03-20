@@ -528,21 +528,28 @@ def get_playstyle(player: PlayerStats, mode: int):
 
     # using shap to get feature importance
     shap_values = explainer.shap_values(df)
-
     shap_top = shap_values[ordered_idx[0]][0]
     top_shap_idxs = np.argsort(shap_top)[::-1]
 
-    filtered_idxs = [
-        idx for idx in top_shap_idxs
-        # if get_tree_threshold_direction(model, df, feature_names, feature_names[idx]) != "low" and shap_top[idx] > 0
-        if 1==1
-    ]
-    top_3_shap_idxs = np.array(filtered_idxs[:3])
     filtered_shap_values = shap_top[top_shap_idxs]
     total_positive = filtered_shap_values[filtered_shap_values > 0].sum()
     percentages = {idx: (shap_top[idx] / total_positive) * 100 for idx in top_shap_idxs}
 
-    top_stats = [ {"feature": feature_names[i], "shap_value": percentages[i], "feature_value": df.iloc[0][feature_names[i]], "direction": get_tree_threshold_direction(model, df, feature_names, feature_names[i])} for i in top_3_shap_idxs ]
+    high_idxs = [
+        idx for idx in top_shap_idxs
+        if shap_top[idx] > 0 and get_tree_threshold_direction(model, df, feature_names, feature_names[idx]) == "high" and percentages[idx] >= 5
+    ]
+
+    low_idxs = [
+        idx for idx in top_shap_idxs
+        if shap_top[idx] > 0 and get_tree_threshold_direction(model, df, feature_names, feature_names[idx]) == "low" and percentages[idx] >= 5
+    ]
+
+    FEATURES_NO = 5
+    combined = high_idxs[:FEATURES_NO] + low_idxs[:max(0, FEATURES_NO - len(high_idxs))]
+    top_3_shap_idxs = np.array(combined[:FEATURES_NO])
+
+    top_stats = [{"feature": feature_names[i], "shap_value": percentages[i], "feature_value": df.iloc[0][feature_names[i]], "direction": "high" if i in high_idxs else "low"} for i in top_3_shap_idxs]
 
     return {"ordered_classes": ordered_classes.tolist(), "ordered_probs": ordered_probs.tolist(), "top_stats": top_stats}
 
