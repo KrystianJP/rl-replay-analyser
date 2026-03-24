@@ -181,6 +181,7 @@ function UploadPage({
 
       const data = await response.json();
 
+      console.log(data);
       setReplayCounter((prev) => prev + 1);
 
       uploadFile(file, data.game_id, data.name, data.players);
