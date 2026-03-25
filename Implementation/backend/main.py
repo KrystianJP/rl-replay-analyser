@@ -82,6 +82,8 @@ COMP_COLS = ["core_shots",
         "positioning_percent_offensive_third",
         ]
 
+RANKS = ["gold-1", "gold-2", "gold-3", "platinum-1", "platinum-2", "platinum-3", "diamond-1", "diamond-2", "diamond-3", "champion-1", "champion-2", "champion-3", "grand-champion-1", "grand-champion-2", "grand-champion-3", "supersonic-legend"]
+
 class StatItem(BaseModel):
     category: str
     You_Original: float
@@ -298,7 +300,7 @@ async def upload_replay(file: UploadFile = File(...)):
                 result = await anyio.to_thread.run_sync(process_replay, temp_path)
                 return result
         except Exception as e:
-            return {"status": "error", "message": f"Failed to process: {e}"}
+            raise HTTPException(status_code=500, detail=f"Failed to get header: {e}")
     
 @app.post("/api/header")
 def get_header(file: UploadFile = File(...)):
@@ -326,7 +328,7 @@ def get_header(file: UploadFile = File(...)):
 
 @app.get("/api/stats_csv")
 def get_stats_csv():
-    df = pd.read_csv("player_stats_2v2.csv")
+    df = pd.read_csv("player_stats_3v3_new.csv")
     df_copy = df.copy()
 
     COLS_TO_CALC = [x[:-4] for x in ML_COLS]
@@ -358,7 +360,7 @@ def get_stats_csv():
 
 @app.post("/api/label_player/{row_index}")
 def label_player(row_index: int, label: str):
-    file = "player_stats_2v2.csv"
+    file = "player_stats_3v3_new.csv"
     df = pd.read_csv(file)
 
     if row_index not in df["index"].values:
@@ -377,6 +379,8 @@ def label_player(row_index: int, label: str):
 
 @app.get("/api/rank_average/{rank}")
 def get_rank_average(rank: str, mode: int):
+    if rank not in RANKS:
+        raise HTTPException(status_code=404, detail="Rank not found")
     if mode == 3:
         df = pd.read_csv("player_stats_3v3_original.csv")
     elif mode ==2:
@@ -398,6 +402,8 @@ def get_rank_average(rank: str, mode: int):
 
 @app.post("/api/user_percentiles/{rank}")
 async def get_user_percentiles(radar: RadarData, rank: str, mode: int):
+    if rank not in RANKS:
+        raise HTTPException(status_code=404, detail="Rank not found")
 
     if mode == 3:
         df = pd.read_csv("player_stats_3v3_original.csv")
@@ -555,10 +561,14 @@ def get_playstyle(player: PlayerStats, mode: int):
 from format_ballchasing import ballchasing_mapping
 @app.get("/api/ballchasing/{id}")
 def get_ballchasing(id: str):
-    replay_data = get_replay(id, TOKEN)
+    try:
+        replay_data = get_replay(id, TOKEN)
 
-    if replay_data is None:
-        return {"error": "Replay not found"}
+        if replay_data is None:
+            return {"error": "Replay not found"}
+
+    except requests.exceptions.HTTPError as e:
+        raise HTTPException(status_code=e.response.status_code, detail=str(e))
     
     players = replay_data['blue']['players'] + replay_data['orange']['players']
 

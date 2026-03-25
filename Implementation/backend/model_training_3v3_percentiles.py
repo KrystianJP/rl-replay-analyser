@@ -8,13 +8,13 @@ from sklearn.metrics import classification_report, accuracy_score
 from sklearn.ensemble import RandomForestClassifier
 import joblib
 
-df = pd.read_csv("player_stats_3v3.csv")
+df = pd.read_csv("player_stats_3v3_new.csv")
 
 EXCLUDE_COLS = {
     "playstyle", "rank", "rank-no", "player_id", "index",
     "movement_percent_ground",
     "positioning_percent_behind_ball",
-    "movement_percent_supersonic_speed"
+    "movement_percent_supersonic_speed", "boost_amount_used_while_supersonic", "boost_count_collected_small", "boost_count_collected_big", "boost_percent_zero_boost", "boost_percent_boost_0_25", "boost_percent_full_boost", "movement_percent_low_air", "positioning_percent_neutral_third", "demo_taken"
 }
 
 stat_cols = [col for col in df.columns if col not in EXCLUDE_COLS]

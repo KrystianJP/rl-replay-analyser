@@ -106,6 +106,7 @@ function UploadPage({
       console.log(`Replay ${match_guid} found in cache, skipping upload.`);
 
       const parsed = Papa.parse(idbReplay, { header: true });
+      console.log(parsed.data);
       setReplayData((prev: any) => [
         ...prev,
         { id: match_guid, players: players, data: parsed.data },
@@ -180,8 +181,6 @@ function UploadPage({
       }
 
       const data = await response.json();
-
-      console.log(data);
       setReplayCounter((prev) => prev + 1);
 
       uploadFile(file, data.game_id, data.name, data.players);

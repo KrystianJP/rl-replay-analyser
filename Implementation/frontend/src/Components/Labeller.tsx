@@ -36,12 +36,12 @@ const ML_COLS = [
   "movement_percent_high_air",
   "positioning_percent_most_back",
   "positioning_percent_most_forward",
-  // "positioning_percent_farthest_from_ball",
   "positioning_percent_closest_to_ball",
   "positioning_percent_infront_ball",
   "positioning_percent_offensive_third",
   "positioning_percent_defensive_third",
   "demo_inflicted",
+  "positioning_percent_farthest_from_ball",
 ];
 
 interface Player {
