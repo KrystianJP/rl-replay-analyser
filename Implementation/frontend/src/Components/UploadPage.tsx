@@ -12,6 +12,8 @@ function UploadPage({
   setPlayer,
   setRank,
   setMode,
+  backendStatus,
+  retryBackend,
 }: any) {
   const [replayList, setReplayList] = useState<any[]>([]);
   const [playersDropdown, setPlayersDropdown] = useState<any[]>([]);
@@ -23,6 +25,9 @@ function UploadPage({
   const [analysing, setAnalysing] = useState<boolean>(false);
   const [ballchasingInput, setBallchasingInput] = useState<string>("");
   const [is3v3, setIs3v3] = useState<boolean>(false);
+  const backendReady = backendStatus === "ready";
+  const backendBooting = backendStatus === "checking";
+  const controlsDisabled = analysing || !backendReady;
 
   const isPlayer = (p: any, player: any) => {
     if (player.id !== "0" && player.id !== "" && "id" in p) {
@@ -196,6 +201,8 @@ function UploadPage({
   };
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!backendReady) return;
+
     const fileList = e.target.files;
     if (!fileList) return;
 
@@ -267,6 +274,14 @@ function UploadPage({
   };
 
   const handleSubmit = () => {
+    if (!backendReady) {
+      setErrorList((prevErrors) => [
+        ...prevErrors,
+        "Backend is still starting. Please wait until it is ready.",
+      ]);
+      return;
+    }
+
     if (replayList.length === 0) {
       setErrorList((prevErrors) => [
         ...prevErrors,
@@ -303,6 +318,8 @@ function UploadPage({
   };
 
   const handleBallchasingUpload = async () => {
+    if (!backendReady) return;
+
     // clear ballchasing errors on new upload attempt
     setErrorList((prev) =>
       prev.filter((error) => !error.includes("ballchasing")),
@@ -359,6 +376,42 @@ function UploadPage({
           meaningful your analysis will be.
         </p>
 
+        {backendStatus !== "ready" ? (
+          <div
+            className={
+              "backend-status " + (backendBooting ? "booting" : "offline")
+            }
+            role="status"
+            aria-live="polite"
+          >
+            <div className="backend-status-title">
+              {backendBooting
+                ? "Backend is booting up"
+                : "Backend is not responding"}
+            </div>
+            <div className="backend-status-message">
+              {backendBooting
+                ? "The demo server is waking from sleep. Uploads are disabled until it connects."
+                : "Uploads are disabled because the demo server could not be reached."}
+            </div>
+            {backendBooting ? (
+              <div className="backend-status-spinner" aria-hidden="true"></div>
+            ) : (
+              <button
+                className="backend-retry-button"
+                type="button"
+                onClick={retryBackend}
+              >
+                Retry connection
+              </button>
+            )}
+          </div>
+        ) : (
+          <div className="backend-status ready" role="status">
+            Backend connected. Uploads are ready.
+          </div>
+        )}
+
         <div className="upload-area">
           <div className="upload-link" onClick={handleCopy}>
             C:\Users\%USERNAME%\Documents\My Games\Rocket
@@ -367,9 +420,9 @@ function UploadPage({
           <label
             htmlFor="file-upload"
             onClick={clearErrors}
-            className="file-upload"
+            className={"file-upload" + (controlsDisabled ? " disabled" : "")}
           >
-            Choose replays to upload
+            {backendReady ? "Choose replays to upload" : "Upload disabled"}
             <span className="material-icons">add</span>
           </label>
           <input
@@ -378,7 +431,7 @@ function UploadPage({
             accept=".replay"
             multiple
             onChange={handleFileChange}
-            disabled={analysing}
+            disabled={controlsDisabled}
           />
           <div style={{ textAlign: "center", opacity: 0.7, padding: "5px 0" }}>
             OR
@@ -387,14 +440,21 @@ function UploadPage({
             <input
               type="text"
               id="ballchasing-upload"
-              disabled={analysing}
+              disabled={controlsDisabled}
               value={ballchasingInput}
               onChange={(e) => setBallchasingInput(e.target.value)}
-              placeholder="Enter Ballchasing ID/URL"
+              placeholder={
+                backendReady
+                  ? "Enter Ballchasing ID/URL"
+                  : "Waiting for backend..."
+              }
               className="ballchasing-input"
             ></input>
             <span
-              className="material-icons ballchasing-add"
+              className={
+                "material-icons ballchasing-add" +
+                (controlsDisabled ? " disabled" : "")
+              }
               onClick={handleBallchasingUpload}
             >
               add
@@ -417,7 +477,7 @@ function UploadPage({
             <select
               id="rank"
               name="rank"
-              disabled={analysing}
+              disabled={controlsDisabled}
               value={selectedRank}
               onChange={(e) => {
                 setSelectedRank(e.target.value);
@@ -453,7 +513,7 @@ function UploadPage({
             <select
               id="player"
               name="player"
-              disabled={analysing}
+              disabled={controlsDisabled}
               value={selectedPlayer}
               onChange={(e) => {
                 setSelectedPlayer(Number(e.target.value));
@@ -477,7 +537,7 @@ function UploadPage({
                 type="checkbox"
                 checked={is3v3}
                 onChange={(e) => setIs3v3(e.target.checked)}
-                disabled={analysing}
+                disabled={controlsDisabled}
               ></input>
               <span className="slider round"></span>
             </label>
@@ -492,7 +552,7 @@ function UploadPage({
           </div>
           <button
             id="analyse-button"
-            disabled={analysing}
+            disabled={controlsDisabled}
             onClick={handleSubmit}
             hidden={!replayList.length}
           >
