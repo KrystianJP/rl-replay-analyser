@@ -39,6 +39,12 @@ origins = [
     "http://127.0.0.1:5173",
     "https://rl-replay-analyser.vercel.app"
 ]
+extra_origins = [
+    origin.strip()
+    for origin in os.getenv("FRONTEND_ORIGINS", "").split(",")
+    if origin.strip()
+]
+origins.extend(extra_origins)
 
 if platform.system() == "Windows":
     RRROCKET_PATH = "./rrrocket.exe"
@@ -285,6 +291,7 @@ def get_tree_threshold_direction(model, df, feature_names, feature):
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,            # Allows specific origins
+    allow_origin_regex=r"https://.*rl-replay-analyser.*\.vercel\.app",
     allow_credentials=True,
     allow_methods=["*"],              # Allows all methods (GET, POST, etc.)
     allow_headers=["*"],              # Allows all headers
