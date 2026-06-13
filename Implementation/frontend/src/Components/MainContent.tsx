@@ -16,16 +16,25 @@ function MainContent() {
   const [mode, setMode] = useState<number>(3);
   const [backendStatus, setBackendStatus] =
     useState<BackendStatus>("checking");
+  const backendUrl = import.meta.env.VITE_API_URL;
 
   const checkBackend = async (signal?: AbortSignal) => {
+    const controller = new AbortController();
+    const timeout = window.setTimeout(() => controller.abort(), 10000);
+    const abortRequest = () => controller.abort();
+    signal?.addEventListener("abort", abortRequest);
+
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/health`, {
-        signal,
+      const response = await fetch(`${backendUrl}/health`, {
+        signal: controller.signal,
       });
 
       return response.ok;
     } catch {
       return false;
+    } finally {
+      window.clearTimeout(timeout);
+      signal?.removeEventListener("abort", abortRequest);
     }
   };
 
@@ -68,6 +77,7 @@ function MainContent() {
           setMode={setMode}
           backendStatus={backendStatus}
           retryBackend={() => waitForBackend()}
+          backendUrl={backendUrl}
         />
       ) : (
         <AnalysisPage

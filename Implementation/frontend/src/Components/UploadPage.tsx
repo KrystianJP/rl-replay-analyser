@@ -14,6 +14,7 @@ function UploadPage({
   setMode,
   backendStatus,
   retryBackend,
+  backendUrl,
 }: any) {
   const [replayList, setReplayList] = useState<any[]>([]);
   const [playersDropdown, setPlayersDropdown] = useState<any[]>([]);
@@ -391,19 +392,42 @@ function UploadPage({
             </div>
             <div className="backend-status-message">
               {backendBooting
-                ? "The demo server is waking from sleep. Uploads are disabled until it connects."
-                : "Uploads are disabled because the demo server could not be reached."}
+                ? "The free demo server is waking from sleep. This can take about 1 minute, so uploads are disabled until it connects."
+                : "Uploads are disabled because the demo server could not be reached. If the backend opens directly, a browser extension may be blocking the request."}
             </div>
+            <a
+              className="backend-health-link"
+              href={`${backendUrl}/health`}
+              target="_blank"
+              rel="noreferrer"
+            >
+              Open backend health check
+            </a>
             {backendBooting ? (
-              <div className="backend-status-spinner" aria-hidden="true"></div>
+              <>
+                <div
+                  className="backend-status-spinner"
+                  aria-hidden="true"
+                ></div>
+                <div className="backend-status-hint">
+                  If this never connects but the health check opens, disable
+                  uBlock Origin for this site and refresh.
+                </div>
+              </>
             ) : (
-              <button
-                className="backend-retry-button"
-                type="button"
-                onClick={retryBackend}
-              >
-                Retry connection
-              </button>
+              <>
+                <div className="backend-status-hint">
+                  Try disabling uBlock Origin for this site, then retry the
+                  connection.
+                </div>
+                <button
+                  className="backend-retry-button"
+                  type="button"
+                  onClick={retryBackend}
+                >
+                  Retry connection
+                </button>
+              </>
             )}
           </div>
         ) : (
