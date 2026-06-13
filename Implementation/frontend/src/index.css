@@ -417,6 +417,24 @@ section .expand-section {
   font-size: 0.8rem;
   margin-left: -15px;
   color: rgb(255, 36, 36);
+  animation: expand-blink 2.4s ease-in-out infinite;
+}
+
+@keyframes expand-blink {
+  0%,
+  100% {
+    opacity: 0.35;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  section .expand-section {
+    animation: none;
+    opacity: 0.85;
+  }
 }
 
 #comparison h3 {

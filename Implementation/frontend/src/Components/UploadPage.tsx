@@ -432,7 +432,8 @@ function UploadPage({
           </div>
         ) : (
           <div className="backend-status ready" role="status">
-            Backend connected. Uploads are ready.
+            Backend connected. Uploads are ready. The free demo server may
+            sleep again after 15 minutes of inactivity.
           </div>
         )}
 
