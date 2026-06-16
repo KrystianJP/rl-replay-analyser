@@ -397,11 +397,11 @@ function UploadPage({
             </div>
             <a
               className="backend-health-link"
-              href={`${backendUrl}/health`}
+              href={`${backendUrl}/api/status`}
               target="_blank"
               rel="noreferrer"
             >
-              Open backend health check
+              Open backend status check
             </a>
             {backendBooting ? (
               <>
@@ -410,7 +410,7 @@ function UploadPage({
                   aria-hidden="true"
                 ></div>
                 <div className="backend-status-hint">
-                  If this never connects but the health check opens, disable
+                  If this never connects but the status check opens, disable
                   uBlock Origin for this site and refresh.
                 </div>
               </>

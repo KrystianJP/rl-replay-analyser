@@ -30,8 +30,9 @@ load_dotenv()
 
 app = FastAPI()
 
+@app.get("/api/status")
 @app.get("/health")
-def health():
+def server_status():
     return {"status": "ok"}
 
 origins = [

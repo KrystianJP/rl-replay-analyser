@@ -5,6 +5,8 @@ import AnalysisPage from "./AnalysisPage";
 import { useEffect, useState } from "react";
 
 type BackendStatus = "checking" | "ready" | "offline";
+const BACKEND_KEEP_AWAKE_INTERVAL_MS = 10 * 60 * 1000;
+const BACKEND_STATUS_PATH = "/api/status";
 
 function MainContent() {
   const [currentPage, setCurrentPage] = useState<"upload" | "analysis">(
@@ -25,7 +27,7 @@ function MainContent() {
     signal?.addEventListener("abort", abortRequest);
 
     try {
-      const response = await fetch(`${backendUrl}/health`, {
+      const response = await fetch(`${backendUrl}${BACKEND_STATUS_PATH}`, {
         signal: controller.signal,
       });
 
@@ -63,7 +65,19 @@ function MainContent() {
     const controller = new AbortController();
     waitForBackend(controller.signal);
 
-    return () => controller.abort();
+    const keepAwakeInterval = window.setInterval(async () => {
+      const ready = await checkBackend();
+
+      setBackendStatus((currentStatus) => {
+        if (ready) return "ready";
+        return currentStatus === "ready" ? "offline" : currentStatus;
+      });
+    }, BACKEND_KEEP_AWAKE_INTERVAL_MS);
+
+    return () => {
+      controller.abort();
+      window.clearInterval(keepAwakeInterval);
+    };
   }, []);
 
   return (
