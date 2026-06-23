@@ -5,6 +5,21 @@ import Papa from "papaparse";
 /* eslint-disable  @typescript-eslint/no-explicit-any */
 
 const dropdownMutex = new Mutex();
+const BALLCHASING_REQUEST_DELAY_MS = 600;
+const DEMO_REPLAY_IDS = [
+  "7aa47e1b-87ce-4eae-942e-de82331e570a",
+  "b928660f-7939-408b-a778-8c8ef73e5107",
+  "d2bb12ce-9256-4160-9e8b-34765eb1707c",
+  "28487a18-7b11-4ad4-bc5e-7d97b22ca39a",
+  "0cabd790-c743-4c29-9abd-03f831cccd61",
+];
+const DEMO_PLAYER_NAME = "KrysJP";
+const DEMO_RANK = "grand-champion-3";
+
+const wait = (ms: number) =>
+  new Promise((resolve) => {
+    window.setTimeout(resolve, ms);
+  });
 
 function UploadPage({
   setCurrentPage,
@@ -24,11 +39,12 @@ function UploadPage({
   const [replayCounter, setReplayCounter] = useState<number>(0);
   const [uploadCounter, setUploadCounter] = useState<number>(0);
   const [analysing, setAnalysing] = useState<boolean>(false);
+  const [demoLoading, setDemoLoading] = useState<boolean>(false);
   const [ballchasingInput, setBallchasingInput] = useState<string>("");
   const [is3v3, setIs3v3] = useState<boolean>(false);
   const backendReady = backendStatus === "ready";
   const backendBooting = backendStatus === "checking";
-  const controlsDisabled = analysing || !backendReady;
+  const controlsDisabled = analysing || demoLoading || !backendReady;
 
   const isPlayer = (p: any, player: any) => {
     if (player.id !== "0" && player.id !== "" && "id" in p) {
@@ -99,6 +115,34 @@ function UploadPage({
     } finally {
       release();
     }
+  };
+
+  const mergePlayers = (currentPlayers: any[], playersList: any[]) => {
+    const mergedPlayers = [...currentPlayers];
+
+    playersList.forEach((newPlayer) => {
+      const exists = mergedPlayers.some((existingPlayer) =>
+        isPlayer(newPlayer, existingPlayer),
+      );
+
+      if (!exists) {
+        mergedPlayers.push(newPlayer);
+      }
+    });
+
+    return mergedPlayers.sort((a, b) => a.name.localeCompare(b.name));
+  };
+
+  const fetchBallchasingReplay = async (id: string) => {
+    const response = await fetch(
+      `${import.meta.env.VITE_API_URL}/api/ballchasing/` + id,
+    );
+
+    if (!response.ok) {
+      throw new Error("Network response not ok");
+    }
+
+    return response.json();
   };
 
   const uploadFile = async (
@@ -329,15 +373,7 @@ function UploadPage({
     // extract from potential url
     const id = ballchasingInput.split("/").pop()?.trim();
     try {
-      const response = await fetch(
-        `${import.meta.env.VITE_API_URL}/api/ballchasing/` + id,
-      );
-
-      if (!response.ok) {
-        throw new Error("Network response not ok");
-      }
-
-      const data = await response.json();
+      const data = await fetchBallchasingReplay(id || "");
 
       const replayData = data.data;
 
@@ -359,6 +395,69 @@ function UploadPage({
         ...prevErrors,
         "Error fetching ballchasing replay",
       ]);
+    }
+  };
+
+  const handleDemoUpload = async () => {
+    if (!backendReady) return;
+
+    setDemoLoading(true);
+    setAnalysing(false);
+    setErrorList([]);
+    setReplayList([]);
+    setPlayersDropdown([]);
+    setReplayData([]);
+    setReplayCounter(0);
+    setUploadCounter(0);
+    setBallchasingInput("");
+    setSelectedRank(DEMO_RANK);
+    setSelectedPlayer(0);
+    setIs3v3(false);
+
+    const demoReplayList: any[] = [];
+    const demoReplayData: any[] = [];
+    let demoPlayers: any[] = [];
+
+    try {
+      for (const [index, id] of DEMO_REPLAY_IDS.entries()) {
+        const data = await fetchBallchasingReplay(id);
+
+        demoReplayList.push({ ...data.header, fileName: id });
+        demoReplayData.push(data.data);
+        demoPlayers = mergePlayers(demoPlayers, data.header.players);
+
+        setReplayList([...demoReplayList]);
+        setReplayData([...demoReplayData]);
+        setPlayersDropdown([...demoPlayers]);
+        setReplayCounter(demoReplayList.length);
+        setUploadCounter(demoReplayData.length);
+
+        if (index < DEMO_REPLAY_IDS.length - 1) {
+          await wait(BALLCHASING_REQUEST_DELAY_MS);
+        }
+      }
+
+      const demoPlayerIndex = demoPlayers.findIndex(
+        (player) => player.name === DEMO_PLAYER_NAME,
+      );
+
+      if (demoPlayerIndex === -1) {
+        setErrorList((prevErrors) => [
+          ...prevErrors,
+          "Demo player KrysJP was not found in these replays",
+        ]);
+        return;
+      }
+
+      setSelectedPlayer(demoPlayerIndex + 1);
+    } catch (error) {
+      console.error("Error loading demo replays:", error);
+      setErrorList((prevErrors) => [
+        ...prevErrors,
+        "Error loading demo replays",
+      ]);
+    } finally {
+      setDemoLoading(false);
     }
   };
 
@@ -458,7 +557,7 @@ function UploadPage({
             onChange={handleFileChange}
             disabled={controlsDisabled}
           />
-          <div style={{ textAlign: "center", opacity: 0.7, padding: "5px 0" }}>
+          <div className="upload-option-divider">
             OR
           </div>
           <div className="ballchasing-input-container">
@@ -485,6 +584,15 @@ function UploadPage({
               add
             </span>
           </div>
+          <div className="upload-option-divider">OR</div>
+          <button
+            type="button"
+            className="demo-upload-button"
+            disabled={controlsDisabled}
+            onClick={handleDemoUpload}
+          >
+            {demoLoading ? "Loading demo replays..." : "Use demo replays"}
+          </button>
           <div style={{ textAlign: "center", opacity: 0.7, marginTop: "5px" }}>
             (Click on a replay to remove it)
           </div>

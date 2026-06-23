@@ -203,6 +203,7 @@ section#upload h2 {
 
 .file-upload.disabled,
 .ballchasing-add.disabled,
+.demo-upload-button:disabled,
 #analyse-button:disabled {
   cursor: not-allowed;
   opacity: 0.55;
@@ -211,7 +212,8 @@ section#upload h2 {
 
 #analyse-button:disabled:hover,
 .file-upload.disabled:hover,
-.ballchasing-add.disabled:hover {
+.ballchasing-add.disabled:hover,
+.demo-upload-button:disabled:hover {
   filter: grayscale(0.2);
 }
 
@@ -641,6 +643,31 @@ section .expand-section {
 }
 .ballchasing-input-container .ballchasing-add:hover {
   filter: brightness(0.8);
+}
+
+.upload-option-divider {
+  text-align: center;
+  opacity: 0.7;
+  padding: 5px 0;
+}
+
+.demo-upload-button {
+  display: block;
+  margin: 0.2rem auto 0 auto;
+  padding: 0.55rem 1.2rem;
+  background: #1e90ff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 0.95rem;
+  font-weight: bold;
+  box-shadow: 0 0 10px rgba(30, 144, 255, 0.35);
+  transition: 0.1s;
+}
+
+.demo-upload-button:hover {
+  filter: brightness(0.88);
 }
 
 /* The switch - the box around the slider */
